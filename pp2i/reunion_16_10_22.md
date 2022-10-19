@@ -114,7 +114,7 @@ déjà commencé sur le web
 - Ne pas trop se rapprocher des existants, être innovant (Mathis)
 
 ## Todo List
-- Noté toute les idées 
+- Noté toutes les idées 
 - Prochaine réunion lundi 17 octobre 18h médialab
 - répétition vendredi entre 13h et 14h
 - Compte rendu de la réunion LaTex (Léo) 

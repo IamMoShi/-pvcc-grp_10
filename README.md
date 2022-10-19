@@ -8,11 +8,13 @@ Gérald Oster <<gerald.oster@telecomnancy.eu>>
 ## Titre du projet
 
 **Membres du groupe** :
-- À compléter
-- À compléter
-- À compléter
-- À compléter
+- Maelan Tiger
+- Héléna Barbillon
+- Mathis Mangold
+- Léo Fornoff
 
 ## Description du projet
 
-À compléter
+Réalisation d'une application web permettant la gestion de jardin paragé avec gestion de placement intelligent de plante
+
+
