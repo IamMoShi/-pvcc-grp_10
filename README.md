@@ -15,6 +15,4 @@ Gérald Oster <<gerald.oster@telecomnancy.eu>>
 
 ## Description du projet
 
-Réalisation d'une application web permettant la gestion de jardin partagé avec gestion de placement intelligent de plante
-
-
+Réalisation d'une application web permettant la gestion de jardins partagés (outils de gestion de placements et de suggestion de plantes)
