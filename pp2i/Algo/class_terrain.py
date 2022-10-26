@@ -1,5 +1,10 @@
 import numpy as np
 
+'''
+Création de l'objet Terrain regroupant un ensemble de fonction applicable sur un terrain
+Ceci n'est que le début de la création de l'objet Terrain, il sera nécessaire d'ajouter des fonctionnalités !
+'''
+
 
 class Terrain:
     """
@@ -8,7 +13,10 @@ class Terrain:
         :param largeur:  représente l'autre dimension en cm du jardin
         :param echelle: représente l'échelle à laquelle la matrice va être crée (cm), valeur par default = 1cm
     :parameter: func
-        __init__ : dimension_terrain
+        __init__ : dimension_terrain as a tuple
+            needed to create the array Mon_tableau
+        modification_echelle : change de scale of mon_terrain,
+            must be used before creating mon_terrain
 
     """
 
@@ -18,34 +26,42 @@ class Terrain:
 
     def __init__(self, dimension_terrain: tuple):
         """
-        :param dimension_terrain: definit la taille de l'un des jardin
+        :param dimension_terrain : définit la taille de l'un des jardins
                 couple de valeur entière en cm
         """
+
         if len(dimension_terrain) != 2:
             print('Erreur de dimension du tuple dimension_terrain')
             exit()
-
+        if dimension_terrain[0] <= 0 or dimension_terrain[1] <= 0:
+            print('Error dimensions must be positive')
         self.longueur, self.largeur = dimension_terrain
 
-    def echelle(self, echelle):
+    def modification_echelle(self, echelle: float):
         """
-        :param echelle: modifie l'echelle de la matrice qui est par default de 1cm par elt
-        :return: retourne et modifie juste la valeur de l'echelle de l'objet
+        :param echelle: modifie l'échelle de la matrice qui est par default de 1cm par elt
+        :return: retourne et modifie juste la valeur de l'échelle de l'objet
         """
+        if not np.array_equal(self.mon_terrain, []):
+            return 'une matrice représentant le terrain existe déjà, échelle actuelle : ' + str(self.echelle)
+        if type(echelle) != float:
+            return 'erreur type echelle'
+        if echelle <= 0:
+            return 'echelle is negative or null'
         self.echelle = echelle
         return self.echelle
 
     def creation_terrain(self):
         """
         :return: retourne une matrie (np.array)
-        dont les dimensions sont retranscrites par l'echelle en un nombre de colonne dans la matrice,
+        dont les dimensions sont retranscrites par l'échelle en un nombre de colonne dans la matrice,
         un booléen représentant le succès de l'opération et aussi un message,
         on se concentre sur la création d'un terrain rectangulaire
         """
 
         if self.longueur < 0:
             self.longueur = -self.longueur
-            self.creation_terrain()
+            self.creation_terrain()  # auto adaptation aux valeurs négatives
         if self.longueur == 0:
             msg = 'longueur nulle'
             return np.array([]), False, msg
@@ -54,20 +70,29 @@ class Terrain:
             self.creation_terrain()
         if self.largeur == 0:
             msg = 'largeur nulle'
-            return np.array([]), False
+            return np.array([]), False, msg
 
-        self.longueur = int(self.longueur // self.echelle)
+        self.longueur = int(self.longueur // self.echelle)  # adaptation à l'échelle
         self.largeur = int(self.largeur // self.echelle)
 
         try:
-            self.mon_terrain = np.full((self.longueur, self.largeur), '-1')
+            # création d'une matrice de -1 de la taille demandé par mise à l'échelle
+            self.mon_terrain = np.full((self.longueur, self.largeur), -1)
             msg = 'opération réussie'
             return self.mon_terrain, True, msg
-        except:
+        except (Exception,):
+            # cas d'erreur inconnue dans la création du tableau
             msg = 'erreur dans la fonction '
             return np.array([]), False, msg
 
     def modification_terrain(self, terrain: np.array, taille_plante: int, position: tuple, id_plante: int):
+        """
+        :param terrain: prend un terrain (utilisé pour ne pas modifier Mon_terrain, la matrice de l'objet Terrain
+        :param taille_plante: taille plante est supposé être la longueur du côté du carré necessaire à la plante
+        :param position: position en partant de en haut à gauche de la plante dans le jardin (init : (0,0)
+        :param id_plante: identifiant unique de la plante à placer selon son type, doit être positif
+        :return: Booléen représentant le succès de la modification et le terrain modifié
+        """
         x, y = position
         colonne_legume = np.full_like(np.zeros(taille_plante), id_plante)
         colonne_vide = np.full_like(np.zeros(taille_plante), -1)
@@ -86,7 +111,9 @@ class Terrain:
         :param taille_plante: on représente une plante par un carré de coté taille_plante, taille plante est un entier
         :param position: position du coin en haut à gauche de la plante, l'indice du jardin commence en 0,0
         :param id_plante: numéro d'identification de la plante (entier positif)
-        :return:
+        :return: le terrain modifié si la modification était possible,
+            le booléen représentant le succès de la modification
+            et un message associé à la modification (pour le debug)
         """
         taille_plante = int(taille_plante // self.echelle)
         if len(position) != 2:
@@ -111,3 +138,5 @@ class Terrain:
         else:
             msg = 'problème d\'ajout'
             return self.mon_terrain, False, msg
+
+
