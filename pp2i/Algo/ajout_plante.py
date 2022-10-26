@@ -16,7 +16,7 @@ def modification_terrain(terrain: np.array, taille_plante: int, position: tuple,
         ):
             terrain[y + k, x:x + taille_plante] = colonne_legume
         else:
-            return False
+            return False, terrain
     return True, terrain
 
 
