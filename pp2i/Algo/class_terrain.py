@@ -121,7 +121,7 @@ class Terrain:
             return self.mon_terrain, False, msg
 
         if position[0] < 0 or position[1] < 0:
-            msg = 'position impossible car l\'une des coordonées est négative '
+            msg = 'position impossible car l\'une des coordonnées est négative '
             return self.mon_terrain, False, msg
 
         if position[0] + taille_plante > len(self.mon_terrain[0]) \
@@ -139,4 +139,25 @@ class Terrain:
             msg = 'problème d\'ajout'
             return self.mon_terrain, False, msg
 
+    def colorisation(self):
+        '''
+        fonction dédiée à l'affichage web du terrain en remplaçant les id par des couleurs
+        :return: une matrice n, p avec des codes couleurs du type b'xxxxxx' avec x un int en base 10
+        '''
 
+        def couleur(nombre):
+            if nombre == -1:
+                return '#202020'
+            str_num = '#' + str(((nombre) * 123) % 10 ** 7)
+            for k in range(7 - len(str_num)):
+                str_num = str_num + '0'
+            return str_num
+
+        longeur_ligne, longeur_colonne = np.shape(self.mon_terrain)
+        mon_terrain_colorie = np.chararray((longeur_ligne, longeur_colonne), itemsize=7)
+
+        for i in range(longeur_ligne):
+            for j in range(longeur_colonne):
+                x = self.mon_terrain[i, j]
+                mon_terrain_colorie[i, j] = couleur(x)
+        return mon_terrain_colorie
