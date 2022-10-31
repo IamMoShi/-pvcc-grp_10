@@ -23,19 +23,23 @@ class Terrain:
     echelle = 1
     longueur, largeur = 0, 0
     mon_terrain = np.array([])
+    data_terrain = dict({
+        'dimensions': (longueur, largeur)
+    })
 
-    def __init__(self, dimension_terrain: tuple):
+    def __init__(self, dimensions_terrain: tuple):
         """
-        :param dimension_terrain : définit la taille de l'un des jardins
+        :param dimensions_terrain : définit la taille de l'un des jardins
                 couple de valeur entière en cm
         """
 
-        if len(dimension_terrain) != 2:
+        if len(dimensions_terrain) != 2:
             print('Erreur de dimension du tuple dimension_terrain')
             exit()
-        if dimension_terrain[0] <= 0 or dimension_terrain[1] <= 0:
+        if dimensions_terrain[0] <= 0 or dimensions_terrain[1] <= 0:
             print('Error dimensions must be positive')
-        self.longueur, self.largeur = dimension_terrain
+        self.longueur, self.largeur = dimensions_terrain
+        self.data_terrain.update(dimension=dimensions_terrain)
 
     def modification_echelle(self, echelle: float):
         """
@@ -126,7 +130,7 @@ class Terrain:
 
         if position[0] + taille_plante > len(self.mon_terrain[0]) \
                 or position[1] + taille_plante > len(self.mon_terrain[1]):
-            msg = 'La plante ne rentre pas dans le jardin à cette postion'
+            msg = 'La plante ne rentre pas dans le jardin à cette position'
             return self.mon_terrain, False, msg
 
         terrain_modifie = self.modification_terrain(self.mon_terrain, taille_plante, position, id_plante)

@@ -7,22 +7,22 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="garden">
+    <table class="garden">
         {% for raw in matrice : %}
-        <div class="raw" style="display: flex;">
-            {%for color in raw : %}
-            <div class="carre" 
+        <tr class="raw" style="display: flex;">
+            {% for color in raw : %}
+            <td class="carre" 
             style="background-color: {{color.decode()}} ; 
             width : 10px;
             height : 10px ;
             border: solid;
             border-width: thin;
              ">
-            </div>
+            </td>
             {% endfor %} 
-    </div>
-    {% endfor %}
-    </div>
+        </tr>
+        {% endfor %}
+    </table>
     
 </body>
 </html>
