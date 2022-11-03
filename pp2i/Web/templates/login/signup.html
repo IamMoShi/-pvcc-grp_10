@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>signup</title>
+    <link rel="stylesheet" href="/static/css/login.css" />
+</head>
+<body>
+    <div class="new-connexion">
+        <p>Nouvelle connection</p>
+        <form action="login" method="post">
+
+            <label for="lastname"></label>
+            <input type="text" name="lastname" id="lastname" placeholder="Nom" autofocus required>
+
+            <label for="prenom"></label>    
+            <input type="text" name="firstname" id="firstname" placeholder="Prénom" required>
+
+            <label for="email"></label>
+            <input type="email" name="email" id="email" placeholder="nom.prenom@exemple.com" required>
+
+            <label for="pwd"></label>
+            <input type="password" name="pwd" id="pwd"
+                    minlength="8" maxlength="25"
+                    autocomplete="new-password" 
+                    placeholder="mot de passe"
+                    required >
+
+            <label for="confirmation-pwd"></label>
+            <input type="password" name="confirmation-pwd" 
+                    id="confirmation-pwd"
+                    minlength="8" maxlength="25"
+                    autocomplete="new-password" 
+                    placeholder="confirmation mot de passe"
+                    required >
+
+            <input type="submit" value="Connexion">
+
+        </form>
+    </div>
+</body>
+</html>
