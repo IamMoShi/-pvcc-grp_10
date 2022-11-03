@@ -1,0 +1,214 @@
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:  sans-serif;
+}
+
+nav {
+  position: fixed;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 8px 20px;
+  background: #34AD32;
+  box-shadow: inset 0px -1px 0px #c5c5c6;
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  margin-right: 20px;
+  border-right: solid;
+  border-width: 2px;
+  border-color: lightgreen;
+}
+
+.nav-icon span {
+  font-family: sans-serif;
+  font-size: 25px;
+  margin-left: 10px;
+  font-weight: 400;
+  color: #f1f1f1;
+}
+.nav-icon img {
+  width: 30px;
+  transform:  translateX(5px);
+}
+.burger {
+  display: none;
+}
+
+.navlinks-container a {
+  margin: 0 10px;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  color: #f1f1f1;
+  display: inline-block;
+  position: relative;
+  padding-top: 5px;
+}
+.navlinks-container a::after {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: -3px;
+  width: 100%;
+  height: 1px;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: #f1f1f1;
+  transition: transform 0.3s ease-out;
+}
+
+.navlinks-container a:hover::after {
+  transform: scaleX(1)
+}
+
+.nav-authentication {
+  margin-left: auto;
+}
+
+.sign-btns button {
+  font-family: sans-serif;
+  font-size: 16px;
+  min-width: 90px;
+  padding: 10px 5px;
+  margin: 0 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none; 
+}
+
+.sign-btns button:nth-child(2) {
+  border: none;
+  background: darkgreen;
+  color: #f1f1f1;
+  transition: 0.4s
+}
+.sign-btns button:nth-child(2):hover {
+    background: #a4e4a4b7;
+    color: black
+}
+.sign-user {
+  display: none;
+}
+
+@media (max-width: 1200px) {
+  nav {
+    padding: 8px 20px;
+    position: relative;
+  }
+
+  .nav-icon {
+    order: 2;
+    margin: 0 auto;
+    border: none;
+  }
+
+  .nav-icon span {
+    font-size: 22px;
+    color: #f1f1f1
+  }
+
+  .main-navlinks {
+    order: 1;
+  }
+  /* burger */
+  .burger {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    background: #34AD32;
+    align-items: center;
+    position: relative;
+  }
+  .burger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: #f1f1f1;
+    position: absolute;
+    pointer-events: none;
+    transition: opacity 0.3s 0.15s ease-out;
+  }
+  .burger span:nth-child(1),
+  .burger span:nth-child(3) {
+    transition: transform 0.3s ease-out;
+  }
+  .burger span:nth-child(1) {
+    transform: translateY(7px);
+  }
+  .burger span:nth-child(3) {
+    transform: translateY(-7px);
+  }
+  .burger.open span:nth-child(1) {
+    transform: translate(0) rotate(135deg);
+  }
+  .burger.open span:nth-child(2) {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+  }
+  .burger.open span:nth-child(3) {
+    transform: translate(0) rotate(-135deg);
+  }
+
+  .navlinks-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    position: absolute;
+    background: #34AD32;
+    top: 100%;
+    margin-top: 10px;
+    margin-left: 10px;
+    left: 0;
+    padding: 15px 50px 25px 30px;
+    box-shadow: inset -2px -2px 0px #c5c5c6;
+    border-radius: 15px;
+    transform: translate(-120%);
+  }
+  .open {
+    transform: translate(0%);
+  }
+  .navlinks-container a {
+    font-size: 18px;
+    margin: 10px 0
+  }
+
+  .nav-authentication {
+    order: 3;
+    margin-left: 0;
+  }
+  .sign-btns {
+    display: none;
+  }
+  .sign-user {
+    display: block;
+    cursor: pointer;
+    border: none;
+  }
+  .sign-user img {
+    width: 20px;
+  }
+
+}
+
+@media (max-width: 600px) {
+  .nav-icon img {
+    width: 20px;
+  }
+  .nav-icon span {
+    font-size: 15px;
+  }
+}
