@@ -20,6 +20,15 @@ body {
 .main img{
     max-width: 50%;
 }
+small {
+    font-size: 12px;
+}
+.text-danger{
+    color: red;
+}
+.text-success{
+    color: green;
+}
 .connexion {
     display: flex;
     width: 100%;
@@ -69,6 +78,9 @@ input[type=submit] {
 input[type=submit]:hover {
     background: lightgreen;
     color: black;
+}
+.input-danger{
+    border-color: red;
 }
 
 @media (max-width: 1200px) {

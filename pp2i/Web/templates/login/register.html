@@ -10,35 +10,41 @@
 <body>
     <div class="new-connexion">
         <p>Nouvelle connection</p>
-        <form action="login" method="post">
+        <form action="login" method="post" id="registerForm">
 
             <label for="lastname"></label>
-            <input type="text" name="lastname" id="lastname" placeholder="Nom" autofocus required>
+            <input type="text" name="lastname" id="lastname" placeholder="Nom" autofocus required/>
+            <small></small>
 
-            <label for="prenom"></label>    
-            <input type="text" name="firstname" id="firstname" placeholder="Prénom" required>
+            <label for="firstname"></label>    
+            <input type="text" name="firstname" id="firstname" placeholder="Prénom" required/>
+            <small></small>
 
             <label for="email"></label>
-            <input type="email" name="email" id="email" placeholder="nom.prenom@exemple.com" required>
+            <input type="email" name="email" id="email" placeholder="nom.prenom@exemple.com" required/>
+            <small></small>
 
             <label for="pwd"></label>
-            <input type="password" name="pwd" id="pwd"
+            <input type="password" name="password" id="password"
                     minlength="8" maxlength="25"
                     autocomplete="new-password" 
                     placeholder="mot de passe"
                     required >
+            <small></small>
 
-            <label for="confirmation-pwd"></label>
-            <input type="password" name="confirmation-pwd" 
-                    id="confirmation-pwd"
+            <label for="confirmation"></label>
+            <input type="password" name="confirmation" 
+                    id="confirmation"
                     minlength="8" maxlength="25"
                     autocomplete="new-password" 
                     placeholder="confirmation mot de passe"
                     required >
+            <small></small>
 
             <input type="submit" value="Connexion">
 
         </form>
     </div>
+    <script src="/static/JS/validRegister.js"></script>
 </body>
 </html>
