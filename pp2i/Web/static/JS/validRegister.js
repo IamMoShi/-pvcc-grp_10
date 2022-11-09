@@ -89,7 +89,9 @@ const validPassword = function(inputPassword) {
     }else if (! /[@$!%*?&_-]/.test(password)){
         msg = startMessage + "un caractere des caractères spéciaux @$!%*?&_-";
     }else if (/\s/.test(password)){
-        msg = "Le mot de passe ne doit pas contenir d'espace"
+        msg = "Le mot de passe ne doit pas contenir d'espace";
+    }else if (!/^[a-zA-Z0-9@$!%*?&_-]+$/.test(password)){
+        msg = "Le mot de passe contient un caractère interdit";
     }else {
         msg = "Mot de passe valide";
         passwordValid = true
@@ -106,7 +108,7 @@ const validPassword = function(inputPassword) {
         small.classList.remove('text-success');
         small.classList.add('text-danger');
     }
-    return password;
+    return passwordValid;
 };
 
 const validConfirmation = function(inputConfirmation, formPassword) {
