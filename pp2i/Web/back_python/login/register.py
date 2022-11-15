@@ -122,5 +122,3 @@ print(register(nom, prenom, email, password, confirmation))
 
 doit retourner [True, [True, True, True, True, True], ''] 
 '''
-
-
