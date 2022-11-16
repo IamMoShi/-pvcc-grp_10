@@ -1,12 +1,12 @@
 CREATE TABLE utilisateur (
-    id_user int PRIMARY KEY ,
+    id_user  INTEGER  PRIMARY KEY AUTOINCREMENT ,
     nom VARCHAR,
     prenom VARCHAR,
     mail VARCHAR,
     mdp VARCHAR
 );
 CREATE TABLE jardin (
-    id_jardin int PRIMARY KEY ,
+    id_jardin  INTEGER  PRIMARY KEY AUTOINCREMENT,
     code_postal varchar,
     ville varchar,
     numero_rue int,
@@ -18,7 +18,7 @@ CREATE TABLE jardin (
                     ON DELETE CASCADE
 );
 CREATE TABLE parcelle (
-    id_parcelle int primary key,
+    id_parcelle  INTEGER  primary key AUTOINCREMENT,
     id_jardin int,
     id_user int,
     longueur_parcelle real,
@@ -34,7 +34,7 @@ CREATE TABLE parcelle (
 
 );
 CREATE TABLE plante (
-    id_plante int PRIMARY KEY,
+    id_plante  INTEGER  PRIMARY KEY,
     taille int
 );
 CREATE TABLE administre (
