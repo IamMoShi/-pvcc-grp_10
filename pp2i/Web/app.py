@@ -13,7 +13,8 @@ def navbar():
 
 @app.route('/signin')
 def signin():
-    return render_template("login/signin.html")    
+    return render_template("login/signin.html")
+  
 @app.route('/signup')
 def signup():
     return render_template("login/signup.html")   
