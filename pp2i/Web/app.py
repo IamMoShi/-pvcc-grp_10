@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, g
 import back_python.login.register as register_py
+import back_python.login.signin as signin_py
 import back_python.login.hash as hash_py
 import sqlite3
 
@@ -50,21 +51,51 @@ def login():
 @app.route('/send-register-form', methods=['POST', 'GET'])
 def register_post():
     if request.method == 'POST':
+
         last_name = request.form['lastname']
         first_name = request.form['firstname']
         email = request.form['email']
         password = request.form['password']
         confirmation = request.form['confirmation']
+
         validation = register_py.register(last_name, first_name, email, password, confirmation)
+
+
         if validation[0]:
-            pwd_hash = hash_py.hash(password)
             db = get_db()
             items = db.cursor()
+            items.execute("SELECT count(*) FROM utilisateur WHERE mail LIKE ?", (email,))
+            
+            if items.fetchall()[0] != 1:
+                return redirect('/login')
+
+            pwd_hash = hash_py.hash(password)
             items.execute('INSERT INTO utilisateur (nom, prenom, mail, mdp) VALUES (?,?,?,?)',
                           (last_name, first_name, email, pwd_hash))
             db.commit()
+
             return 'POST'
-    return 'GET'
+    return 'ERROR'
+
+
+@app.route('/send-signin-form', methods=['POST', 'GET'])
+def signin_post():
+    if request.method == "POST":
+        email = request.form['email']
+        password = request.form['password']
+        
+        if signin_py.signin(email, password):
+            print(password)
+            pwd_hash = hash_py.hash(password)
+            db = get_db()
+            items = db.cursor()
+            items.execute("SELECT count(*) FROM utilisateur WHERE mail LIKE ? and mdp = ? ", (email, pwd_hash,))
+            if items.fetchall()[0][0] != 1:
+                return 'Le mdp ou l\'email sont incorect'
+
+            return 'Connected'
+    return 'ERROR'
+
 
 
 if __name__ == '__main__':
