@@ -11,7 +11,7 @@
   
     <nav>
 
-      <a href="#" class="nav-icon" aria-label="visit homepage" aria-current="page">
+      <a href="/" class="nav-icon" aria-label="visit homepage" aria-current="page">
         <img src="/static/images/icons/icons8-panier-en-osier-90.svg" alt="chat icon">
         <span>Le Bonheur Est Dans Le Potager<span>
       </a>
@@ -23,19 +23,20 @@
           <span></span>
         </button>
         <div class="navlinks-container">
-          <a href="/login" aria-current="page">Home</a>
+          <a href="/" aria-current="page">Home</a>
           <a href="/users">Jardiniers</a>
-          <a href="#">Link 2</a>
+          <a href="/login">Login</a>
+          <a href="#">Link</a>
         </div>
       </div>
 
       <div class="nav-authentication">
-        <a href="#" class="sign-user" aria-label="Sign in page">
+        <a href="/login" class="sign-user" aria-label="Sign in page">
           <img src="/static/images/icons/login.svg" alt="user-icon">
         </a>
         <div class="sign-btns">
-          <button type="button">Sign In</button>
-          <button type="button">Register</button>
+          <button type="button" onclick="window.location.href='/login'">Sign In</button>
+          <button type="button" onclick="window.location.href='/login'">Register</button>
         </div>
       </div>
     </nav>
