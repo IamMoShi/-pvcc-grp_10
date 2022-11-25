@@ -48,6 +48,16 @@ def login():
     return render_template("login/login.html")
 
 
+
+@app.route('/users')
+def users():
+    db = get_db()
+    items = db.cursor()
+    items.execute("SELECT * FROM utilisateur")
+    data=items.fetchall()
+    return render_template("login/users.html", data=data)
+
+
 @app.route('/send-register-form', methods=['POST', 'GET'])
 def register_post():
     if request.method == 'POST':

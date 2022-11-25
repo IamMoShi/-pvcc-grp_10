@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion participants</title>
+    <link rel="stylesheet" href="/static/css/users.css" />
+</head>
+
+<body>
+    <div>
+        <div class="nav">
+            {% include "navBar.html" %}
+        
+        <div id="horizontal">
+            <div id="vertical">
+                <ul id="nom"></ul>
+                <ul id="prenom"></ul>
+                <ul id="mail"></ul>
+                <ul id="iduser"></ul>
+            </div>
+            <div id="vertical">
+
+                <h2>Utilisateurs du jardin partagé:</h2>
+                <h3>Cliquez pour afficher un profil!</h3>
+
+                <table class="coord">
+
+                    <tr>
+                        <th>Jardiniers</th>
+                    </tr>
+                    {%for data in data%}
+
+                    <tr class="personne"
+                        onclick="afficherprofil('{{data[1]}}','{{data[2]}}','{{data[3]}}','{{data[0]}}' )">
+                        <td>{{data[2]}} {{data[1]}}</td></a>
+
+                    </tr>
+                    {%endfor%}
+                </table>
+            </div>
+        
+        <script>
+            function afficherprofil(nom, prenom, mail, iduser) {
+                document.getElementById('prenom').textContent = "Prénom: "+prenom;
+                document.getElementById('nom').textContent = "Nom: "+nom;
+                document.getElementById('mail').textContent = "Adresse mail: "+mail;
+                document.getElementById('iduser').textContent = "Identifiant: "+iduser;
+            }
+        </script>
+</body>
+
+</html>
