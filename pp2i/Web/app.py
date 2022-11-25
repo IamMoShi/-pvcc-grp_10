@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, redirect, g
 import back_python.login.register as register_py
 import back_python.login.signin as signin_py
 import back_python.login.hash as hash_py
+import back_python.potager.image as image_py
 import sqlite3
+import numpy as np
 
 app = Flask(__name__)
 
@@ -48,13 +50,12 @@ def login():
     return render_template("login/login.html")
 
 
-
 @app.route('/users')
 def users():
     db = get_db()
     items = db.cursor()
     items.execute("SELECT * FROM utilisateur")
-    data=items.fetchall()
+    data = items.fetchall()
     return render_template("login/users.html", data=data)
 
 
@@ -70,12 +71,11 @@ def register_post():
 
         validation = register_py.register(last_name, first_name, email, password, confirmation)
 
-
         if validation[0]:
             db = get_db()
             items = db.cursor()
             items.execute("SELECT count(*) FROM utilisateur WHERE mail LIKE ?", (email,))
-            
+
             if items.fetchall()[0] != 1:
                 return redirect('/login')
 
@@ -93,7 +93,7 @@ def signin_post():
     if request.method == "POST":
         email = request.form['email']
         password = request.form['password']
-        
+
         if signin_py.signin(email, password):
             print(password)
             pwd_hash = hash_py.hash(password)
@@ -106,6 +106,43 @@ def signin_post():
             return 'Connected'
     return 'ERROR'
 
+
+@app.route('/test')
+def test():
+    A = np.array([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ])
+    database = get_db()
+    id_image = 10
+    PotagerImage = image_py.PotagerImage(A, id_image, database.cursor())
+    return 'fait'
 
 
 if __name__ == '__main__':
