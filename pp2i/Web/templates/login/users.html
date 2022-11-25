@@ -13,43 +13,57 @@
     <div>
         <div class="nav">
             {% include "navBar.html" %}
-        
-        <div id="horizontal">
-            <div id="vertical">
-                <ul id="nom"></ul>
-                <ul id="prenom"></ul>
-                <ul id="mail"></ul>
-                <ul id="iduser"></ul>
-            </div>
-            <div id="vertical">
 
-                <h2>Utilisateurs du jardin partagé:</h2>
-                <h3>Cliquez pour afficher un profil!</h3>
+            <div id="horizontal">
+                <div id="vertical">
+                    <div id="imgprof"></div>
+                    <div id="affichagepropre">
+                        
+                        <ul id="nom"></ul>
+                        <ul id="prenom"></ul>
+                        <ul id="mail"></ul>
+                        <ul id="iduser"></ul>
+                    </div>
 
-                <table class="coord">
+                </div>
+                <div id="vertical">
 
-                    <tr>
-                        <th>Jardiniers</th>
-                    </tr>
-                    {%for data in data%}
+                    <h2>Utilisateurs du jardin partagé:</h2>
+                    <h3>Cliquez pour afficher un profil!</h3>
 
-                    <tr class="personne"
-                        onclick="afficherprofil('{{data[1]}}','{{data[2]}}','{{data[3]}}','{{data[0]}}' )">
-                        <td>{{data[2]}} {{data[1]}}</td></a>
+                    <table class="coord">
 
-                    </tr>
-                    {%endfor%}
-                </table>
-            </div>
-        
-        <script>
-            function afficherprofil(nom, prenom, mail, iduser) {
-                document.getElementById('prenom').textContent = "Prénom: "+prenom;
-                document.getElementById('nom').textContent = "Nom: "+nom;
-                document.getElementById('mail').textContent = "Adresse mail: "+mail;
-                document.getElementById('iduser').textContent = "Identifiant: "+iduser;
-            }
-        </script>
+                        <tr>
+                            <th>Jardiniers</th>
+                        </tr>
+                        {%for data in data%}
+
+                        <tr class="personne"
+                            onclick="afficherprofil('{{data[1]}}','{{data[2]}}','{{data[3]}}','{{data[0]}}' )">
+                            <td>{{data[2]}} {{data[1]}}</td></a>
+
+                        </tr>
+                        {%endfor%}
+                    </table>
+                </div>
+
+                <script>
+                    var img = document.createElement("img");
+                    function afficherprofil(nom, prenom, mail, iduser) {
+                        
+                        img.src = "static/images/icons/gardener.png";
+                        img.style.width="20%";
+                        img.style.marginBottom="3%";
+            
+                        var div = document.getElementById("imgprof");
+                        div.appendChild(img);
+
+                        document.getElementById('prenom').textContent = "Prénom: " + prenom;
+                        document.getElementById('nom').textContent = "Nom: " + nom;
+                        document.getElementById('mail').textContent = "Adresse mail: " + mail;
+                        document.getElementById('iduser').textContent = "Identifiant: " + iduser;
+                    }
+                </script>
 </body>
 
 </html>

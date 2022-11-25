@@ -28,6 +28,11 @@ def index():
     return 'Up and Running'
 
 
+@app.route('/')
+def accueil():
+    return render_template("accueil.html")
+
+
 @app.route('/navbar')
 def navbar():
     return render_template("navBar.html")
