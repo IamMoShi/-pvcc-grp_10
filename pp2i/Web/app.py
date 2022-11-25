@@ -133,9 +133,9 @@ def test():
         [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1],
+        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1],
+        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
@@ -146,9 +146,17 @@ def test():
     ])
     database = get_db()
     id_image = 10
-    PotagerImage = image_py.PotagerImage(A, id_image, database.cursor())
-    return 'fait'
+    chemin = "potager_user/potager_user_affichage.html"
 
+    PotagerImage = image_py.PotagerImage(A, id_image, database.cursor())
+    l_polynomes_txt, chemin_image = PotagerImage.html_code()
+
+    return render_template(chemin, l_polynomes_txt=l_polynomes_txt, chemin_image=chemin_image)
+
+
+@app.route('/id_plante/<numero>')
+def id_plante(numero):
+    return numero
 
 if __name__ == '__main__':
     app.run(debug=True)

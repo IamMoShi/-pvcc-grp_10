@@ -1,5 +1,3 @@
-import numpy as np
-
 """
 direction : 4 valeurs :
 - 1 : i += 1
@@ -222,7 +220,8 @@ def solve_outlines(tableau_potager):
                         l1, l2 = outline(x, y, tableau_potager, longueur, largeur)
                         l_contours.append(l1)
                         l_contours_compris.append(l2)
-    return l_contours_compris
+                        l_id.append(id_plante)
+    return l_contours_compris, l_id
 
 
 def simplify(l_contours):
@@ -268,3 +267,16 @@ def reverse(l_polynomes):
         l_liste.append(liste)
     return l_liste
 
+
+def to_text(l_polynomes, l_id_plante, tableau_potager, alpha):
+    l_polynomes_txt = []
+    longueur = len(l_polynomes)
+
+    for k in range(longueur):
+        polynome_txt = ""
+        polynome = l_polynomes[k]
+        for couple in polynome:
+            polynome_txt += str(couple[0]) + ',' + str(couple[1]) + ','
+        id_plante = l_id_plante[k]
+        l_polynomes_txt.append((polynome_txt, id_plante))
+    return l_polynomes_txt
