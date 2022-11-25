@@ -177,14 +177,24 @@ def resize_liste(l_polygones, k: int):
     return l_polygones_redimensionnes
 
 
+def reverse(l_polynomes):
+    l_liste = []
+    for polynome in l_polynomes:
+        liste = []
+        for couple in polynome:
+            liste.append((couple[1], couple[0]))
+        l_liste.append(liste)
+    return l_liste
+
+
 
 A = np.array([
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1],
+    [0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1],
+    [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ])
 
