@@ -14,8 +14,12 @@
 
     <div class="main">
         <div class="connexion">
+            {% if b_register %}
             {% include "login/register.html" %}
+            {% endif %}
+            {% if b_signin %}
             {% include "login/signin.html" %}
+            {% endif %}
         </div>
         <img src="static/images/autres/potager.png" alt="potager">
     </div>

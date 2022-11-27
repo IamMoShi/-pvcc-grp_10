@@ -35,24 +35,19 @@ def accueil():
     return render_template("accueil.html")
 
 
-@app.route('/navbar')
-def navbar():
-    return render_template("navBar.html")
-
-
 @app.route('/signin')
 def signin():
-    return render_template("login/signin.html")
+    return render_template("login/login.html", b_signin=True, b_register=False)
 
 
-@app.route('/signup')
+@app.route('/register')
 def signup():
-    return render_template("login/signup.html")
+    return render_template("login/login.html", b_signin=False, b_register=True)
 
 
 @app.route('/login')
 def login():
-    return render_template("login/login.html")
+    return render_template("login/login.html", b_signin=True, b_register=True)
 
 
 @app.route('/users')
