@@ -160,11 +160,14 @@ def mon_potager(numero):
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ])
 
+    A = np.array([[0 for j in range(1000)] for i in range(500)])
+
     PotagerImage = image_py.PotagerImage(A, id_image, database.cursor())
     l_polynomes_txt, chemin_image = PotagerImage.html_code()
     l_legende = [('blue', 10), ('green', 11)]
-
     chemin = "potager_user/potager_user_affichage.html"
+
+    print(chemin_image)
     return render_template(chemin, l_polynomes_txt=l_polynomes_txt[::-1], chemin_image=chemin_image, prenom=prenom,
                            l_legende=PotagerImage.legende(database.cursor()))
 

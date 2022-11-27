@@ -1,17 +1,18 @@
 from PIL import Image, ImageDraw
 import sys
 from os.path import dirname
+import time
 
 sys.path.append(dirname(__file__))
 import transformation_polygone_v2 as tp
 
 
 class PotagerImage:
-    alpha = 20  # redimensionnement des coefficients de la matrice en px
+    alpha = 2  # redimensionnement des coefficients de la matrice en px
     file = 'static/images/images_potagers/'
 
     def __init__(self, tableau_potager, id_image, items):
-
+        tps = time.time()
         self.size = (len(tableau_potager[0]) * self.alpha, len(tableau_potager) * self.alpha)
         self.tableau_potager = tableau_potager
         self.id_image = id_image
@@ -28,7 +29,8 @@ class PotagerImage:
         l_polynomes = tp.resize_liste(l_polynomes, self.alpha)
 
         self.l_polynomes = l_polynomes
-
+        print(time.time() - tps)
+        tps = time.time()
         for polynome in l_polynomes:
             id_plante = tableau_potager[(polynome[0][1] // self.alpha, polynome[0][0] // self.alpha)]
 
@@ -38,15 +40,17 @@ class PotagerImage:
                 items.execute('select color from plante where id_plante = ?', (int(id_plante),))
                 color = items.fetchall()[0][0]
                 draw.polygon(polynome, fill=color, width=1, outline=None)
-
+        print(time.time() - tps)
+        tps = time.time()
         img.save(self.file + str(id_image) + '.png', "PNG")
+        print(time.time() - tps)
 
     def image_path(self):
         return self.file + str(self.id_image) + '.png'
 
     def html_code(self):
         l_polynomes_txt = tp.to_text(self.l_polynomes, self.l_id, self.tableau_potager, self.alpha)
-        chemin_image = self.file + str(self.id_image)
+        chemin_image = "/" + self.file + str(self.id_image) + '.png'
         return l_polynomes_txt, chemin_image
 
     def legende(self, items):
