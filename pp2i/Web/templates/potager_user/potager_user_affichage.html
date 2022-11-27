@@ -6,14 +6,44 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Votre potager</title>
+    <link rel="stylesheet" href="/static/css/potager.css"/>
 </head>
 <body>
-<map name="potager">
-    {% for polynome_txt in l_polynomes_txt %}
-        <area shape="poly" coords={{polynome_txt[0]}} href="/id_plante/{{polynome_txt[1] }}" alt="partie du potager">
+{% include "navBar.html" %}
+<main>
+    <div class="informations">
+        <p>{{ prenom }}, bienvenue sur la page de votre potager</p>
+    </div>
+    <div class="potager">
 
-    {% endfor %}
-</map>
-<img usemap="#potager" src="/static/images/images_potagers/10.png", alt="image de potager">
+        <div class="imageMap">
+            <map name="potager">
+                {% for polynome_txt in l_polynomes_txt %}
+                <area shape="poly" coords={{ polynome_txt[0] }} href="/id_plante/{{ polynome_txt[1] }}"
+                      alt="partie du potager" />
+
+                {% endfor %}
+            </map>
+            <img usemap="#potager" src="/static/images/images_potagers/10.png" , alt="image de potager">
+        </div>
+
+        <div class="legende">
+
+            <div class="titre"><h3>Légende</h3></div>
+
+            <div class="corps">
+
+                {% for couple in l_legende %}
+                <div class="ligne">
+                    <div class="carre" style="background: {{ couple[0] }}"></div>
+                    <p style="padding-left: 20px"> {{ couple[1] }}</p>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+</main>
+
 </body>
 </html>

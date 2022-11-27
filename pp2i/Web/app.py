@@ -80,15 +80,13 @@ def register_post():
             db = get_db()
             items = db.cursor()
             items.execute("SELECT count(*) FROM utilisateur WHERE mail LIKE ?", (email,))
-
-            if items.fetchall()[0] != 1:
+            if len(items.fetchall()[0]) != 1:
                 return redirect('/login')
 
             pwd_hash = hash_py.hash(password)
             items.execute('INSERT INTO utilisateur (nom, prenom, mail, mdp) VALUES (?,?,?,?)',
                           (last_name, first_name, email, pwd_hash))
             db.commit()
-
             return 'POST'
     return 'ERROR'
 
@@ -105,23 +103,40 @@ def signin_post():
             db = get_db()
             items = db.cursor()
             items.execute("SELECT count(*) FROM utilisateur WHERE mail LIKE ? and mdp = ? ", (email, pwd_hash,))
-            if items.fetchall()[0][0] != 1:
+            if len(items.fetchall()[0]) != 1:
                 return 'Le mdp ou l\'email sont incorect'
 
             return 'Connected'
     return 'ERROR'
 
 
-@app.route('/test')
-def test():
+@app.route('/monpotager/<numero>')
+def mon_potager(numero):
+    try:
+        numero = int(numero)
+    except:
+        return 'error ce numero n\'est pas correct'
+
+    database = get_db()
+
+    item = database.cursor()
+    commande = "Select nom, prenom From utilisateur WHERE id_user = ?"
+    item.execute(commande, (numero,))
+    resultat = item.fetchall()
+
+    if len(resultat) != 1:
+        return 'error ce numero n\'est pas correct'
+    nom, prenom = resultat[0]
+
+    id_image = numero
     A = np.array([
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
@@ -144,19 +159,20 @@ def test():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ])
-    database = get_db()
-    id_image = 10
-    chemin = "potager_user/potager_user_affichage.html"
 
     PotagerImage = image_py.PotagerImage(A, id_image, database.cursor())
     l_polynomes_txt, chemin_image = PotagerImage.html_code()
+    l_legende = [('blue', 10), ('green', 11)]
 
-    return render_template(chemin, l_polynomes_txt=l_polynomes_txt, chemin_image=chemin_image)
+    chemin = "potager_user/potager_user_affichage.html"
+    return render_template(chemin, l_polynomes_txt=l_polynomes_txt[::-1], chemin_image=chemin_image, prenom=prenom,
+                           l_legende=PotagerImage.legende(database.cursor()))
 
 
 @app.route('/id_plante/<numero>')
 def id_plante(numero):
     return numero
+
 
 if __name__ == '__main__':
     app.run(debug=True)
