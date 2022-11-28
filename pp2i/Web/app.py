@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, g
+from flask import Flask, render_template, request, redirect, g, session
+from flask_session import Session
 import back_python.login.register as register_py
 import back_python.login.signin as signin_py
 import back_python.login.hash as hash_py
@@ -7,9 +8,13 @@ import sqlite3
 import numpy as np
 
 app = Flask(__name__)
+app.config["DEBUG"] = True
 
 DATABASE = 'database/database.db'
 
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -49,6 +54,11 @@ def signup():
 def login():
     return render_template("login/login.html", b_signin=True, b_register=True)
 
+@app.route('/logout')
+def logout():
+    session["name"] = None
+    return redirect("/")
+
 
 @app.route('/users')
 def users():
@@ -56,7 +66,7 @@ def users():
     items = db.cursor()
     items.execute("SELECT * FROM utilisateur")
     data = items.fetchall()
-    return render_template("login/users.html", data=data)
+    return render_template("users.html", data=data)
 
 
 @app.route('/send-register-form', methods=['POST', 'GET'])
@@ -82,15 +92,18 @@ def register_post():
             items.execute('INSERT INTO utilisateur (nom, prenom, mail, mdp) VALUES (?,?,?,?)',
                           (last_name, first_name, email, pwd_hash))
             db.commit()
-            return 'POST'
+            return render_template('login/bienvenue.html', first_name=first_name,last_name=last_name) 
     return 'ERROR'
 
 
 @app.route('/send-signin-form', methods=['POST', 'GET'])
 def signin_post():
+    
     if request.method == "POST":
         email = request.form['email']
         password = request.form['password']
+
+        session["email"] = request.form.get("email")
 
         if signin_py.signin(email, password):
             print(password)
@@ -98,10 +111,11 @@ def signin_post():
             db = get_db()
             items = db.cursor()
             items.execute("SELECT count(*) FROM utilisateur WHERE mail LIKE ? and mdp = ? ", (email, pwd_hash,))
-            if len(items.fetchall()[0]) != 1:
-                return 'Le mdp ou l\'email sont incorect'
+            if items.fetchall()[0][0] != 1:
+                return render_template('login/erreur.html')
 
-            return 'Connected'
+            else:
+                return render_template('login/connected.html')
     return 'ERROR'
 
 
