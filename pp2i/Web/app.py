@@ -103,10 +103,8 @@ def signin_post():
         email = request.form['email']
         password = request.form['password']
 
-        session["email"] = request.form.get("email")
 
         if signin_py.signin(email, password):
-            print(password)
             pwd_hash = hash_py.hash(password)
             db = get_db()
             items = db.cursor()
@@ -115,7 +113,12 @@ def signin_post():
                 return render_template('login/erreur.html')
 
             else:
-                return render_template('login/connected.html')
+                session["email"] = request.form.get("email")
+                dbb = get_db()
+                itemss = dbb.cursor()
+                itemss.execute("SELECT prenom, nom FROM utilisateur WHERE mail LIKE ? ", (email,))
+                nom= itemss.fetchall()
+                return render_template('login/connected.html', nom=nom)
     return 'ERROR'
 
 
