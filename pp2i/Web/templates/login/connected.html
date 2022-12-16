@@ -15,7 +15,8 @@
 
     <div>
         {% if session.email %}
-            Bienvenue{{ session.email }} <a href="/logout">logout</a>.
+            Bienvenue {{nom[0][0]}} {{nom[0][1]}}  <br>
+            <a href="/logout">logout</a>.
         {% endif %}
     </div>
 </body>
