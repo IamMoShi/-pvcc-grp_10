@@ -54,6 +54,8 @@ def signup():
 
 @app.route('/login')
 def login():
+    session["email"] = None
+    session["name"] = None
     return render_template("login/login.html", b_signin=True, b_register=True)
 
 @app.route('/logout')

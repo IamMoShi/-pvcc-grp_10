@@ -40,7 +40,7 @@
           {%if session.name%}
           Bonjour {{session.name}}
           {%else%}
-          Connectez-vous ou créez un compte:
+          Bienvenue sur notre site! Connectez-vous ou créez un compte pour continuer:
           {%endif%}
           
           <button type="button" onclick="window.location.href='/signin'">
@@ -48,11 +48,13 @@
           Déconnexion
           {%else%}
           Connexion
-          {%endif%}
-            
+          {%endif%}  
           </button>
+
+          {%if not session.name%}
           <button type="button" onclick="window.location.href='/register'">Inscription</button>
-        </div>
+          {%endif%}    
+      </div>
       </div>
     </nav>
 
