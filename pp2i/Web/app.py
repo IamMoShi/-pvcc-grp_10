@@ -42,6 +42,8 @@ def accueil():
 
 @app.route('/signin')
 def signin():
+    session["email"] = None
+    session["name"] = None
     return render_template("login/login.html", b_signin=True, b_register=False)
 
 
@@ -56,17 +58,23 @@ def login():
 
 @app.route('/logout')
 def logout():
+    session["email"] = None
     session["name"] = None
     return redirect("/")
 
 
 @app.route('/users')
 def users():
-    db = get_db()
-    items = db.cursor()
-    items.execute("SELECT * FROM utilisateur")
-    data = items.fetchall()
-    return render_template("users.html", data=data)
+    if not session.get("email"):
+        return redirect("/signin")
+    else:
+        db = get_db()
+        items = db.cursor()
+        items.execute("SELECT u.id_user, u.nom, u.prenom, u.mail, u.mdp FROM utilisateur u JOIN administre a ON a.id_user=u.id_user")
+        data_admin = items.fetchall()
+        items.execute("SELECT * from utilisateur EXCEPT SELECT u.id_user, u.nom, u.prenom, u.mail, u.mdp FROM utilisateur AS u JOIN administre AS a ON u.id_user=a.id_user")
+        data = items.fetchall()
+        return render_template("users.html", data=data, data_admin=data_admin)
 
 
 @app.route('/send-register-form', methods=['POST', 'GET'])
@@ -95,7 +103,7 @@ def register_post():
             return render_template('login/bienvenue.html', first_name=first_name,last_name=last_name) 
     return 'ERROR'
 
-
+#sessions
 @app.route('/send-signin-form', methods=['POST', 'GET'])
 def signin_post():
     
@@ -118,6 +126,7 @@ def signin_post():
                 itemss = dbb.cursor()
                 itemss.execute("SELECT prenom, nom FROM utilisateur WHERE mail LIKE ? ", (email,))
                 nom= itemss.fetchall()
+                session["name"]=nom[0][0]+" "+nom[0][1]
                 return render_template('login/connected.html', nom=nom)
     return 'ERROR'
 

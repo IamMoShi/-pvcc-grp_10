@@ -55,9 +55,22 @@ h3{
     margin-bottom: 10px;
 }
 
+#imgprof{
+    margin-top: 20%;
+
+}
+
+.case{
+    background-color: rgb(200, 219, 202);
+    width: 50%;
+    height: 150%;
+    margin-left: 10%;
+}
+
 #affichagepropre{
     display: flex;
     flex-direction: column;
     text-align: left;
     margin-left: 10%;
+    border-radius: 4%;
 }

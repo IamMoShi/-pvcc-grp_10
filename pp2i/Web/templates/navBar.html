@@ -24,8 +24,10 @@
         </button>
         <div class="navlinks-container">
           <a href="/" aria-current="page">Home</a>
+          {%if session.name%}
           <a href="/users">Jardiniers</a>
           <a href="/monpotager/1">Mon Potager</a>
+          {%endif%}
           <a href="#">Link</a>
         </div>
       </div>
@@ -35,8 +37,21 @@
           <img src="/static/images/icons/login.svg" alt="user-icon">
         </a>
         <div class="sign-btns">
-          <button type="button" onclick="window.location.href='/signin'">Sign In</button>
-          <button type="button" onclick="window.location.href='/register'">Register</button>
+          {%if session.name%}
+          Bonjour {{session.name}}
+          {%else%}
+          Connectez-vous ou créez un compte:
+          {%endif%}
+          
+          <button type="button" onclick="window.location.href='/signin'">
+          {%if session.name%}
+          Déconnexion
+          {%else%}
+          Connexion
+          {%endif%}
+            
+          </button>
+          <button type="button" onclick="window.location.href='/register'">Inscription</button>
         </div>
       </div>
     </nav>
