@@ -1,0 +1,55 @@
+::before,
+::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+div.head {
+    font-size: larger;
+    font-weight: bolder;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 20px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 100px;
+}
+
+div.general {
+    border: solid darkgreen 2px;
+    padding: 5px;
+}
+
+div.titre {
+    font-size: large;
+    margin: 10px;
+}
+
+div.partie1 {
+    font-size: large;
+}
+
+div.parcelles {
+    margin-top: 20px;
+    border: solid darkgreen 2px;
+    padding: 5px;
+}
+
+div.parcelle {
+    font-size: large;
+}
+
+.parcelle .numero_parcelle {
+    font-size: larger;
+    margin: 5px auto;
+    font-weight: bold;
+}

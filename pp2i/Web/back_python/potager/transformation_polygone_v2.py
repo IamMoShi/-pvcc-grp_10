@@ -123,7 +123,7 @@ def next_elt(i, j, tableau_potager, longueur, largeur, direction, id_plante) -> 
 
 def bordure_penible(couple_bordure, direction, a, b):
     """
-    It's kind of magic
+    It's kind of magic (on traite juste tous les cas possibles)
     """
     if direction == 1 or direction == 4:
         if couple_bordure == (0, 0):
@@ -258,25 +258,58 @@ def resize_liste(l_polygones, k: int):
     return l_polygones_redimensionnes
 
 
-def reverse(l_polynomes):
+def reverse(l_polygones):
     l_liste = []
-    for polynome in l_polynomes:
+    for polygone in l_polygones:
         liste = []
-        for couple in polynome:
+        for couple in polygone:
             liste.append((couple[1], couple[0]))
         l_liste.append(liste)
     return l_liste
 
 
-def to_text(l_polynomes, l_id_plante, tableau_potager, alpha):
-    l_polynomes_txt = []
-    longueur = len(l_polynomes)
+def to_text(l_polygones, l_id_plante):
+    l_polygones_txt = []
+    longueur = len(l_polygones)
 
     for k in range(longueur):
-        polynome_txt = ""
-        polynome = l_polynomes[k]
-        for couple in polynome:
-            polynome_txt += str(couple[0]) + ',' + str(couple[1]) + ','
+        polygone_txt = ""
+        polygone = l_polygones[k]
+        for couple in polygone:
+            polygone_txt += str(couple[0]) + ',' + str(couple[1]) + ','
         id_plante = l_id_plante[k]
-        l_polynomes_txt.append((polynome_txt, id_plante))
-    return l_polynomes_txt
+        l_polygones_txt.append((polygone_txt, id_plante))
+    return l_polygones_txt
+
+
+def string_to_lists(char):
+    def f2(char, liste):
+        if char == '':
+            return '', liste
+
+        if char[0] == ']':
+            return char[1::], liste
+        if char[0] == '[':
+            char, liste2 = f2(char[1::], [])
+            liste.append(liste2)
+            return f2(char, liste)
+
+        if char[0] == ',' or char[0] == ' ':
+            return f2(char[1::], liste)
+
+        if char[0] == '(':
+            char, liste2 = f2(char[1::], [])
+            liste.append(tuple(liste2))
+            return f2(char, liste)
+        if char[0] == ')':
+            return char[1::], liste
+
+        nombre = ''
+        while char[0] in '0123456789':
+            nombre += char[0]
+            char = char[1::]
+        liste.append(int(nombre))
+        return f2(char, liste)
+
+    char, liste = f2(char, [])
+    return liste[0]

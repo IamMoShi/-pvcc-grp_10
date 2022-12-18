@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang=fr>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ajout nouvelle parcelle</title>
+    <link rel="stylesheet" href="/static/css/nouvelle_parcelle.css"/>
+</head>
+{% include "navBar.html" %}
+<body>
+<main>
+    <div class="titre"><H1>Crée une nouvelle parcelle vierge</H1></div>
+
+    <div class="caracteristiques">
+
+        <form action="/send-creer-parcelle" method="post">
+
+            <label for="id_jardin">Veuillez renseigner le jardin dans lequel ajouter la parcelle</label>
+            <input type="number" name="id_jardin" id="id_jardin" placeholder="1" min="1" required />
+
+            <label for="longueur">Veuillez donner la longueur de la parcelle en cm</label>
+            <input type="number" name="longueur" id="longueur" placeholder="100" min="10" max="10000" step="10"
+                   required />
+
+            <label for="largeur">Veuillez donner la largeur de la parcelle en cm</label>
+            <input type="number" name="largeur" id="largeur" placeholder="100" min="10" max="10000" step="10"
+                   required />  
+
+            <input type="submit" value="Ajouter">
+
+        </form>
+
+    </div>
+
+</main>
+
+</body>
+</html>

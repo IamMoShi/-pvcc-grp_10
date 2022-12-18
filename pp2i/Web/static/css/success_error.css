@@ -1,0 +1,16 @@
+main {
+    display: flex;
+    justify-content: center;
+}
+
+div.success {
+    margin-top: 30px;
+    color: darkgreen;
+    font-size: large;
+}
+
+div.error {
+    margin-top: 30px;
+    color: darkred;
+    font-size: large;
+}

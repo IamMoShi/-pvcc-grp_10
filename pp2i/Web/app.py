@@ -4,6 +4,7 @@ import back_python.login.register as register_py
 import back_python.login.signin as signin_py
 import back_python.login.hash as hash_py
 import back_python.potager.image as image_py
+import back_python.potager.transformation_polygone_v2 as tp
 import sqlite3
 import numpy as np
 
@@ -15,6 +16,7 @@ DATABASE = 'database/database.db'
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -54,6 +56,7 @@ def signup():
 def login():
     return render_template("login/login.html", b_signin=True, b_register=True)
 
+
 @app.route('/logout')
 def logout():
     session["name"] = None
@@ -92,17 +95,15 @@ def register_post():
             items.execute('INSERT INTO utilisateur (nom, prenom, mail, mdp) VALUES (?,?,?,?)',
                           (last_name, first_name, email, pwd_hash))
             db.commit()
-            return render_template('login/bienvenue.html', first_name=first_name,last_name=last_name) 
+            return render_template('login/bienvenue.html', first_name=first_name, last_name=last_name)
     return 'ERROR'
 
 
 @app.route('/send-signin-form', methods=['POST', 'GET'])
 def signin_post():
-    
     if request.method == "POST":
         email = request.form['email']
         password = request.form['password']
-
 
         if signin_py.signin(email, password):
             pwd_hash = hash_py.hash(password)
@@ -117,11 +118,45 @@ def signin_post():
                 dbb = get_db()
                 itemss = dbb.cursor()
                 itemss.execute("SELECT prenom, nom FROM utilisateur WHERE mail LIKE ? ", (email,))
-                nom= itemss.fetchall()
+                nom = itemss.fetchall()
                 return render_template('login/connected.html', nom=nom)
     return 'ERROR'
 
 
+@app.route('/admin/nouvelle_parcelle')
+def nouvelle_parcelle():
+    return render_template('admin/nouvelle_parcelle.html')
+
+
+@app.route('/send-creer-parcelle', methods=['POST', 'GET'])
+def definir_parcelle_post():
+    if request.method == "POST":
+        try:
+            largeur = int(request.form['largeur'])
+            longueur = int(request.form['longueur'])
+            id_jardin = request.form['id_jardin']
+            parcelle = image_py.NouvelleParcelle(longueur, largeur)
+        except:
+            return 'ERROR'
+
+        db = get_db()
+        items = db.cursor()
+        items.execute(
+            'INSERT INTO parcelle (id_jardin, longueur_parcelle, largeur_parcelle, polygone) VALUES (?,?,?,?)',
+            (id_jardin, longueur, largeur, str(parcelle.l_polygones) + "//[0]",)
+        )
+        db.commit()
+
+        db = get_db()
+        items = db.cursor()
+        items.execute('SELECT max(id_parcelle) FROM parcelle')
+        id_image = items.fetchall()[0][0]
+        return render_template('success_page.html', msg="La parcelle a bien été ajoutée !")
+
+    return render_template('error_page.html', msg="Une erreur est survenue lors de l'ajout")
+
+
+"""
 @app.route('/monpotager/<numero>')
 def mon_potager(numero):
     try:
@@ -141,36 +176,6 @@ def mon_potager(numero):
     nom, prenom = resultat[0]
 
     id_image = numero
-    A = np.array([
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1],
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1],
-        [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ])
 
     A = np.array([[0 for j in range(1000)] for i in range(500)])
 
@@ -182,11 +187,97 @@ def mon_potager(numero):
     print(chemin_image)
     return render_template(chemin, l_polynomes_txt=l_polynomes_txt[::-1], chemin_image=chemin_image, prenom=prenom,
                            l_legende=PotagerImage.legende(database.cursor()))
+"""
+
+
+@app.route('/monpotager/<numero>')
+def mon_potager(numero):
+    try:
+        numero = int(numero)
+    except:
+        return 'error ce numero n\'est pas correct'
+
+    database = get_db()
+    items = database.cursor()
+    items.execute(
+        'SELECT id_parcelle, id_jardin, longueur_parcelle, largeur_parcelle, polygone FROM parcelle WHERE id_parcelle = ?',
+        (numero,))
+    resultat = items.fetchall()
+    if len(resultat) == 0:
+        return 'la parcelle n\' a pas été trouvée'
+
+    resultat = resultat[0]
+
+    id_parcelle, id_jardin, longueur, largeur, polygone = resultat
+    l_polygone, l_id = polygone.split('//')
+    l_polygone = tp.string_to_lists(l_polygone)
+    l_id = tp.string_to_lists(l_id)
+
+    longueur, largeur = round(longueur), round(largeur)
+
+    l_polygone_txt, chemin_image = image_py.html_code_fonction(l_polygone, l_id, id_parcelle)
+
+    chemin_image = image_py.affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
+                                               database.cursor())
+
+    chemin = "potager_user/potager_user_affichage.html"
+    print(chemin_image)
+
+    return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image, prenom="prenom",
+                           l_legende=image_py.legende_fonction(database.cursor(), l_id))
 
 
 @app.route('/id_plante/<numero>')
 def id_plante(numero):
     return numero
+
+
+@app.route('/user/vos_informations/<numero>')
+def vos_informations(numero):
+    try:
+        numero = int(numero)
+    except:
+        return 'error ce numero n\'est pas correct'
+
+    db = get_db()
+
+    items = db.cursor()
+    items.execute('SELECT nom, prenom, mail FROM utilisateur WHERE id_user = ?', (numero,))
+    resultat = items.fetchall()[0]
+
+    if items == []:
+        return 'La page demandé n\'existe pas'
+
+    donnees = {
+        'lastname': resultat[0],
+        'firstname': resultat[1],
+        'email': resultat[2]
+    }
+
+    items = db.cursor()
+    items.execute('SELECT * FROM parcelle WHERE id_user = ?', (numero,))
+    resultat = items.fetchall()
+    parcelles = {}
+    liste_parcelles = []
+
+    for i in resultat:
+        liste_parcelles.append(i[0])
+        parcelles.update({
+            i[0]: i[1::]
+        })
+    donnees.update({'parcelles': liste_parcelles})
+
+    return render_template('potager_user/user_page.html', donnees=donnees, parcelles=parcelles)
+
+
+@app.route('/monpotager/<numero>/edit')
+def edit_potager(numero):
+    try:
+        numero = int(numero)
+    except:
+        return 'error ce numero n\'est pas correct'
+
+    return render_template('potager_user/edit_potager.html')
 
 
 if __name__ == '__main__':
