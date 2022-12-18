@@ -46,6 +46,7 @@ def accueil():
 def signin():
     session["email"] = None
     session["name"] = None
+    session["id_user"] = None
     return render_template("login/login.html", b_signin=True, b_register=False)
 
 
@@ -58,6 +59,7 @@ def signup():
 def login():
     session["email"] = None
     session["name"] = None
+    session["id_user"] = None
     return render_template("login/login.html", b_signin=True, b_register=True)
 
 
@@ -65,6 +67,7 @@ def login():
 def logout():
     session["email"] = None
     session["name"] = None
+    session["id_user"] = None
     return redirect("/")
 
 
@@ -133,6 +136,9 @@ def signin_post():
                 itemss.execute("SELECT prenom, nom FROM utilisateur WHERE mail LIKE ? ", (email,))
                 nom = itemss.fetchall()
                 session["name"] = nom[0][0] + " " + nom[0][1]
+                itemss.execute("SELECT id_user FROM utilisateur WHERE mail LIKE ? ", (email,))
+                id_user = itemss.fetchall()
+                session["id_user"] = id_user[0][0]
                 return render_template('login/connected.html', nom=nom)
     return 'ERROR'
 
