@@ -47,6 +47,7 @@ def signin():
     session["email"] = None
     session["name"] = None
     session["id_user"] = None
+    session["admin"] = None
     return render_template("login/login.html", b_signin=True, b_register=False)
 
 
@@ -60,6 +61,7 @@ def login():
     session["email"] = None
     session["name"] = None
     session["id_user"] = None
+    session["admin"] = None
     return render_template("login/login.html", b_signin=True, b_register=True)
 
 
@@ -68,6 +70,7 @@ def logout():
     session["email"] = None
     session["name"] = None
     session["id_user"] = None
+    session["admin"] = None
     return redirect("/")
 
 
@@ -138,8 +141,13 @@ def signin_post():
                 session["name"] = nom[0][0] + " " + nom[0][1]
                 itemss.execute("SELECT id_user FROM utilisateur WHERE mail LIKE ? ", (email,))
                 id_user = itemss.fetchall()
+                itemss.execute("SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.mail LIKE ?" , (email,))
+                admin=itemss.fetchall()
+                if len(admin)!=0:
+                    session["admin"]="oui"
                 session["id_user"] = id_user[0][0]
-                return render_template('login/connected.html', nom=nom)
+
+                return render_template('login/connected.html')
     return 'ERROR'
 
 
