@@ -16,6 +16,9 @@
 
             <div id="horizontal">
                 <div id="vertical">
+                    <div class="case">
+
+                    
                     <div id="imgprof"></div>
                     <div id="affichagepropre">
                         
@@ -24,24 +27,33 @@
                         <ul id="mail"></ul>
                         <ul id="iduser"></ul>
                     </div>
-
+                </div>
                 </div>
                 <div id="vertical">
 
-                    <h2>Utilisateurs du jardin partagé:</h2>
+                    <h2>Les jardiniers:</h2>
                     <h3>Cliquez pour afficher un profil!</h3>
 
                     <table class="coord">
 
                         <tr>
-                            <th>Jardiniers</th>
+                            <th>Noms</th>
+                            <th>Statut</th>
                         </tr>
                         {%for data in data%}
 
                         <tr class="personne"
                             onclick="afficherprofil('{{data[1]}}','{{data[2]}}','{{data[3]}}','{{data[0]}}' )">
                             <td>{{data[2]}} {{data[1]}}</td></a>
+                            <td>pas admin</td>
+                        </tr>
+                        {%endfor%}
+                        {%for data_admin in data_admin%}
 
+                        <tr class="personne"
+                            onclick="afficherprofil('{{data_admin[1]}}','{{data_admin[2]}}','{{data_admin[3]}}','{{data_admin[0]}}' )">
+                            <td>{{data_admin[2]}} {{data_admin[1]}}</td></a>
+                            <td>admin</td>
                         </tr>
                         {%endfor%}
                     </table>

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/css/navBar.css" />
   </head>
   <body>
-  
+
     <nav>
 
       <a href="/" class="nav-icon" aria-label="visit homepage" aria-current="page">
@@ -24,8 +24,10 @@
         </button>
         <div class="navlinks-container">
           <a href="/" aria-current="page">Home</a>
+          {%if session.name%}
           <a href="/users">Jardiniers</a>
           <a href="/monpotager/1">Mon Potager</a>
+          {%endif%}
           <a href="#">Link</a>
         </div>
       </div>
@@ -35,14 +37,29 @@
           <img src="/static/images/icons/login.svg" alt="user-icon">
         </a>
         <div class="sign-btns">
-          <button type="button" onclick="window.location.href='/signin'">Inscription</button>
-          <button type="button" onclick="window.location.href='/register'">Connection</button>
-        </div>
+          {%if session.name%}
+          Bonjour {{session.name}}
+          {%else%}
+          Bienvenue sur notre site! Connectez-vous ou créez un compte pour continuer:
+          {%endif%}
+
+          <button type="button" onclick="window.location.href='/signin'">
+          {%if session.name%}
+          Déconnexion
+          {%else%}
+          Connexion
+          {%endif%}
+          </button>
+
+          {%if not session.name%}
+          <button type="button" onclick="window.location.href='/register'">Inscription</button>
+          {%endif%}
+      </div>
       </div>
     </nav>
 
 
-    
+
 
     <script src="/static/JS/navBar.js"></script>
   </body>
