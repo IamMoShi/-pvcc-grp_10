@@ -215,7 +215,14 @@ def attribution_parcelles():
     if not resultat:
         return render_template('error_page.html', msg='Vous n\'êtes administrateur d\'aucun jardin')
 
-    return render_template('admin/attribution_parcelles.html', resultat=resultat)
+    return render_template('admin/attribution_parcelle.html', resultat=resultat)
+
+
+@app.route('/test')
+def test():
+    resultat = [[1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50]]], [1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50],[22, 1, 120, 50]]],
+                [1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50]]]]
+    return render_template('admin/attribution_parcelle.html', resultat=resultat)
 
 
 """

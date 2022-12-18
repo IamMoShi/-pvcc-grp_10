@@ -1,0 +1,31 @@
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+div.titre {
+    margin-top: 20px;
+    font-weight: bolder;
+    font-size: larger;
+    text-align: center;
+}
+
+
+
+main div.jardin {
+    margin: 20px 40px;
+    padding: 20px 20px;
+    border: solid 2px lightgreen;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td{
+    padding: 5px 5px;
+    font-size: larger;
+    min-width: 100px;
+}
