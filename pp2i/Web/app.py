@@ -48,6 +48,7 @@ def signin():
     session["name"] = None
     session["id_user"] = None
     session["admin"] = None
+    session["num_jardin_a"] = None
     return render_template("login/login.html", b_signin=True, b_register=False)
 
 
@@ -62,6 +63,7 @@ def login():
     session["name"] = None
     session["id_user"] = None
     session["admin"] = None
+    session["num_jardin_a"] = None
     return render_template("login/login.html", b_signin=True, b_register=True)
 
 
@@ -71,6 +73,7 @@ def logout():
     session["name"] = None
     session["id_user"] = None
     session["admin"] = None
+    session["num_jardin_a"] = None
     return redirect("/")
 
 
@@ -145,9 +148,12 @@ def signin_post():
                 admin=itemss.fetchall()
                 if len(admin)!=0:
                     session["admin"]="oui"
+                    itemss.execute("SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.mail LIKE ?" , (email,))
+                    num_jardin_a=itemss.fetchall()
+                    session["num_jardin_a"]=num_jardin_a[0][0]
                 session["id_user"] = id_user[0][0]
 
-                return render_template('login/connected.html')
+                return render_template('/')
     return 'ERROR'
 
 
