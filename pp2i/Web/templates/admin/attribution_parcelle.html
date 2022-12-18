@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Attribution Parcelles</title>
+</head>
+{% include "navBar.html" %}
+<body>
+<div class="titre">Attribution des parcelles</div>
+<main>
+    {% for jardin in range(len(resultat)) %}
+        <table>
+            <thead class="jardin">Terrain numéro {{ jardin[0] }}, situé au {{ jardin[1] }} {{ jardin[2] }} de
+                    référent {{ jardin[3] }}</thead>
+            <tbody class="information_jardin">
+                < class="parcelles_jardin">voici les parcelles présentes dans le jardin</>
+                {% for parcelles in jardin %}
+                    <div class="parcelle {{ jardin[0] }}">
+
+                    </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+</main>
+</body>
+</html>

@@ -139,11 +139,19 @@ def signin_post():
 
 @app.route('/admin/nouvelle_parcelle')
 def nouvelle_parcelle():
+    """
+    Ajouter la vérification du compte administrateur et faire agir la page en conséquence
+    :return:
+    """
     return render_template('admin/nouvelle_parcelle.html')
 
 
 @app.route('/send-creer-parcelle', methods=['POST', 'GET'])
 def definir_parcelle_post():
+    """
+    Ajouter la vérification du compte administrateur et faire agir la page en conséquence
+    :return:
+    """
     if request.method == "POST":
         try:
             largeur = int(request.form['largeur'])
@@ -168,6 +176,26 @@ def definir_parcelle_post():
         return render_template('success_page.html', msg="La parcelle a bien été ajoutée !")
 
     return render_template('error_page.html', msg="Une erreur est survenue lors de l'ajout")
+
+
+@app.route('/admin/attribution_parcelles')
+def attribution_parcelles():
+    """
+    AJOUTER Id_user rapidement !!
+    :return:
+    """
+    if not session.get("email"):
+        return redirect("/signin")
+
+    db = get_db()
+    items = db.cursor()
+    items.execute('SELECT id_jardin FROM administre WHERE id_user = ?', (session.get("id_user")))
+    resultat = items.fetchall()
+
+    if not resultat:
+        return render_template('error_page.html', msg='Vous n\'êtes administrateur d\'aucun jardin')
+
+    return render_template('admin/attribution_parcelles.html', resultat=resultat)
 
 
 """
@@ -206,6 +234,13 @@ def mon_potager(numero):
 
 @app.route('/monpotager/<numero>')
 def mon_potager(numero):
+    """
+    Verifier que la fonction tourne après la modification des paramètres sessions par ajout de id_user
+    :param numero:
+    :return:
+    """
+    if not session.get("email"):
+        return redirect("/signin")
     try:
         numero = int(numero)
     except:
@@ -248,12 +283,18 @@ def id_plante(numero):
 
 @app.route('/user/vos_informations/<numero>')
 def vos_informations(numero):
+    if not session.get("email"):
+        return redirect("/signin")
     try:
         numero = int(numero)
     except:
         return 'error ce numero n\'est pas correct'
 
     db = get_db()
+    items = db.cursor()
+    items.execute('SELECT count(*) FROM parcelle WHERE id_user = ?', (session.get("id_user")))
+    if not items.fetchall()[0]:
+        return render_template('error_page.html', msg='Vous n\'avez pas accès à ces informations')
 
     items = db.cursor()
     items.execute('SELECT nom, prenom, mail FROM utilisateur WHERE id_user = ?', (numero,))
