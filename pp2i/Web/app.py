@@ -49,6 +49,7 @@ def signin():
     session["id_user"] = None
     session["admin"] = None
     session["num_jardin_a"] = None
+    session["parcelles"]= None
     return render_template("login/login.html", b_signin=True, b_register=False)
 
 
@@ -64,6 +65,7 @@ def login():
     session["id_user"] = None
     session["admin"] = None
     session["num_jardin_a"] = None
+    session["parcelles"]= None
     return render_template("login/login.html", b_signin=True, b_register=True)
 
 
@@ -74,6 +76,7 @@ def logout():
     session["id_user"] = None
     session["admin"] = None
     session["num_jardin_a"] = None
+    session["parcelles"]= None
     return redirect("/")
 
 
@@ -152,19 +155,20 @@ def signin_post():
                     num_jardin_a=itemss.fetchall()
                     session["num_jardin_a"]=num_jardin_a[0][0]
                 session["id_user"] = id_user[0][0]
+                itemss.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (id_user[0][0],))
+                parcelle=itemss.fetchall()
+                session["parcelles"]=parcelle[0][0] #ne gère que pour une seule parcelle pour le moment
 
-                return render_template('/')
+                return redirect('/')
     return 'ERROR'
 
 
 @app.route('/admin/nouvelle_parcelle')
 def nouvelle_parcelle():
-    """
-    Ajouter la vérification du compte administrateur et faire agir la page en conséquence
-    :return:
-    """
-    return render_template('admin/nouvelle_parcelle.html')
-
+    if session['admin']=='oui':
+        return render_template('admin/nouvelle_parcelle.html')
+    else:
+        return render_template('error_page.html', msg="Vous n'avez pas les droits d'administrateur")
 
 @app.route('/send-creer-parcelle', methods=['POST', 'GET'])
 def definir_parcelle_post():
@@ -207,14 +211,15 @@ def attribution_parcelles():
     """
     if not session.get("email"):
         return redirect("/signin")
+    if not session["admin"]:
+        return render_template('error_page.html', msg='Vous n\'êtes administrateur d\'aucun jardin')
+
+
 
     db = get_db()
     items = db.cursor()
-    items.execute('SELECT id_jardin FROM administre WHERE id_user = ?', (session.get("id_user")))
+    items.execute('SELECT id_jardin, numero_rue, nom_rue, ? FROM jardin WHERE id_referent LIKE ?', (session["num_jardin_a"], session["id_user"]))
     resultat = items.fetchall()
-
-    if not resultat:
-        return render_template('error_page.html', msg='Vous n\'êtes administrateur d\'aucun jardin')
 
     return render_template('admin/attribution_parcelle.html', resultat=resultat)
 
