@@ -283,6 +283,9 @@ def mesparcelles():
     database = get_db()
     items = database.cursor()
     resultat=[]
+    if len(session["parcelles"])==0:
+        return render_template("error_page.html", msg="Vous n'avez pas encore de parcelles")
+    
     for i in range(len(session["parcelles"])):
         items.execute(
             'SELECT id_parcelle, id_jardin, longueur_parcelle, largeur_parcelle, polygone FROM parcelle WHERE id_parcelle = ?',
@@ -311,8 +314,9 @@ def mesparcelles():
 
         l_polynomes_txt=l_polygone_txt[::-1]
         l_legende=image_py.legende_fonction(database.cursor(), l_id)
-        parametres.append((l_polynomes_txt, chemin_image, l_legende))    
-
+        
+        parametres.append([l_polynomes_txt,l_legende,chemin_image,id_parcelle])
+        
     chemin = "potager_user/potager_user_affichage_global.html"
     return render_template(chemin, parametres=parametres)
 
