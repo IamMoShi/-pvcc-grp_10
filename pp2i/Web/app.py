@@ -198,6 +198,7 @@ def definir_parcelle_post():
     return render_template('error_page.html', msg="Une erreur est survenue lors de l'ajout")
 
 
+
 @app.route('/admin/attribution_parcelles')
 def attribution_parcelles():
     """
