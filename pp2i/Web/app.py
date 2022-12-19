@@ -17,6 +17,12 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+def enleveCrochets(liste):
+    tmp=[]
+    if len(liste)!=0:
+        for i in range (len(liste)):
+            tmp.append(liste[i][0])
+    return tmp
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -46,6 +52,10 @@ def accueil():
 def signin():
     session["email"] = None
     session["name"] = None
+    session["id_user"] = None
+    session["admin"] = None
+    session["num_jardin_a"] = None
+    session["parcelles"]= None
     return render_template("login/login.html", b_signin=True, b_register=False)
 
 
@@ -58,6 +68,10 @@ def signup():
 def login():
     session["email"] = None
     session["name"] = None
+    session["id_user"] = None
+    session["admin"] = None
+    session["num_jardin_a"] = None
+    session["parcelles"]= None
     return render_template("login/login.html", b_signin=True, b_register=True)
 
 
@@ -65,6 +79,10 @@ def login():
 def logout():
     session["email"] = None
     session["name"] = None
+    session["id_user"] = None
+    session["admin"] = None
+    session["num_jardin_a"] = None
+    session["parcelles"]= None
     return redirect("/")
 
 
@@ -112,6 +130,15 @@ def register_post():
 
 
 # sessions
+"""
+le dictionnaire session comprend:
+session["email"] :email
+session["name"]: prénom nom de l'utilisateur
+session["id_user"] = id de l'utilisateur
+session["admin"] = "oui" si l'utilisateur est admin, sinon pas de valeur
+session["num_jardin_a"] = [id_1, id_2, ...] renvoie les id des jardins dans lesquels on est admin
+session["parcelles"]= [id_1, id_2, ...] renvoie les id des parcelles qu'on gère
+"""
 @app.route('/send-signin-form', methods=['POST', 'GET'])
 def signin_post():
     if request.method == "POST":
@@ -133,17 +160,36 @@ def signin_post():
                 itemss.execute("SELECT prenom, nom FROM utilisateur WHERE mail LIKE ? ", (email,))
                 nom = itemss.fetchall()
                 session["name"] = nom[0][0] + " " + nom[0][1]
-                return render_template('login/connected.html', nom=nom)
+                itemss.execute("SELECT id_user FROM utilisateur WHERE mail LIKE ? ", (email,))
+                id_user = itemss.fetchall()
+                itemss.execute("SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.mail LIKE ?" , (email,))
+                admin=itemss.fetchall()
+                if len(admin)!=0:
+                    session["admin"]="oui"
+                    itemss.execute("SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.mail LIKE ?" , (email,))
+                    num_jardin_a=itemss.fetchall()
+                    session["num_jardin_a"]=enleveCrochets(num_jardin_a)
+                session["id_user"] = id_user[0][0]
+                itemss.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (id_user[0][0],))
+                parc = itemss.fetchall() 
+                session["parcelles"]=enleveCrochets(parc)
+                return redirect('/')
     return 'ERROR'
 
 
 @app.route('/admin/nouvelle_parcelle')
 def nouvelle_parcelle():
-    return render_template('admin/nouvelle_parcelle.html')
-
+    if session['admin']=='oui':
+        return render_template('admin/nouvelle_parcelle.html')
+    else:
+        return render_template('error_page.html', msg="Vous n'avez pas les droits d'administrateur")
 
 @app.route('/send-creer-parcelle', methods=['POST', 'GET'])
 def definir_parcelle_post():
+    """
+    Ajouter la vérification du compte administrateur et faire agir la page en conséquence
+    :return:
+    """
     if request.method == "POST":
         try:
             largeur = int(request.form['largeur'])
@@ -168,6 +214,35 @@ def definir_parcelle_post():
         return render_template('success_page.html', msg="La parcelle a bien été ajoutée !")
 
     return render_template('error_page.html', msg="Une erreur est survenue lors de l'ajout")
+
+
+
+@app.route('/admin/attribution_parcelles')
+def attribution_parcelles():
+    """
+    AJOUTER Id_user rapidement !!
+    :return:
+    """
+    if not session.get("email"):
+        return redirect("/signin")
+    if not session["admin"]:
+        return render_template('error_page.html', msg='Vous n\'êtes administrateur d\'aucun jardin')
+
+
+
+    db = get_db()
+    items = db.cursor()
+    items.execute('SELECT id_jardin, numero_rue, nom_rue, ? FROM jardin WHERE id_referent LIKE ?', (session["num_jardin_a"], session["id_user"]))
+    resultat = items.fetchall()
+
+    return render_template('admin/attribution_parcelle.html', resultat=resultat)
+
+
+@app.route('/test')
+def test():
+    resultat = [[1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50]]], [1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50],[22, 1, 120, 50]]],
+                [1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50]]]]
+    return render_template('admin/attribution_parcelle.html', resultat=resultat)
 
 
 """
@@ -206,6 +281,13 @@ def mon_potager(numero):
 
 @app.route('/monpotager/<numero>')
 def mon_potager(numero):
+    """
+    Verifier que la fonction tourne après la modification des paramètres sessions par ajout de id_user
+    :param numero:
+    :return:
+    """
+    if not session.get("email"):
+        return redirect("/signin")
     try:
         numero = int(numero)
     except:
@@ -248,12 +330,18 @@ def id_plante(numero):
 
 @app.route('/user/vos_informations/<numero>')
 def vos_informations(numero):
+    if not session.get("email"):
+        return redirect("/signin")
     try:
         numero = int(numero)
     except:
         return 'error ce numero n\'est pas correct'
 
     db = get_db()
+    items = db.cursor()
+    items.execute('SELECT count(*) FROM parcelle WHERE id_user = ?', (session.get("id_user")))
+    if not items.fetchall()[0]:
+        return render_template('error_page.html', msg='Vous n\'avez pas accès à ces informations')
 
     items = db.cursor()
     items.execute('SELECT nom, prenom, mail FROM utilisateur WHERE id_user = ?', (numero,))

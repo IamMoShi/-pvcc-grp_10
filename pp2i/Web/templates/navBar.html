@@ -26,7 +26,10 @@
           <a href="/" aria-current="page">Home</a>
           {%if session.name%}
           <a href="/users">Jardiniers</a>
-          <a href="/monpotager/1">Mon Potager</a>
+          <a href="/monpotager/{{session.parcelles[0]}}">Mon Potager</a>
+          {%endif%}
+          {%if session.admin%}
+          <a href="/admin/attribution_parcelles">Attrib parcelles</a>
           {%endif%}
           <a href="#">Link</a>
         </div>
