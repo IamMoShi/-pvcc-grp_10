@@ -17,6 +17,12 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+def enleveCrochets(liste):
+    tmp=[]
+    if len(liste)!=0:
+        for i in range (len(liste)):
+            tmp.append(liste[i][0])
+    return tmp
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -124,6 +130,15 @@ def register_post():
 
 
 # sessions
+"""
+le dictionnaire session comprend:
+session["email"] :email
+session["name"]: prénom nom de l'utilisateur
+session["id_user"] = id de l'utilisateur
+session["admin"] = "oui" si l'utilisateur est admin, sinon pas de valeur
+session["num_jardin_a"] = [id_1, id_2, ...] renvoie les id des jardins dans lesquels on est admin
+session["parcelles"]= [id_1, id_2, ...] renvoie les id des parcelles qu'on gère
+"""
 @app.route('/send-signin-form', methods=['POST', 'GET'])
 def signin_post():
     if request.method == "POST":
@@ -153,12 +168,11 @@ def signin_post():
                     session["admin"]="oui"
                     itemss.execute("SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.mail LIKE ?" , (email,))
                     num_jardin_a=itemss.fetchall()
-                    session["num_jardin_a"]=num_jardin_a[0][0]
+                    session["num_jardin_a"]=enleveCrochets(num_jardin_a)
                 session["id_user"] = id_user[0][0]
                 itemss.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (id_user[0][0],))
-                parcelle=itemss.fetchall()
-                session["parcelles"]=parcelle[0][0] #ne gère que pour une seule parcelle pour le moment
-
+                parc = itemss.fetchall() 
+                session["parcelles"]=enleveCrochets(parc)
                 return redirect('/')
     return 'ERROR'
 
