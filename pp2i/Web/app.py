@@ -129,7 +129,7 @@ def register_post():
     return 'ERROR'
 
 
-# sessions
+# quand on se connecte à un compte
 """
 le dictionnaire session comprend:
 session["email"] :email
@@ -232,7 +232,7 @@ def attribution_parcelles():
 
     db = get_db()
     items = db.cursor()
-    items.execute('SELECT id_jardin, numero_rue, nom_rue, ? FROM jardin WHERE id_referent LIKE ?', (session["num_jardin_a"], session["id_user"]))
+    items.execute('SELECT id_jardin, numero_rue, nom_rue, ? FROM jardin WHERE id_referent LIKE ?', (session["num_jardin_a"][0], session["id_user"]))
     resultat = items.fetchall()
 
     return render_template('admin/attribution_parcelle.html', resultat=resultat)
@@ -277,8 +277,46 @@ def mon_potager(numero):
     return render_template(chemin, l_polynomes_txt=l_polynomes_txt[::-1], chemin_image=chemin_image, prenom=prenom,
                            l_legende=PotagerImage.legende(database.cursor()))
 """
+#affichage de toutes les parcelles
+@app.route('/mesparcelles')
+def mesparcelles():
+    database = get_db()
+    items = database.cursor()
+    resultat=[]
+    for i in range(len(session["parcelles"])):
+        items.execute(
+            'SELECT id_parcelle, id_jardin, longueur_parcelle, largeur_parcelle, polygone FROM parcelle WHERE id_parcelle = ?',
+            (session["parcelles"][i],))
+        resultat.append(items.fetchall())
 
+    for i in range(len(resultat)):
+        tmp=resultat[i][0]
+        resultat[i]=tmp
 
+    
+    parametres=[]
+    for i in range(len(resultat)):
+        id_parcelle, id_jardin, longueur, largeur, polygone = resultat[i]
+        l_polygone, l_id = polygone.split('//')
+        l_polygone = tp.string_to_lists(l_polygone)
+        l_id = tp.string_to_lists(l_id)
+
+        longueur, largeur = round(longueur), round(largeur)
+
+        l_polygone_txt, chemin_image = image_py.html_code_fonction(l_polygone, l_id, id_parcelle)
+
+        chemin_image = image_py.affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
+                                                database.cursor())
+        
+
+        l_polynomes_txt=l_polygone_txt[::-1]
+        l_legende=image_py.legende_fonction(database.cursor(), l_id)
+        parametres.append((l_polynomes_txt, chemin_image, l_legende))    
+
+    chemin = "potager_user/potager_user_affichage_global.html"
+    return render_template(chemin, parametres=parametres)
+
+#affichage individuel des parcelles (fonction d'ajout de plantes à mettre)
 @app.route('/monpotager/<numero>')
 def mon_potager(numero):
     """
@@ -316,11 +354,11 @@ def mon_potager(numero):
     chemin_image = image_py.affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
                                                database.cursor())
 
-    chemin = "potager_user/potager_user_affichage.html"
+    chemin = "potager_user/potager_user_affichage_individuel.html"
     print(chemin_image)
 
-    return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image, prenom="prenom",
-                           l_legende=image_py.legende_fonction(database.cursor(), l_id))
+    return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
+                           l_legende=image_py.legende_fonction(database.cursor(), l_id), numeor=numero)
 
 
 @app.route('/id_plante/<numero>')

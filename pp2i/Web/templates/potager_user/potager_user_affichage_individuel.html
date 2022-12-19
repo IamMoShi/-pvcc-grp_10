@@ -9,13 +9,12 @@
     <link rel="stylesheet" href="/static/css/potager.css"/>
 </head>
 <body>
+{% include "navBar.html" %}
 <main>
     <div class="informations">
         <p>{{session.name}},bienvenue sur la page de votre potager.</p>
     </div>
-    {%for i in session.parcelles %}
-    <h2> Parcelle numéro {{i}}</h2>
-    <a href="/monpotager/{{i}}">Gérer la parcelle</a>
+    <h2> Parcelle numéro {{numero}}</h2>
     <div class="potager">
 
         <div class="imageMap">
@@ -45,7 +44,6 @@
             </div>
         </div>
     </div>
-    {%endfor%}
 </main>
 
 </body>

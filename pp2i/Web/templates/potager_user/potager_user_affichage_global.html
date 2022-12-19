@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Votre potager</title>
+    <link rel="stylesheet" href="/static/css/potager.css"/>
+</head>
+<body>
+{% include "navBar.html" %}
+<main>
+    <div class="informations">
+        <p>{{session.name}},bienvenue sur la page de votre potager.</p>
+    </div>
+    {%for i in session.parcelles %}
+    <h2> Parcelle numéro {{i}}</h2>
+    
+    <a href="/monpotager/{{i}}">Gérer la parcelle</a>
+    {%endfor%}
+
+</main>
+
+</body>
+</html>
