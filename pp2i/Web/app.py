@@ -17,12 +17,14 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+
 def enleveCrochets(liste):
-    tmp=[]
-    if len(liste)!=0:
-        for i in range (len(liste)):
+    tmp = []
+    if len(liste) != 0:
+        for i in range(len(liste)):
             tmp.append(liste[i][0])
     return tmp
+
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -55,7 +57,7 @@ def signin():
     session["id_user"] = None
     session["admin"] = None
     session["num_jardin_a"] = None
-    session["parcelles"]= None
+    session["parcelles"] = None
     return render_template("login/login.html", b_signin=True, b_register=False)
 
 
@@ -71,7 +73,7 @@ def login():
     session["id_user"] = None
     session["admin"] = None
     session["num_jardin_a"] = None
-    session["parcelles"]= None
+    session["parcelles"] = None
     return render_template("login/login.html", b_signin=True, b_register=True)
 
 
@@ -82,7 +84,7 @@ def logout():
     session["id_user"] = None
     session["admin"] = None
     session["num_jardin_a"] = None
-    session["parcelles"]= None
+    session["parcelles"] = None
     return redirect("/")
 
 
@@ -95,27 +97,30 @@ def users():
         items = db.cursor()
 
         items.execute("SELECT u.id_user, u.nom, u.prenom, u.mail FROM utilisateur u")
-        data=items.fetchall()
-        final=[]
-        
+        data = items.fetchall()
+        final = []
+
         for i in data:
-            items.execute("SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?" , (i[0],))
-            admin=items.fetchall()
-            if len(admin)!=0:
-                i+=("admin",)
+            items.execute(
+                "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
+                (i[0],))
+            admin = items.fetchall()
+            if len(admin) != 0:
+                i += ("admin",)
             else:
-                i+=("pas admin",)
-            #recupere les jardins de chacun
-            items.execute("SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?" , (i[0],))
-            num_jardin_a=items.fetchall()
-            i+=(enleveCrochets(num_jardin_a),)
-            #recupere les parcelles de chacun
+                i += ("pas admin",)
+            # recupere les jardins de chacun
+            items.execute(
+                "SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
+                (i[0],))
+            num_jardin_a = items.fetchall()
+            i += (enleveCrochets(num_jardin_a),)
+            # recupere les parcelles de chacun
             items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
-            parc = items.fetchall() 
-            i+=(enleveCrochets(parc),)
+            parc = items.fetchall()
+            i += (enleveCrochets(parc),)
             final.append(i)
 
-        
         return render_template("users.html", data=final)
 
 
@@ -156,6 +161,8 @@ session["admin"] = "oui" si l'utilisateur est admin, sinon pas de valeur
 session["num_jardin_a"] = [id_1, id_2, ...] renvoie les id des jardins dans lesquels on est admin
 session["parcelles"]= [id_1, id_2, ...] renvoie les id des parcelles qu'on gère
 """
+
+
 @app.route('/send-signin-form', methods=['POST', 'GET'])
 def signin_post():
     if request.method == "POST":
@@ -179,27 +186,32 @@ def signin_post():
                 session["name"] = nom[0][0] + " " + nom[0][1]
                 itemss.execute("SELECT id_user FROM utilisateur WHERE mail LIKE ? ", (email,))
                 id_user = itemss.fetchall()
-                itemss.execute("SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.mail LIKE ?" , (email,))
-                admin=itemss.fetchall()
-                if len(admin)!=0:
-                    session["admin"]="oui"
-                    itemss.execute("SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.mail LIKE ?" , (email,))
-                    num_jardin_a=itemss.fetchall()
-                    session["num_jardin_a"]=enleveCrochets(num_jardin_a)
+                itemss.execute(
+                    "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.mail LIKE ?",
+                    (email,))
+                admin = itemss.fetchall()
+                if len(admin) != 0:
+                    session["admin"] = "oui"
+                    itemss.execute(
+                        "SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.mail LIKE ?",
+                        (email,))
+                    num_jardin_a = itemss.fetchall()
+                    session["num_jardin_a"] = enleveCrochets(num_jardin_a)
                 session["id_user"] = id_user[0][0]
                 itemss.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (id_user[0][0],))
-                parc = itemss.fetchall() 
-                session["parcelles"]=enleveCrochets(parc)
+                parc = itemss.fetchall()
+                session["parcelles"] = enleveCrochets(parc)
                 return redirect('/')
     return 'ERROR'
 
 
 @app.route('/admin/nouvelle_parcelle')
 def nouvelle_parcelle():
-    if session['admin']=='oui':
+    if session['admin'] == 'oui':
         return render_template('admin/nouvelle_parcelle.html')
     else:
         return render_template('error_page.html', msg="Vous n'avez pas les droits d'administrateur")
+
 
 @app.route('/send-creer-parcelle', methods=['POST', 'GET'])
 def definir_parcelle_post():
@@ -233,7 +245,6 @@ def definir_parcelle_post():
     return render_template('error_page.html', msg="Une erreur est survenue lors de l'ajout")
 
 
-
 @app.route('/admin/attribution_parcelles')
 def attribution_parcelles():
     """
@@ -245,11 +256,10 @@ def attribution_parcelles():
     if not session["admin"]:
         return render_template('error_page.html', msg='Vous n\'êtes administrateur d\'aucun jardin')
 
-
-
     db = get_db()
     items = db.cursor()
-    items.execute('SELECT id_jardin, numero_rue, nom_rue, ? FROM jardin WHERE id_referent LIKE ?', (session["num_jardin_a"][0], session["id_user"]))
+    items.execute('SELECT id_jardin, numero_rue, nom_rue, ? FROM jardin WHERE id_referent LIKE ?',
+                  (session["num_jardin_a"][0], session["id_user"]))
     resultat = items.fetchall()
 
     return render_template('admin/attribution_parcelle.html', resultat=resultat)
@@ -257,7 +267,8 @@ def attribution_parcelles():
 
 @app.route('/test')
 def test():
-    resultat = [[1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50]]], [1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50],[22, 1, 120, 50]]],
+    resultat = [[1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50]]],
+                [1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50], [22, 1, 120, 50]]],
                 [1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50]]]]
     return render_template('admin/attribution_parcelle.html', resultat=resultat)
 
@@ -294,15 +305,17 @@ def mon_potager(numero):
     return render_template(chemin, l_polynomes_txt=l_polynomes_txt[::-1], chemin_image=chemin_image, prenom=prenom,
                            l_legende=PotagerImage.legende(database.cursor()))
 """
-#affichage de toutes les parcelles
+
+
+# affichage de toutes les parcelles
 @app.route('/mesparcelles')
 def mesparcelles():
     database = get_db()
     items = database.cursor()
-    resultat=[]
-    if len(session["parcelles"])==0:
+    resultat = []
+    if len(session["parcelles"]) == 0:
         return render_template("error_page.html", msg="Vous n'avez pas encore de parcelles")
-    
+
     for i in range(len(session["parcelles"])):
         items.execute(
             'SELECT id_parcelle, id_jardin, longueur_parcelle, largeur_parcelle, polygone FROM parcelle WHERE id_parcelle = ?',
@@ -310,11 +323,10 @@ def mesparcelles():
         resultat.append(items.fetchall())
 
     for i in range(len(resultat)):
-        tmp=resultat[i][0]
-        resultat[i]=tmp
+        tmp = resultat[i][0]
+        resultat[i] = tmp
 
-    
-    parametres=[]
+    parametres = []
     for i in range(len(resultat)):
         id_parcelle, id_jardin, longueur, largeur, polygone = resultat[i]
         l_polygone, l_id = polygone.split('//')
@@ -326,18 +338,18 @@ def mesparcelles():
         l_polygone_txt, chemin_image = image_py.html_code_fonction(l_polygone, l_id, id_parcelle)
 
         chemin_image = image_py.affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
-                                                database.cursor())
-        
+                                                   database.cursor())
 
-        l_polynomes_txt=l_polygone_txt[::-1]
-        l_legende=image_py.legende_fonction(database.cursor(), l_id)
-        
-        parametres.append([l_polynomes_txt,l_legende,chemin_image,id_parcelle])
-        
+        l_polynomes_txt = l_polygone_txt[::-1]
+        l_legende = image_py.legende_fonction(database.cursor(), l_id)
+
+        parametres.append([l_polynomes_txt, l_legende, chemin_image, id_parcelle])
+
     chemin = "potager_user/potager_user_affichage_global.html"
     return render_template(chemin, parametres=parametres)
 
-#affichage individuel des parcelles (fonction d'ajout de plantes à mettre)
+
+# affichage individuel des parcelles (fonction d'ajout de plantes à mettre)
 @app.route('/monpotager/<numero>')
 def mon_potager(numero):
     """

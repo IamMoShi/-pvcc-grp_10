@@ -1,0 +1,99 @@
+body {
+    font-family: sans-serif;
+    background: #f1f1f1;
+    margin: 0;
+}
+
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Haut de la page avec les informations relatives à la personne */
+
+div.informations {
+    margin: 30px 30px;
+    font-weight: bolder;
+    font-size: 25px;
+}
+/* partie d'affichage de la map avec sa légende*/
+/* partie MAP */
+div.potager {
+    width: 90%;
+    display: flex;
+    padding: 15px;
+    border: solid #b0b0b0 2px;
+    border-radius: 10px;
+}
+
+.potager .imageMap {
+    padding-right: 20px;
+    border-right: solid lightgrey 2px;
+    min-width: 70%;
+    display: flex;
+    justify-content: center;
+}
+
+.potager .imageMap img {
+    max-width: 100%;
+}
+
+/* Partie légende */
+
+.potager .legende {
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 100%;
+}
+
+.legende .titre {
+    width: 100%;
+    text-align: center;
+    text-decoration: underline;
+    font-size: 20px;
+}
+
+.legende .corps {
+    padding-top: 30px;
+}
+
+.legende .corps .ligne {
+    display: flex;
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+div.carre {
+    width: 30px;
+    height: 30px;
+}
+
+/* ajustement si la page est trop petite */
+
+@media (max-width: 1200px) {
+    .potager {
+        flex-direction: column;
+    }
+    .potager .imageMap {
+        border-right: None;
+        border-bottom: solid lightgrey 2px;
+        padding-right: 0;
+        padding-bottom: 30px;
+    }
+    .potager .legende {
+        padding-top: 30px ;
+    }
+}
+
+
+@media (max-width: 800px) {
+    .informations p {
+        font-size: 15px;
+    }
+    .legende .titre{
+        font-size: 13px;
+    }
+
+}

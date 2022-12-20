@@ -1,0 +1,96 @@
+CREATE TABLE utilisateur (
+    id_user  INTEGER  PRIMARY KEY AUTOINCREMENT ,
+    nom VARCHAR,
+    prenom VARCHAR,
+    mail VARCHAR,
+    mdp VARCHAR
+);
+CREATE TABLE jardin (
+    id_jardin  INTEGER  PRIMARY KEY AUTOINCREMENT,
+    code_postal varchar,
+    ville varchar,
+    numero_rue int,
+    nom_rue varchar,
+    id_referent,
+    CONSTRAINT fk_referent
+                    foreign key (id_referent)
+                    references utilisateur(id_user)
+                    ON DELETE CASCADE
+);
+CREATE TABLE parcelle (
+    id_parcelle  INTEGER  primary key AUTOINCREMENT,
+    id_jardin int,
+    id_user int,
+    longueur_parcelle real,
+    largeur_parcelle real,
+
+    CONSTRAINT fk_id_jardin
+                      foreign key (id_jardin)
+                      references jardin(id_jardin)
+                      ON DELETE CASCADE,
+    CONSTRAINT fk_id_user
+                      foreign key (id_user)
+                      references utilisateur(id_user)
+
+);
+CREATE TABLE plante (
+    id_plante  INTEGER  PRIMARY KEY,
+    taille int
+);
+CREATE TABLE administre (
+    id_user int,
+    id_jardin int,
+    CONSTRAINT pk
+                        PRIMARY KEY (id_user, id_jardin),
+    CONSTRAINT fk
+                        FOREIGN KEY (id_user)
+                        references utilisateur(id_user)
+                        ON DELETE CASCADE ,
+                        FOREIGN KEY  (id_jardin)
+                        references jardin(id_jardin)
+                        ON DELETE CASCADE
+
+
+);
+CREATE TABLE est_separer_en (
+    id_parcelle int,
+    id_jardin int,
+    CONSTRAINT pk
+                        PRIMARY KEY (id_parcelle, id_jardin),
+    CONSTRAINT fk
+                        FOREIGN KEY (id_parcelle)
+                        references parcelle(id_parcelle)
+                        ON DELETE CASCADE ,
+                        FOREIGN KEY  (id_jardin)
+                        references jardin(id_jardin)
+                        ON DELETE CASCADE
+);
+CREATE TABLE contient (
+    id_parcelle int,
+    id_plante int,
+    x_plante int,
+    y_plante int,
+    CONSTRAINT pk
+                        PRIMARY KEY (id_parcelle, id_plante, x_plante, y_plante),
+    CONSTRAINT fk
+                        FOREIGN KEY (id_parcelle)
+                        references parcelle(id_parcelle)
+                        ON DELETE CASCADE ,
+                        FOREIGN KEY  (id_plante)
+                        references plante(id_plante)
+                        ON DELETE CASCADE
+);
+CREATE TABLE affinites (
+    id_planteA int,
+    id_planteB int,
+    valeur_affinite int,
+    CONSTRAINT pk
+                        PRIMARY KEY (id_planteA, id_planteB),
+    CONSTRAINT fk
+                        FOREIGN KEY (id_planteA)
+                        references plante(id_plante)
+                        ON DELETE CASCADE ,
+                        FOREIGN KEY  (id_planteB)
+                        references plante(id_plante)
+                        ON DELETE CASCADE
+);

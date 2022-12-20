@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Navbar</title>
+    <link rel="stylesheet" href="/static/css/navBar.css" />
+  </head>
+  <body>
+
+    <nav>
+
+      <a href="/" class="nav-icon" aria-label="visit homepage" aria-current="page">
+        <img src="/static/images/icons/icons8-panier-en-osier-90.svg" alt="chat icon">
+        <span>Le Bonheur Est Dans Le Potager<span>
+      </a>
+
+      <div class="main-navlinks">
+        <button class="burger" type="button" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="navlinks-container">
+          <a href="/" aria-current="page">Home</a>
+          {%if session.name%}
+          <a href="/users">Jardiniers</a>
+          <a href="/mesparcelles">Mes parcelles</a>
+          {%endif%}
+          {%if session.admin%}
+          <a href="/admin/attribution_parcelles">Attrib parcelles</a>
+          {%endif%}
+          <a href="#">Link</a>
+        </div>
+      </div>
+
+      <div class="nav-authentication">
+        <a href="/login" class="sign-user" aria-label="Sign in page">
+          <img src="/static/images/icons/login.svg" alt="user-icon">
+        </a>
+        <div class="sign-btns">
+          {%if session.name%}
+          Bonjour {{session.name}}
+          {%else%}
+          Bienvenue sur notre site! Connectez-vous ou créez un compte pour continuer:
+          {%endif%}
+
+          <button type="button" onclick="window.location.href='/signin'">
+          {%if session.name%}
+          Déconnexion
+          {%else%}
+          Connexion
+          {%endif%}
+          </button>
+
+          {%if not session.name%}
+          <button type="button" onclick="window.location.href='/register'">Inscription</button>
+          {%endif%}
+      </div>
+      </div>
+    </nav>
+
+
+
+{%include "footer.html"%}
+    <script src="/static/JS/navBar.js"></script>
+  </body>
+</html>

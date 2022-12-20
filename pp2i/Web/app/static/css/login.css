@@ -1,0 +1,118 @@
+::before,
+::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:  sans-serif;
+  background: f1f1f1;
+  margin: 0;
+}
+.main {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 60px ;
+    border: dotted 2px lightgray;
+    align-items: stretch;
+}
+.main img{
+    max-width: 50%;
+}
+small {
+    font-size: 12px;
+}
+.text-danger{
+    color: red;
+}
+.text-success{
+    color: green;
+}
+.connexion {
+    display: flex;
+    width: 100%;
+}
+
+.new-connexion {
+    text-align: center;
+    padding-bottom: 15px;
+    width: 50%;
+    min-width: 350px;
+    border-right: dotted 2px lightgray;
+}
+.new-connexion p {
+    padding-top: 20px;
+    font-size: 30px;
+    font-weight: 600;
+}
+
+form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+input {
+    margin: 1px auto;
+    border: solid green 2px;
+    border-radius: 5px;
+    height: 40px;
+    width: 250px;
+    padding-left: 5px;
+}
+
+input[type=submit] {
+    margin-top: 30px;
+    background: green;
+    border: none;
+    border-radius: 10px;
+    color: #f1f1f1;
+    width: 130px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+input[type=submit]:hover {
+    background: lightgreen;
+    color: black;
+}
+.input-danger{
+    border-color: red;
+}
+
+@media (max-width: 1200px) {
+    .connexion {
+        flex-direction: column;
+    }
+    .new-connexion {
+        height: 100%;
+        width: 100%;
+        border-bottom: dotted 2px lightgray;
+    }
+    .new-connexion:last-child {
+        border-bottom: none;
+    }
+    .new-connexion p {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 800px){
+    .main img {
+        display: none;
+    }
+
+    .main {
+        max-width: 400px;
+        border-right: none;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+
+}
+
+

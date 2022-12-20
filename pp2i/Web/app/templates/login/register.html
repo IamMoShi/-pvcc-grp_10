@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>signup</title>
+    <link rel="stylesheet" href="/static/css/login.css" />
+</head>
+<body>
+    <div class="new-connexion">
+        <p>Inscription</p>
+        <form action="/send-register-form" method="post" id="registerForm">
+
+            <label for="lastname"></label>
+            <input type="text" name="lastname" id="lastname" placeholder="Nom" autofocus required autocomplete="off"/>
+            <small></small>
+
+            <label for="firstname"></label>    
+            <input type="text" name="firstname" id="firstname" placeholder="Prénom" required autocomplete="off"/>
+            <small></small>
+
+            <label for="email"></label>
+            <input type="email" name="email" id="email" placeholder="nom.prenom@exemple.com" required/>
+            <small></small>
+
+            <label for="pwd"></label>
+            <input type="password" name="password" id="password"
+                    minlength="8" maxlength="25"
+                    autocomplete="new-password" 
+                    placeholder="mot de passe"
+                    required >
+            <small></small>
+
+            <label for="confirmation"></label>
+            <input type="password" name="confirmation" 
+                    id="confirmation"
+                    minlength="8" maxlength="25"
+                    autocomplete="new-password" 
+                    placeholder="confirmation mot de passe"
+                    required >
+            <small></small>
+
+            <input type="submit" value="Connexion">
+
+        </form>
+    </div>
+    <script src="/static/JS/validRegister.js"></script>
+</body>
+</html>
