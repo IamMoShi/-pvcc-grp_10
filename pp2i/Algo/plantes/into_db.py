@@ -3,7 +3,7 @@ import re
 from PyPDF2 import PdfReader
 
 """ Lecture du document """
-reader = PdfReader("compagnonnage.pdf")
+reader = PdfReader("Algo/plantes/compagnonnage.pdf")
 text = ""
 for page in reader.pages:
     text += page.extract_text() + "\n"
@@ -18,8 +18,8 @@ text=text.replace("Concombre et cornichon","Concombre")
 text=text.replace("Aubergin e","Aubergine ") # erreur unique pour cette plante (espace au milieu)
 text=text.replace("Ail","Ail ")
 text=text.replace(" -","-") # les tirets des noms sont précédés d'espaces
-text=text.replace("É","E")
-text=text.replace("È","E")
+text=text.replace("É","E") # enlever les accents
+text=text.replace("È","E") 
 text=text.replace("é","e")
 text=text.replace("è","e")
 text=text.replace("à","a")
@@ -89,66 +89,67 @@ for test in document: # pour séparer compagnes et ennemies de la plante étudi�
 
 
     """ correction d'erreurs uniques"""
+    const = True
+    if const : 
+        while re.match(r'.*\s{2,}(de)+.*',k):
+            k=k.replace(" de","de")
+        while re.match(r'.*(de)+\s{2,}.*',k):
+            k=k.replace("de ","de")
 
-    while re.match(r'.*\s{2,}(de)+.*',k):
-        k=k.replace(" de","de")
-    while re.match(r'.*(de)+\s{2,}.*',k):
-        k=k.replace("de ","de")
+        while re.match(r'.*(piment)+\s{2,}(fort)+.*',k):
+            k=k.replace("piment ","piment")
 
-    while re.match(r'.*(piment)+\s{2,}(fort)+.*',k):
-        k=k.replace("piment ","piment")
+        while re.match(r'.*(chou-)+\s+(fleur)+.*',k):
+            k=k.replace(" fleur","fleur")
 
-    while re.match(r'.*(chou-)+\s+(fleur)+.*',k):
-        k=k.replace(" fleur","fleur")
+        while re.match(r'.*(chou)+\s+(rave)+.*',k):
+            k=k.replace(" rave","rave")
 
-    while re.match(r'.*(chou)+\s+(rave)+.*',k):
-        k=k.replace(" rave","rave")
+        while re.match(r'.*(a)+\s{2,}(carde)+.*',k):
+            k=k.replace("a ","a")
+        
+        while re.match(r'.*(chicoree)+\s{2,}(frisee)+.*',k):
+            k=k.replace("chicoree ","chicoree")
 
-    while re.match(r'.*(a)+\s{2,}(carde)+.*',k):
-        k=k.replace("a ","a")
-    
-    while re.match(r'.*(chicoree)+\s{2,}(frisee)+.*',k):
-        k=k.replace("chicoree ","chicoree")
+        while re.match(r'.*(haricot)+\s{2,}(nain)+.*',k):
+            k=k.replace("haricot ","haricot")
 
-    while re.match(r'.*(haricot)+\s{2,}(nain)+.*',k):
-        k=k.replace("haricot ","haricot")
+        while re.match(r'.*(tomat e)+.*',k):
+            k=k.replace("tomat e","tomate ")
 
-    while re.match(r'.*(tomat e)+.*',k):
-        k=k.replace("tomat e","tomate ")
+        while re.match(r'.*(ro quette)+.*',k):
+            k=k.replace("ro quette","roquette")
 
-    while re.match(r'.*(ro quette)+.*',k):
-        k=k.replace("ro quette","roquette")
+        while re.match(r'.*(rue)+\s+.*',k):
+            k=k.replace("rue ","rue")
 
-    while re.match(r'.*(rue)+\s+.*',k):
-        k=k.replace("rue ","rue")
+        while re.match(r'.*(deterre)+.*',k):
+            k=k.replace("deterre","de terre")
 
-    while re.match(r'.*(deterre)+.*',k):
-        k=k.replace("deterre","de terre")
+        while re.match(r'.*(menth)+\s+.*',k):
+            k=k.replace("menth e","menthe")
 
-    while re.match(r'.*(menth)+\s+.*',k):
-        k=k.replace("menth e","menthe")
+        while re.match(r'.*(me)+\s+(nthe)+.*',k):
+            k=k.replace("me nthe","menthe")
 
-    while re.match(r'.*(me)+\s+(nthe)+.*',k):
-        k=k.replace("me nthe","menthe")
+        while re.match(r'.*(terre)+\s+(epinard)+.*',k):
+            k=k.replace("pomme de terre epinard","pomme de terre,epinard")
 
-    while re.match(r'.*(terre)+\s+(epinard)+.*',k):
-        k=k.replace("pomme de terre epinard","pomme de terre,epinard")
+        while re.match(r'.*(echal)+\s+(ote)+.*',k):
+            k=k.replace("echal ote","echalote")
+        
+        k=k.replace("chou debruxelles","chou de bruxelles")
+        
+        k=k.replace("ci boulette","ciboulette")
 
-    while re.match(r'.*(echal)+\s+(ote)+.*',k):
-        k=k.replace("echal ote","echalote")
-    
-    k=k.replace("chou debruxelles","chou de bruxelles")
-    
-    k=k.replace("ci boulette","ciboulette")
+        k=k.replace("haricota ecosser","haricot a ecosser")
 
-    k=k.replace("haricota ecosser","haricot a ecosser")
+        k=k.replace("ha ricot","haricot")
 
-    k=k.replace("ha ricot","haricot")
+        k=k.replace("courgett e","courgette")
 
-    k=k.replace("courgett e","courgette")
-
-    while re.match(r'.*(rueabsinthe)+.*',k):
-        k=k.replace("rueabsinthe","rue  absinthe")
+        while re.match(r'.*(rueabsinthe)+.*',k):
+            k=k.replace("rueabsinthe","rue  absinthe")
 
     """ fin correction d'erreurs uniques """
 
@@ -177,7 +178,7 @@ for test in document: # pour séparer compagnes et ennemies de la plante étudi�
 document=new_doc
 
 
-data = sqlite3.connect("databse.db") # ATTENTION LA DATABASE DOIT CONTENIR AU MOINS UNE PLANTE AVEC UN ID
+data = sqlite3.connect("Algo/plantes/databse.db") # ATTENTION LA DATABASE DOIT CONTENIR AU MOINS UNE PLANTE AVEC UN ID
 
 cur = data.cursor()
 cur.execute("select * from plantes") # on cherche si il existe déjà une plante
@@ -239,7 +240,7 @@ def new_value(type,plante1,plante2=1):
             cur.execute("""insert into ennemis values(?,?);""",(min(id1,id2),max(id1,id2)))
             data.commit()
 
-
+""" Pour ajouter toutes les données du document """
 for lignes in document:
     plante_etudiee = lignes[0]
     for i in lignes[1]:
