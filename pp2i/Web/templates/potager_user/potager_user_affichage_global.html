@@ -12,19 +12,27 @@
 {% include "navBar.html" %}
 <main>
     <div class="informations">
-        <p>{{ prenom }}, bienvenue sur la page de votre potager</p>
+        <p>{{session.name}}, bienvenue sur la page de votre potager.</p>
     </div>
+    {%for j in parametres%}
+    
+    <h2> Parcelle numéro {{j[3]}}</h2>
+    
+    
+    <a href="/monpotager/{{j[3]}}">Gérer la parcelle</a>
+    
+    
     <div class="potager">
 
         <div class="imageMap">
             <map name="potager">
-                {% for polynome_txt in l_polynomes_txt %}
+                {% for polynome_txt in j[0] %}
                 <area shape="poly" coords={{ polynome_txt[0] }} href="/id_plante/{{ polynome_txt[1] }}"
                       alt="partie du potager" />
 
                 {% endfor %}
             </map>
-            <img usemap="#potager" src=/{{ chemin_image }} , alt="image de potager">
+            <img usemap="#potager" src=/{{ j[2] }} , alt="image de potager">
         </div>
 
         <div class="legende">
@@ -33,7 +41,7 @@
 
             <div class="corps">
 
-                {% for couple in l_legende %}
+                {% for couple in j[1] %}
                 <div class="ligne">
                     <div class="carre" style="background: {{ couple[0] }}"></div>
                     <p style="padding-left: 20px"> {{ couple[1] }}</p>
@@ -43,6 +51,7 @@
             </div>
         </div>
     </div>
+    {%endfor%}
 </main>
 
 </body>
