@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion participants</title>
+    <title>Les Jardiniers</title>
     <link rel="stylesheet" href="/static/css/users.css" />
 </head>
 
@@ -26,6 +26,9 @@
                         <ul id="prenom"></ul>
                         <ul id="mail"></ul>
                         <ul id="iduser"></ul>
+                        <ul id="statut"></ul>
+                        <ul id="jardins"></ul>
+                        <ul id="parcelles"></ul>
                     </div>
                 </div>
                 </div>
@@ -42,17 +45,10 @@
                         {%for data in data%}
 
                         <tr class="personne"
-                            onclick="afficherprofil('{{data[1]}}','{{data[2]}}','{{data[3]}}','{{data[0]}}' )">
+                            
+                            onclick="afficherprofil('{{data[1]}}','{{data[2]}}','{{data[3]}}','{{data[0]}}','{{data[4]}}', '{{data[5]}}', '{{data[6]}}' )">
                             <td>{{data[2]}} {{data[1]}}</td></a>
-                            <td>pas admin</td>
-                        </tr>
-                        {%endfor%}
-                        {%for data_admin in data_admin%}
-
-                        <tr class="personne"
-                            onclick="afficherprofil('{{data_admin[1]}}','{{data_admin[2]}}','{{data_admin[3]}}','{{data_admin[0]}}' )">
-                            <td>{{data_admin[2]}} {{data_admin[1]}}</td></a>
-                            <td>admin</td>
+                            <td>{{data[4]}}</td>
                         </tr>
                         {%endfor%}
                     </table>
@@ -60,7 +56,7 @@
 
                 <script>
                     var img = document.createElement("img");
-                    function afficherprofil(nom, prenom, mail, iduser) {
+                    function afficherprofil(nom, prenom, mail, iduser, statut, jardins, parcelles) {
                         
                         img.src = "static/images/icons/gardener.png";
                         img.style.width="20%";
@@ -73,6 +69,10 @@
                         document.getElementById('nom').textContent = "Nom: " + nom;
                         document.getElementById('mail').textContent = "Adresse mail: " + mail;
                         document.getElementById('iduser').textContent = "Identifiant: " + iduser;
+                        document.getElementById('statut').textContent = "Statut: " + statut;
+                        document.getElementById('jardins').textContent = "Jardins administrés: " + jardins;
+                        document.getElementById('parcelles').textContent = "Jardine dans ces parcelles: " + parcelles;
+                           
                     }
                 </script>
 </body>

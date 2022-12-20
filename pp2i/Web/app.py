@@ -93,13 +93,30 @@ def users():
     else:
         db = get_db()
         items = db.cursor()
-        items.execute(
-            "SELECT u.id_user, u.nom, u.prenom, u.mail, u.mdp FROM utilisateur u JOIN administre a ON a.id_user=u.id_user")
-        data_admin = items.fetchall()
-        items.execute(
-            "SELECT * from utilisateur EXCEPT SELECT u.id_user, u.nom, u.prenom, u.mail, u.mdp FROM utilisateur AS u JOIN administre AS a ON u.id_user=a.id_user")
-        data = items.fetchall()
-        return render_template("users.html", data=data, data_admin=data_admin)
+
+        items.execute("SELECT u.id_user, u.nom, u.prenom, u.mail FROM utilisateur u")
+        data=items.fetchall()
+        final=[]
+        
+        for i in data:
+            items.execute("SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?" , (i[0],))
+            admin=items.fetchall()
+            if len(admin)!=0:
+                i+=("admin",)
+            else:
+                i+=("pas admin",)
+            #recupere les jardins de chacun
+            items.execute("SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?" , (i[0],))
+            num_jardin_a=items.fetchall()
+            i+=(enleveCrochets(num_jardin_a),)
+            #recupere les parcelles de chacun
+            items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
+            parc = items.fetchall() 
+            i+=(enleveCrochets(parc),)
+            final.append(i)
+
+        
+        return render_template("users.html", data=final)
 
 
 @app.route('/send-register-form', methods=['POST', 'GET'])
