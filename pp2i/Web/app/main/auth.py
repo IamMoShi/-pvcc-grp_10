@@ -1,13 +1,12 @@
 from flask import render_template, Blueprint, session, redirect, request
 
-from pp2i.Web.app.fonctions.login.register import register
-from pp2i.Web.app.fonctions.login.hash import hash
+from ..fonctions.login.register import register
+from ..fonctions.login.hash import hash
 from ..fonctions.main.enleve_crochets import enleve_crochets
-from pp2i.Web.app.fonctions.login.signin import signin
+from ..fonctions.login.signin import signin
 from ..database.get_db import get_db
 
 auth = Blueprint('auth', __name__)
-
 
 @auth.route('/signin')
 def signin():

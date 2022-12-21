@@ -10,11 +10,12 @@ def create_app():
     Session(app)
 
     from .main.main import main
-    from .main.auth import auth
-    from .main.admin import admin
-    from  .main.user import user
-    from .main.plante import plante
+    # from .main.auth import auth
+    # from .main.admin import admin
+    # from .main.user import user
+    # from .main.plante import plante
 
     app.register_blueprint(main)
-    app.register_blueprint(auth)
+    #app.register_blueprint(auth)
     return app
+
