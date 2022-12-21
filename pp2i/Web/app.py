@@ -124,6 +124,59 @@ def users():
         return render_template("users.html", data=final)
 
 
+@app.route('/users/<numero>')
+def userss(numero):
+    if not session.get("email"):
+        return redirect("/signin")
+
+    #vérifie que l'utilisateur a bien accès à ce jardin (qu'il a pas triché)
+    listeJardins=[]
+    for i in session.get("parcelles"):
+        db = get_db()
+        items = db.cursor()
+        items.execute("SELECT p.id_jardin FROM parcelle p JOIN utilisateur u ON p.id_user=u.id_user WHERE id_parcelle=?", (i,))
+        listeJardins.append((items.fetchall())[0][0])
+    
+    cestpasbon=True
+    for j in listeJardins :
+        if int(numero)==int(j):
+            cestpasbon=False
+    
+    #si l'utilisateur ne fait pas partie du jardin demandé en numéro
+    if cestpasbon==True:
+        return render_template("error_page.html", msg="Vous n'avez pas accès à ce jardin")
+    
+    else:
+        db = get_db()
+        items = db.cursor()
+
+        items.execute("SELECT u.id_user, u.nom, u.prenom, u.mail FROM utilisateur u JOIN parcelle p ON p.id_user=u.id_user WHERE id_jardin=?", (numero,))
+        data = items.fetchall()
+        final = []
+
+        for i in data:
+            items.execute(
+                "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
+                (i[0],))
+            admin = items.fetchall()
+            if len(admin) != 0:
+                i += ("admin",)
+            else:
+                i += ("pas admin",)
+            # recupere les jardins de chacun
+            items.execute(
+                "SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
+                (i[0],))
+            num_jardin_a = items.fetchall()
+            i += (enleveCrochets(num_jardin_a),)
+            # recupere les parcelles de chacun
+            items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
+            parc = items.fetchall()
+            i += (enleveCrochets(parc),)
+            final.append(i)
+
+        return render_template("users.html", data=final, numero=numero)
+
 @app.route('/send-register-form', methods=['POST', 'GET'])
 def register_post():
     if request.method == 'POST':
@@ -343,7 +396,7 @@ def mesparcelles():
         l_polynomes_txt = l_polygone_txt[::-1]
         l_legende = image_py.legende_fonction(database.cursor(), l_id)
 
-        parametres.append([l_polynomes_txt, l_legende, chemin_image, id_parcelle])
+        parametres.append([l_polynomes_txt, l_legende, chemin_image, id_parcelle, id_jardin])
 
     chemin = "potager_user/potager_user_affichage_global.html"
     return render_template(chemin, parametres=parametres)
@@ -363,6 +416,14 @@ def mon_potager(numero):
         numero = int(numero)
     except:
         return 'error ce numero n\'est pas correct'
+
+    #vérifie que l'utilisateur a bien accès à cette parcelle (et qu'il a pas triché)
+    cestpasbon=True
+    for num in session.get("parcelles"):
+        if num==numero:
+            cestpasbon=False
+    if cestpasbon:
+        return render_template("error_page.html", msg="Vous n'avez pas accès à cette parcelle")
 
     database = get_db()
     items = database.cursor()
@@ -391,7 +452,7 @@ def mon_potager(numero):
     print(chemin_image)
 
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
-                           l_legende=image_py.legende_fonction(database.cursor(), l_id), numeor=numero)
+                           l_legende=image_py.legende_fonction(database.cursor(), l_id), numero=numero, id_jardin=id_jardin)
 
 
 @app.route('/id_plante/<numero>')
