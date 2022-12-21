@@ -110,5 +110,3 @@ def aleatoire(id_parcelle:int):
     if cur.fetchall()==[]: # si la position est libre
         cur.execute("insert into contient values(?,?,?,?)",(id_parcelle,id,x,y)) # on ajoute la plante à la parcelle
         data.commit()
-
-
