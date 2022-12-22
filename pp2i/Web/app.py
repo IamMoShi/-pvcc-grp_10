@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, g, session
 from flask_session import Session
+from os import listdir
 import back_python.login.register as register_py
 import back_python.login.signin as signin_py
 import back_python.login.hash as hash_py
@@ -96,7 +97,7 @@ def users():
         db = get_db()
         items = db.cursor()
 
-        items.execute("SELECT u.id_user, u.nom, u.prenom, u.mail FROM utilisateur u")
+        items.execute("SELECT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u")
         data = items.fetchall()
         final = []
 
@@ -119,9 +120,8 @@ def users():
             items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
             parc = items.fetchall()
             i += (enleveCrochets(parc),)
-            i+=("/static/images/icons/gardener.png",)
+            i+=(i[4],)
             final.append(i)
-
         return render_template("users.html", data=final)
 
 
@@ -151,7 +151,7 @@ def userss(numero):
         db = get_db()
         items = db.cursor()
 
-        items.execute("SELECT u.id_user, u.nom, u.prenom, u.mail FROM utilisateur u JOIN parcelle p ON p.id_user=u.id_user WHERE id_jardin=?", (numero,))
+        items.execute("SELECT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN parcelle p ON p.id_user=u.id_user WHERE id_jardin=?", (numero,))
         data = items.fetchall()
         final = []
 
@@ -174,8 +174,8 @@ def userss(numero):
             items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
             parc = items.fetchall()
             i += (enleveCrochets(parc),)
-            i+=("/static/images/icons/gardener.png",)
-            final.append(i)
+            i+=(i[4],)
+            final.append(i) 
 
         return render_template("users.html", data=final, numero=numero)
 
@@ -478,7 +478,7 @@ def vos_informations():
     #     return render_template('error_page.html', msg='Vous n\'avez pas accès à ces informations')
 
     items = db.cursor()
-    items.execute('SELECT nom, prenom, mail FROM utilisateur WHERE id_user = ?', (session.get("id_user"),))
+    items.execute('SELECT nom, prenom, mail, img FROM utilisateur WHERE id_user = ?', (session.get("id_user"),))
     resultat = items.fetchall()[0]
 
     if items == []:
@@ -487,7 +487,8 @@ def vos_informations():
     donnees = {
         'lastname': resultat[0],
         'firstname': resultat[1],
-        'email': resultat[2]
+        'email': resultat[2],
+        'img' : resultat[3]
     }
 
     items = db.cursor()
@@ -509,10 +510,28 @@ def vos_informations():
             items = db.cursor()
             items.execute('SELECT j.id_jardin, j.code_postal, j.ville, j.numero_rue, j.nom_rue, j.id_referent, u.prenom, u.nom FROM jardin j JOIN utilisateur u ON u.id_user=j.id_referent WHERE id_jardin = ?', (i,))
             jardins.append(items.fetchall()[0])
-                    
-        
-    return render_template('potager_user/user_page.html', donnees=donnees, parcelles=parcelles, jardins=jardins)
+        return render_template('potager_user/user_page.html', donnees=donnees, parcelles=parcelles, jardins=jardins)
 
+    return render_template('potager_user/user_page.html', donnees=donnees, parcelles=parcelles)
+
+@app.route('/changePhoto')
+def changePhoto():
+    if not session["id_user"]:
+        return redirect('/')
+
+    listeImg = listdir("static/images/photos_profil")
+        
+    return render_template('changePhoto.html', listeImg=listeImg)
+
+@app.route('/changePhoto/<chemin>')
+def changePhotoo(chemin):
+
+    db=get_db()
+    items=db.cursor()
+    items.execute("UPDATE utilisateur SET img=? WHERE id_user=?", ("/static/images/photos_profil/"+chemin ,session.get('id_user'),))
+    db.commit()
+    
+    return redirect('/user/vos_informations')
 
 @app.route('/monpotager/<numero>/edit')
 def edit_potager(numero):

@@ -27,6 +27,8 @@ main {
 div.general {
     border: solid darkgreen 2px;
     padding: 5px;
+    display: flex;
+    flex-direction: row;
 }
 
 div.titre {
@@ -81,3 +83,35 @@ div.contenujard{
     color: rgb(70, 70, 70);
     
 }
+
+.pdp{
+    max-width: 12%;
+    height: auto;
+    margin-left: auto;
+}
+
+.changePhoto{
+    display: block;
+    margin-top: 10px;
+    margin-left: 30px;
+    font-size: 100%;
+    padding: 5px 20px;
+    color: rgb(61, 61, 61);
+    border-color: rgb(80, 165, 99);
+}
+
+a{
+    text-decoration: none;
+    color: rgb(61, 61, 61);
+}
+a:hover{
+    color: white;
+}
+button.changePhoto {
+    transition-duration: 0.4s;
+  }
+  
+button.changePhoto:hover {
+    background-color: #4CAF50; /* Green */
+    color: white;
+  }
