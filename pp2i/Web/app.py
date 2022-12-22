@@ -462,23 +462,23 @@ def id_plante(numero):
     return numero
 
 
-@app.route('/user/vos_informations/<numero>')
-def vos_informations(numero):
+@app.route('/user/vos_informations')
+def vos_informations():
     if not session.get("email"):
         return redirect("/signin")
-    try:
-        numero = int(numero)
-    except:
-        return 'error ce numero n\'est pas correct'
+    # try:
+    #     numero = int(numero)
+    # except:
+    #     return 'error ce numero n\'est pas correct'
 
     db = get_db()
-    items = db.cursor()
-    items.execute('SELECT count(*) FROM parcelle WHERE id_user = ?', (session.get("id_user")))
-    if not items.fetchall()[0]:
-        return render_template('error_page.html', msg='Vous n\'avez pas accès à ces informations')
+    # items = db.cursor()
+    # items.execute('SELECT count(*) FROM parcelle WHERE id_user = ?', (session.get("id_user"),))
+    # if not items.fetchall()[0]:
+    #     return render_template('error_page.html', msg='Vous n\'avez pas accès à ces informations')
 
     items = db.cursor()
-    items.execute('SELECT nom, prenom, mail FROM utilisateur WHERE id_user = ?', (numero,))
+    items.execute('SELECT nom, prenom, mail FROM utilisateur WHERE id_user = ?', (session.get("id_user"),))
     resultat = items.fetchall()[0]
 
     if items == []:
@@ -491,7 +491,7 @@ def vos_informations(numero):
     }
 
     items = db.cursor()
-    items.execute('SELECT * FROM parcelle WHERE id_user = ?', (numero,))
+    items.execute('SELECT * FROM parcelle WHERE id_user = ?', (session.get("id_user"),))
     resultat = items.fetchall()
     parcelles = {}
     liste_parcelles = []
