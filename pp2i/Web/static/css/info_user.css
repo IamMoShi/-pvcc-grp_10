@@ -52,4 +52,32 @@ div.parcelle {
     font-size: larger;
     margin: 5px auto;
     font-weight: bold;
+    margin-left: 10px;
+}
+
+.id_jardin, .taille_parcelle, .nom, .prenom, .email{
+    margin-left: 30px;
+}
+
+div.jardins{
+    margin-top: 20px;
+    border: solid darkgreen 2px;
+    padding: 5px;
+}
+
+div.numjard{
+    font-size: larger;
+    font-weight: bold;
+    margin: 10px;
+}
+
+div.contenujard{
+    margin-left: 30px;
+    font-size: 110%;
+}
+
+.remarques{
+    margin-left: 30px;
+    color: rgb(70, 70, 70);
+    
 }

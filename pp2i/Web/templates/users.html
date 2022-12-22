@@ -16,33 +16,15 @@
 
             <div id="horizontal">
                 <div id="vertical">
-                    <div class="case">
-
-                    
-                    <div id="imgprof"></div>
-                    <div id="affichagepropre">
-                        <div id="msgBase"></div>
-                        <ul><div id="nom"></div><div id="n"></div></ul>
-                        <ul><div id="prenom"></div><div id="p"></div></ul>
-                        <ul><div id="mail"></div><a href="mailto:{{data[3]}}" id="m"></a></ul>
-                        <ul><div id="iduser"></div><div id="i"></div></ul>
-                        <ul><div id="statut"></div><div id="s"></div></ul>
-                        <ul><div id="jardins"></div><div id="j"></div></ul>
-                        <ul><div id="parcelles"></div><div id="pa"></div></ul>
-                        
-                    </div>
-                </div>
-                </div>
-                <div id="vertical">
                     {%if numero%}
                     <h2>Les jardiniers du jardin {{numero}}</h2>
                     {%else%}
                     <h2>Les jardiniers:</h2>
                     {%endif%}
                     <h3>Cliquez pour afficher un profil!</h3>
-
+                    
                     <table class="coord">
-
+                        
                         <tr>
                             <th>Noms</th>
                             <th>Statut</th>
@@ -50,7 +32,6 @@
                         {%for data in data%}
 
                         <tr class="personne"
-                            
                             onclick="afficherprofil('{{data[1]}}','{{data[2]}}','{{data[3]}}','{{data[0]}}','{{data[4]}}', '{{data[5]}}', '{{data[6]}}', '{{data[7]}}' )">
                             <td>{{data[2]}} {{data[1]}}</td></a>
                             <td>{{data[4]}}</td>
@@ -58,24 +39,62 @@
                         {%endfor%}
                     </table>
                 </div>
+                
+                <div id="vertical">
+                    <div class="case">
 
+
+                        <div id="imgprof"></div>
+                        <div id="affichagepropre">
+                            <div id="msgBase"></div>
+                            <ul>
+                                <div id="nom"></div>
+                                <div id="n"></div>
+                            </ul>
+                            <ul>
+                                <div id="prenom"></div>
+                                <div id="p"></div>
+                            </ul>
+                            <ul>
+                                <div id="mail"></div><a href="mailto:{{data[3]}}" id="m"></a>
+                            </ul>
+                            <ul>
+                                <div id="iduser"></div>
+                                <div id="i"></div>
+                            </ul>
+                            <ul>
+                                <div id="statut"></div>
+                                <div id="s"></div>
+                            </ul>
+                            <ul>
+                                <div id="jardins"></div>
+                                <div id="j"></div>
+                            </ul>
+                            <ul>
+                                <div id="parcelles"></div>
+                                <div id="pa"></div>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
                 <script>
                     var img = document.createElement("img");
                     var pasDeClick = new Boolean(true);
-                    
-                    if (pasDeClick){
+
+                    if (pasDeClick) {
                         document.getElementById('msgBase').textContent = "Cliquez sur une case pour afficher un profil!"
-                        
+
                     }
                     function afficherprofil(nom, prenom, mail, iduser, statut, jardins, parcelles, chemin) {
-                        
+
                         img.src = chemin;
-                        img.style.width="20%";
-                        img.style.marginBottom="3%";
-            
+                        img.style.width = "20%";
+                        img.style.marginBottom = "3%";
+
                         var div = document.getElementById("imgprof");
                         div.appendChild(img);
-                        document.getElementById('msgBase').textContent="";
+                        document.getElementById('msgBase').textContent = "";
                         document.getElementById('prenom').textContent = "Prénom: ";
                         document.getElementById('p').textContent = prenom;
                         document.getElementById('nom').textContent = "Nom: ";
@@ -90,7 +109,7 @@
                         document.getElementById('j').textContent = jardins;
                         document.getElementById('parcelles').textContent = "Jardine dans ces parcelles: ";
                         document.getElementById('pa').textContent = parcelles;
-                           
+
                     }
                 </script>
 </body>

@@ -22,12 +22,19 @@ h2{
     margin-bottom: 5%;
     margin-top: 2%;
 }
+@media (min-width: 1200px){
 
-#horizontal{
-    display: flex;
-    flex-direction:row;
-    justify-content:space-around;
-    margin-top: 5%;
+    #horizontal{
+        display: flex;
+        flex-direction:row;
+        justify-content:space-around;
+        margin-top: 5%;
+    }
+ 
+    .coord{
+        margin-left: 5%;
+        width: 90%;
+    }
 }
 
 #vertical{
@@ -39,11 +46,6 @@ h2{
 
     border-left: dotted 2px lightgray;
     padding-bottom: 3%;
-    
-}
-.coord{
-    margin-left: 5%;
-    width: 90%;
 }
 .personne:hover{
     background-color: rgb(243, 243, 243);

@@ -503,7 +503,15 @@ def vos_informations():
         })
     donnees.update({'parcelles': liste_parcelles})
 
-    return render_template('potager_user/user_page.html', donnees=donnees, parcelles=parcelles)
+    if session['admin']=='oui':
+        jardins=[]
+        for i in session.get('num_jardin_a'):
+            items = db.cursor()
+            items.execute('SELECT j.id_jardin, j.code_postal, j.ville, j.numero_rue, j.nom_rue, j.id_referent, u.prenom, u.nom FROM jardin j JOIN utilisateur u ON u.id_user=j.id_referent WHERE id_jardin = ?', (i,))
+            jardins.append(items.fetchall()[0])
+                    
+        
+    return render_template('potager_user/user_page.html', donnees=donnees, parcelles=parcelles, jardins=jardins)
 
 
 @app.route('/monpotager/<numero>/edit')

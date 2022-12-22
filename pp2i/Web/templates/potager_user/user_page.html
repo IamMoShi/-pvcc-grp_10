@@ -31,7 +31,19 @@
         </div>
         {%endfor%}
     </div>
-
+    {%if session['admin']%}
+    <div class="jardins">
+        <div class="titre"><h2>Les jardins que vous administrez:</h2></div>
+        <em class="remarques">Vous administrez ces jardins, cela veut dire que vous pouvez y créer de nouvelles parcelles et les attribuer à des jardiniers.</em>
+        {%for jard in jardins%}
+            <div class="numjard">Jardin numéro {{jard[0]}}</div>
+            <div class="contenujard">
+                <b></b>Situé : {{jard[3]}} rue des {{jard[4]}} dans la ville de {{jard[2]}} {{jard[1]}} <br>
+                Référent.e de ce jardin : {{jard[6]}} {{jard[7]}} (identifiant: {{jard[5]}})
+            </div>
+        {%endfor%}
+    </div>
+    {%endif%}
 </main>
 </body>
 </html>
