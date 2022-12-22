@@ -119,6 +119,7 @@ def users():
             items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
             parc = items.fetchall()
             i += (enleveCrochets(parc),)
+            i+=("/static/images/icons/gardener.png",)
             final.append(i)
 
         return render_template("users.html", data=final)
@@ -173,6 +174,7 @@ def userss(numero):
             items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
             parc = items.fetchall()
             i += (enleveCrochets(parc),)
+            i+=("/static/images/icons/gardener.png",)
             final.append(i)
 
         return render_template("users.html", data=final, numero=numero)

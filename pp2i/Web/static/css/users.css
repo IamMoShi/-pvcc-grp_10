@@ -91,6 +91,10 @@ h3{
     font-size: 120%;
 }
 
+#pa{
+    margin-bottom: 10%;
+}
+
 #msgBase{
     color: rgb(90, 90, 90);
     text-transform: uppercase;
