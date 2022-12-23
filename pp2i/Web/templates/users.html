@@ -32,7 +32,7 @@
                         {%for data in data%}
 
                         <tr class="personne"
-                            onclick="afficherprofil('{{data[1]}}','{{data[2]}}','{{data[3]}}','{{data[0]}}','{{data[5]}}', '{{data[6]}}', '{{data[7]}}', '{{data[8]}}' )">
+                            onclick="afficherprofil('{{data[1]}}','{{data[2]}}','{{data[3]}}','{{data[0]}}','{{data[5]}}', '{{data[6]}}', '{{data[7]}}', '{{data[8]}}' , '{{data[9]}}')">
                             <td>{{data[2]}} {{data[1]}}</td></a>
                             <td>{{data[5]}}</td>
                         </tr>
@@ -75,6 +75,11 @@
                                 <div id="pa"></div>
                             </ul>
 
+                            <ul>
+                                <div id="referent"></div>
+                                <div id="re"></div>
+                            </ul>
+
                         </div>
                     </div>
                 </div>
@@ -86,11 +91,17 @@
                         document.getElementById('msgBase').textContent = "Cliquez sur une case pour afficher un profil!"
 
                     }
-                    function afficherprofil(nom, prenom, mail, iduser, statut, jardins, parcelles, chemin) {
+                    function afficherprofil(nom, prenom, mail, iduser, statut, jardins, parcelles, chemin, referent) {
 
                         img.src = chemin;
                         img.style.width = "20%";
                         img.style.marginBottom = "3%";
+                        document.getElementById('jardins').textContent = "";
+                        document.getElementById('j').textContent="";
+                        document.getElementById('parcelles').textContent = "";
+                        document.getElementById('pa').textContent = "";
+                        document.getElementById('referent').textContent = "";
+                        document.getElementById('re').textContent = "";
 
                         var div = document.getElementById("imgprof");
                         div.appendChild(img);
@@ -105,10 +116,36 @@
                         document.getElementById('i').textContent = iduser;
                         document.getElementById('statut').textContent = "Statut: ";
                         document.getElementById('s').textContent = statut;
-                        document.getElementById('jardins').textContent = "Jardins administrés: ";
-                        document.getElementById('j').textContent = jardins;
-                        document.getElementById('parcelles').textContent = "Jardine dans ces parcelles: ";
-                        document.getElementById('pa').textContent = parcelles;
+                        if (jardins.length>2){
+                            if (jardins.length==3){
+                                document.getElementById('jardins').textContent = "Administre ce jardin: ";
+                            }else{
+                                document.getElementById('jardins').textContent = "Administre ces jardins: ";
+                            }
+                            for (var i=1; i<jardins.length-1; i++ ){
+                                document.getElementById('j').textContent += jardins[i];
+                            }
+                        }
+                        if (parcelles.length>2){
+                            if (parcelles.length==3){
+                                document.getElementById('parcelles').textContent = "Jardine dans cette parcelle: ";
+                            }else{
+                                document.getElementById('parcelles').textContent = "Jardine dans ces parcelles: ";
+                            }
+                            for (var i=1; i<parcelles.length-1; i++ ){
+                                document.getElementById('pa').textContent += parcelles[i];
+                            }
+                        }
+                        if (referent.length>2){
+                            if (referent.length==3){
+                                document.getElementById('referent').textContent = "Référent.e de ce jardin: ";
+                            }else{
+                                document.getElementById('re').textContent = "Référent.e de ces jardins: ";
+                            }
+                            for (var i=1; i<referent.length-1; i++ ){
+                                document.getElementById('re').textContent += referent[i];
+                            }
+                        }
 
                     }
                 </script>

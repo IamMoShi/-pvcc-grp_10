@@ -81,7 +81,7 @@ h3{
     line-height: 150%;
 }
 
-#nom, #prenom, #mail, #iduser, #statut, #jardins, #parcelles{
+#nom, #prenom, #mail, #iduser, #statut, #jardins, #parcelles, #referent{
     float: left;
     color: rgb(90, 90, 90);
     text-transform: uppercase;
@@ -89,11 +89,11 @@ h3{
     margin-right: 2%;
 }
 
-#n, #p, #m, #i, #s, #j, #pa{
+#n, #p, #m, #i, #s, #j, #pa, #re{
     font-size: 120%;
 }
 
-#pa{
+#re{
     margin-bottom: 10%;
 }
 

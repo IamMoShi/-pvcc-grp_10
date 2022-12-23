@@ -102,14 +102,22 @@ def users():
         final = []
 
         for i in data:
+            statut=""
             items.execute(
                 "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
                 (i[0],))
             admin = items.fetchall()
             if len(admin) != 0:
-                i += ("admin",)
-            else:
-                i += ("pas admin",)
+                statut += "administrateur.trice, "
+            items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
+            if len(items.fetchall()) != 0:
+                statut += "jardinier, "
+            items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
+            if len(items.fetchall()) != 0:
+                statut += "référent.e "
+            if statut=="":
+                statut = " - "
+            i+=(statut,)
             # recupere les jardins de chacun
             items.execute(
                 "SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
@@ -121,6 +129,10 @@ def users():
             parc = items.fetchall()
             i += (enleveCrochets(parc),)
             i+=(i[4],)
+            items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
+            ref=items.fetchall()
+            i += (enleveCrochets(ref),)
+
             final.append(i)
         return render_template("users.html", data=final)
 
@@ -156,14 +168,22 @@ def userss(numero):
         final = []
 
         for i in data:
+            statut=""
             items.execute(
                 "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
                 (i[0],))
             admin = items.fetchall()
             if len(admin) != 0:
-                i += ("admin",)
-            else:
-                i += ("pas admin",)
+                statut += "administrateur.trice, "
+            items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
+            if len(items.fetchall()) != 0:
+                statut += "jardinier, "
+            items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
+            if len(items.fetchall()) != 0:
+                statut += "référent.e "
+            if statut=="":
+                statut = " - "
+            i+=(statut,)
             # recupere les jardins de chacun
             items.execute(
                 "SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
@@ -175,7 +195,11 @@ def userss(numero):
             parc = items.fetchall()
             i += (enleveCrochets(parc),)
             i+=(i[4],)
-            final.append(i) 
+            items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
+            ref=items.fetchall()
+            i += (enleveCrochets(ref),)
+
+            final.append(i)
 
         return render_template("users.html", data=final, numero=numero)
 

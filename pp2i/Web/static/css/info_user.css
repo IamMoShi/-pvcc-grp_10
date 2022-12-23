@@ -85,8 +85,8 @@ div.contenujard{
 }
 
 .pdp{
-    max-width: 12%;
-    height: auto;
+    max-height: 180px;
+    width: auto;
     margin-left: auto;
 }
 
@@ -100,13 +100,22 @@ div.contenujard{
     border-color: rgb(80, 165, 99);
 }
 
-a{
+a.changementPhoto{
     text-decoration: none;
     color: rgb(61, 61, 61);
 }
-a:hover{
+a.changementPhoto:hover{
     color: white;
 }
+
+a.voirJardiniers{
+    text-decoration: none;
+    color: rgb(60, 92, 67);
+}
+a.voirJardiniers:hover{
+    color: rgb(51, 138, 73);
+}
+
 button.changePhoto {
     transition-duration: 0.4s;
   }

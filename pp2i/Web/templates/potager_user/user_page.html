@@ -25,8 +25,9 @@
                 <div class="nom">Nom : {{donnees['lastname']}}</div>
                 <div class="prenom">Prénom : {{donnees['firstname']}}</div>
                 <div class="email">Email : {{donnees['email']}}</div>
+                <div class="nom">Numéro identifiant: {{session.get('id_user')}}</div>
             </div>
-            <button class="changePhoto"><a href="/changePhoto">Choisir une autre photo de profil</a></button>
+            <button class="changePhoto"><a class="changementPhoto" href="/changePhoto">Choisir une autre photo de profil</a></button>
         </div>
             <img class="pdp" src="{{donnees['img']}}">
         </div>
@@ -38,8 +39,8 @@
             {% for i in donnees['parcelles']%}
             <div class="parcelle {{i}}">
                 <div class="numero_parcelle">Parcelle numéro : {{i}}</div>
-                <div class="id_jardin">Présente dans le jardin : {{ parcelles[i][1] }}</div>
-                <div class="taille_parcelle">De taille : {{ parcelles[i][3] }} x {{ parcelles[i][3] }}</div>
+                <div class="id_jardin">Présente dans le jardin : {{ parcelles[i][0] }} <a class="voirJardiniers" href="/users/{{parcelles[i][0]}}"> (Voir les jardiniers du jardin {{parcelles[i][0]}})</a></div>
+                <div class="taille_parcelle">De taille : {{ parcelles[i][2] }} x {{ parcelles[i][3] }}</div>
             </div>
             {%endfor%}
         </div>
