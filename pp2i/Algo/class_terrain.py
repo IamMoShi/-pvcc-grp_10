@@ -62,7 +62,7 @@ class Terrain:
         un booléen représentant le succès de l'opération et aussi un message,
         on se concentre sur la création d'un terrain rectangulaire
         """
-e
+
         if self.longueur < 0:
             self.longueur = -self.longueur
             self.creation_terrain()  # auto adaptation aux valeurs négatives
