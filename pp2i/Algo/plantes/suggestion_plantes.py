@@ -1,12 +1,12 @@
 import sqlite3
 import random
 
-data = sqlite3.connect("Algo/plantes/databse.db")
+data = sqlite3.connect("pp2i/Web/database/database.db")
 
 def id_to_nom(id:int) -> str:
 # renvoie le nom d'une plante à partir de son id
     cur = data.cursor()
-    cur.execute("select nom from plantes where id like ?",(id,))
+    cur.execute("select nom from plante where id_plante like ?",(id,))
     donnees=cur.fetchall()
     return donnees[0][0]
 
@@ -46,7 +46,7 @@ def coords_voisins(x:int,y:int,liste_coords_plantes:list,rayon:int) -> list:
 def plantes_compagnes(plante:int) -> list:
 # renvoie les plantes compagnes d'une plante
     cur = data.cursor()
-    cur.execute("select id from plantes where nom like ?",(plante,)) # on cherche l'id de la plante
+    cur.execute("select id_plante from plante where nom like ?",(plante,)) # on cherche l'id de la plante
     donnees=cur.fetchall()
     for i in donnees:
         id=i[0]
@@ -62,7 +62,7 @@ def plantes_compagnes(plante:int) -> list:
 def plantes_ennemies(plante:int) -> list:
 # renvoie la liste des ennemis d'une plante
     cur = data.cursor()
-    cur.execute("select id from plantes where nom like ?",(plante,)) # on cherche l'id de la plante
+    cur.execute("select id_plante from plante where nom like ?",(plante,)) # on cherche l'id de la plante
     donnees=cur.fetchall()
     for i in donnees:
         id=i[0]
@@ -100,12 +100,12 @@ def suggestion(liste_plantes:list) -> tuple:
 def aleatoire(id_parcelle:int):
 # ajoute une plante aléatoire à la parcelle à une position aléatoire
     cur = data.cursor()
-    cur.execute("select max(id) from plantes") # on cherche l'id maximum des plantes
+    cur.execute("select max(id_plante) from plante") # on cherche l'id maximum des plantes
     donnees=cur.fetchall()
     max_id=donnees[0][0]
     id=random.randint(1,max_id) # on choisit une plante aléatoire
-    x=random.randint(100,1000)
-    y=random.randint(100,1000)
+    x=random.randint(0,100)
+    y=random.randint(0,100)
     cur.execute("select * from contient where x_plante = ? and y_plante = ?",(x,y)) # on vérifie que la position est libre
     if cur.fetchall()==[]: # si la position est libre
         cur.execute("insert into contient values(?,?,?,?)",(id_parcelle,id,x,y)) # on ajoute la plante à la parcelle
