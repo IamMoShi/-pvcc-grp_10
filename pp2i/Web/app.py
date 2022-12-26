@@ -155,53 +155,54 @@ def userss(numero):
         if int(numero)==int(j):
             cestpasbon=False
     
+    """Bon en fait non, pas de condition pour voir les jardiniers c'est complicado avec les histoires d'admins, référents, ..."""
     #si l'utilisateur ne fait pas partie du jardin demandé en numéro
-    if cestpasbon==True:
-        return render_template("error_page.html", msg="Vous n'avez pas accès à ce jardin")
+    # if cestpasbon==True:
+    #     return render_template("error_page.html", msg="Vous n'avez pas accès à ce jardin")
     
-    else:
-        db = get_db()
-        items = db.cursor()
+    #else:
+    db = get_db()
+    items = db.cursor()
 
-        items.execute("SELECT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN parcelle p ON p.id_user=u.id_user WHERE id_jardin=?", (numero,))
-        data = items.fetchall()
-        final = []
+    items.execute("SELECT DISTINCT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN parcelle p ON p.id_user=u.id_user WHERE p.id_jardin=? UNION SELECT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN administre a ON a.id_user=u.id_user WHERE a.id_jardin=? UNION SELECT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN jardin j ON j.id_referent=u.id_user WHERE j.id_jardin=?", (numero,numero,numero,))
+    data = items.fetchall()
+    final = []
 
-        for i in data:
-            statut=""
-            items.execute(
-                "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
-                (i[0],))
-            admin = items.fetchall()
-            if len(admin) != 0:
-                statut += "administrateur.trice, "
-            items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
-            if len(items.fetchall()) != 0:
-                statut += "jardinier, "
-            items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
-            if len(items.fetchall()) != 0:
-                statut += "référent.e "
-            if statut=="":
-                statut = " - "
-            i+=(statut,)
-            # recupere les jardins de chacun
-            items.execute(
-                "SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
-                (i[0],))
-            num_jardin_a = items.fetchall()
-            i += (enleveCrochets(num_jardin_a),)
-            # recupere les parcelles de chacun
-            items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
-            parc = items.fetchall()
-            i += (enleveCrochets(parc),)
-            i+=(i[4],)
-            items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
-            ref=items.fetchall()
-            i += (enleveCrochets(ref),)
+    for i in data:
+        statut=""
+        items.execute(
+            "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
+            (i[0],))
+        admin = items.fetchall()
+        if len(admin) != 0:
+            statut += "administrateur.trice, "
+        items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
+        if len(items.fetchall()) != 0:
+            statut += "jardinier, "
+        items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
+        if len(items.fetchall()) != 0:
+            statut += "référent.e "
+        if statut=="":
+            statut = " - "
+        i+=(statut,)
+        # recupere les jardins de chacun
+        items.execute(
+            "SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
+            (i[0],))
+        num_jardin_a = items.fetchall()
+        i += (enleveCrochets(num_jardin_a),)
+        # recupere les parcelles de chacun
+        items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
+        parc = items.fetchall()
+        i += (enleveCrochets(parc),)
+        i+=(i[4],)
+        items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
+        ref=items.fetchall()
+        i += (enleveCrochets(ref),)
 
-            final.append(i)
+        final.append(i)
 
-        return render_template("users.html", data=final, numero=numero)
+    return render_template("users.html", data=final, numero=numero)
 
 @app.route('/send-register-form', methods=['POST', 'GET'])
 def register_post():
