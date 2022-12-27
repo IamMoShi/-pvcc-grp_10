@@ -1,5 +1,6 @@
 import numpy as np
 
+
 '''
 Création de l'objet Terrain regroupant un ensemble de fonction applicable sur un terrain
 Ceci n'est que le début de la création de l'objet Terrain, il sera nécessaire d'ajouter des fonctionnalités !
@@ -165,3 +166,4 @@ class Terrain:
                 x = self.mon_terrain[i, j]
                 mon_terrain_colorie[i, j] = couleur(x)
         return mon_terrain_colorie
+

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, g
 from flask_session import Session
 
 
@@ -9,13 +9,24 @@ def create_app():
     app.config["SESSION_TYPE"] = "filesystem"
     Session(app)
 
+    # ====================
+    """
+    Import des blueprints
+    """
+    # ====================
     from .main.main import main
-    # from .main.auth import auth
-    # from .main.admin import admin
-    # from .main.user import user
-    # from .main.plante import plante
 
+    # ====================
+    """
+    Utilisation des blueprints
+    """
+    # ====================
     app.register_blueprint(main)
-    #app.register_blueprint(auth)
-    return app
 
+    @app.teardown_appcontext
+    def close_connection(exception):
+        db = getattr(g, '_database', None)
+        if db is not None:
+            db.close()
+
+    return app
