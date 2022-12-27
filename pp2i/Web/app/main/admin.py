@@ -82,6 +82,11 @@ def supp_parcelle(num_parcelle):
     items = db.cursor()
     items.execute('DELETE FROM parcelle WHERE id_parcelle=?', (num_parcelle,))
     db.commit()
+
+    for i in range(len(session['parcelles'])):
+        if int(session['parcelles'][i])==int(num_parcelle):
+            del session['parcelles'][i]
+        
     return redirect('/admin/attribution_parcelles')
 
 
