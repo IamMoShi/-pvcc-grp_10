@@ -36,6 +36,9 @@
             <div class="titre">
                 <h2>Vos parcelles</h2>
             </div>
+            {%if msg%}
+            {{msg}}
+            {%endif%}
             {% for i in donnees['parcelles']%}
             <div class="parcelle {{i}}">
                 <div class="numero_parcelle">Parcelle numéro : {{i}}</div>

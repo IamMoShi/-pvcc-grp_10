@@ -86,6 +86,7 @@ def supp_parcelle(num_parcelle):
     for i in range(len(session['parcelles'])):
         if int(session['parcelles'][i])==int(num_parcelle):
             del session['parcelles'][i]
+            break
         
     return redirect('/admin/attribution_parcelles')
 

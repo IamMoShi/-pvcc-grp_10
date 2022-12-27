@@ -28,15 +28,15 @@ def users():
                 (i[0],))
             admin = items.fetchall()
             if len(admin) != 0:
-                statut += "administrateur.trice, "
+                statut += "- administrateur.trice "
             items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
             if len(items.fetchall()) != 0:
-                statut += "jardinier, "
+                statut += "- jardinier "
             items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
             if len(items.fetchall()) != 0:
-                statut += "référent.e "
-            if statut == "":
-                statut = " - "
+                statut += "- référent.e "
+
+            statut += " - "
             i += (statut,)
             # recupere les jardins de chacun
             items.execute(
@@ -62,26 +62,26 @@ def userss(numero):
     if not session.get("email"):
         return redirect("/signin")
 
-    # vérifie que l'utilisateur a bien accès à ce jardin (qu'il a pas triché)
-    listeJardins = []
-    for i in session.get("parcelles"):
-        db = get_db()
-        items = db.cursor()
-        items.execute(
-            "SELECT p.id_jardin FROM parcelle p JOIN utilisateur u ON p.id_user=u.id_user WHERE id_parcelle=?", (i,))
-        listeJardins.append((items.fetchall())[0][0])
+    # # vérifie que l'utilisateur a bien accès à ce jardin (qu'il a pas triché)
+    # listeJardins = []
+    # for i in session.get("parcelles"):
+    #     db = get_db()
+    #     items = db.cursor()
+    #     items.execute(
+    #         "SELECT p.id_jardin FROM parcelle p JOIN utilisateur u ON p.id_user=u.id_user WHERE id_parcelle=?", (i,))
+    #     listeJardins.append((items.fetchall())[0][0])
 
-    cestpasbon = True
-    for j in listeJardins:
-        if int(numero) == int(j):
-            cestpasbon = False
+    # cestpasbon = True
+    # for j in listeJardins:
+    #     if int(numero) == int(j):
+    #         cestpasbon = False
 
-    """Bon en fait non, pas de condition pour voir les jardiniers c'est complicado avec les histoires d'admins, référents, ..."""
-    # si l'utilisateur ne fait pas partie du jardin demandé en numéro
-    # if cestpasbon==True:
-    #     return render_template("error_page.html", msg="Vous n'avez pas accès à ce jardin")
+    # """Bon en fait non, pas de condition pour voir les jardiniers c'est complicado avec les histoires d'admins, référents, ..."""
+    # # si l'utilisateur ne fait pas partie du jardin demandé en numéro
+    # # if cestpasbon==True:
+    # #     return render_template("error_page.html", msg="Vous n'avez pas accès à ce jardin")
 
-    # else:
+    # # else:
     db = get_db()
     items = db.cursor()
 
@@ -94,19 +94,18 @@ def userss(numero):
     for i in data:
         statut = ""
         items.execute(
-            "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
-            (i[0],))
+            "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ? AND a.id_jardin=?",
+            (i[0],numero,))
         admin = items.fetchall()
         if len(admin) != 0:
-            statut += "administrateur.trice, "
-        items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
+            statut += "- administrateur.trice "
+        items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ? AND id_jardin=?", (i[0],numero,))
         if len(items.fetchall()) != 0:
-            statut += "jardinier, "
-        items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
+            statut += "- jardinier"
+        items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ? AND id_jardin=?", (i[0],numero,))
         if len(items.fetchall()) != 0:
-            statut += "référent.e "
-        if statut == "":
-            statut = " - "
+            statut += "- référent.e"
+        statut += " - "
         i += (statut,)
         # recupere les jardins de chacun
         items.execute(
@@ -134,7 +133,7 @@ def mesparcelles():
     items = database.cursor()
     resultat = []
     if len(session["parcelles"]) == 0:
-        return render_template("error_page.html", msg="Vous n'avez pas encore de parcelles")
+        return render_template("error_page.html", msg="Vous n'avez pas encore de parcelles, contactez un administrateur pour qu'il vous en attribue une!")
 
     for i in range(len(session["parcelles"])):
         items.execute(
@@ -190,6 +189,9 @@ def vos_informations():
 
     if items == []:
         return 'La page demandé n\'existe pas'
+    msg=None
+    if len(session['parcelles'])==0:
+        msg="Vous n'avez pas encore de parcelles, contactez un administrateur pour qu'il vous en attribue une!"
 
     donnees = {
         'lastname': resultat[0],
@@ -221,7 +223,7 @@ def vos_informations():
             jardins.append(items.fetchall()[0])
         return render_template('potager_user/user_page.html', donnees=donnees, parcelles=parcelles, jardins=jardins)
 
-    return render_template('potager_user/user_page.html', donnees=donnees, parcelles=parcelles)
+    return render_template('potager_user/user_page.html', donnees=donnees, parcelles=parcelles, msg=msg)
 
 
 @user.route('/changePhoto')
