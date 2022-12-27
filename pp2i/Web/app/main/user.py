@@ -1,10 +1,12 @@
-from flask import Blueprint, render_template, redirect, g, session
+from flask import Blueprint, render_template, redirect, session
 from os import listdir
 
 from ..database.get_db import get_db
 from ..fonctions.main.enleve_crochets import enleve_crochets
-from ..fonctions.potager import transformation_polygone_v2 as tp
-from ..fonctions.potager import image as image_py
+from ..fonctions.potager.html_code_fonction import html_code_fonction
+from ..fonctions.potager.affichage_parcelle import affichage_parcelle
+from ..fonctions.potager.legende_fonction import legende_fonction
+from ..fonctions.potager.transformation_polygone_v2 import *
 
 user = Blueprint('user', __name__)
 
@@ -95,14 +97,14 @@ def userss(numero):
         statut = ""
         items.execute(
             "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ? AND a.id_jardin=?",
-            (i[0],numero,))
+            (i[0], numero,))
         admin = items.fetchall()
         if len(admin) != 0:
             statut += "- administrateur.trice "
-        items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ? AND id_jardin=?", (i[0],numero,))
+        items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ? AND id_jardin=?", (i[0], numero,))
         if len(items.fetchall()) != 0:
             statut += "- jardinier"
-        items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ? AND id_jardin=?", (i[0],numero,))
+        items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ? AND id_jardin=?", (i[0], numero,))
         if len(items.fetchall()) != 0:
             statut += "- référent.e"
         statut += " - "
@@ -133,7 +135,8 @@ def mesparcelles():
     items = database.cursor()
     resultat = []
     if len(session["parcelles"]) == 0:
-        return render_template("error_page.html", msg="Vous n'avez pas encore de parcelles, contactez un administrateur pour qu'il vous en attribue une!")
+        return render_template("error_page.html",
+                               msg="Vous n'avez pas encore de parcelles, contactez un administrateur pour qu'il vous en attribue une!")
 
     for i in range(len(session["parcelles"])):
         items.execute(
@@ -149,23 +152,24 @@ def mesparcelles():
     for i in range(len(resultat)):
         id_parcelle, id_jardin, longueur, largeur, polygone = resultat[i]
         l_polygone, l_id = polygone.split('//')
-        l_polygone = tp.string_to_lists(l_polygone)
-        l_id = tp.string_to_lists(l_id)
+        l_polygone = string_to_lists(l_polygone)
+        l_id = string_to_lists(l_id)
 
         longueur, largeur = round(longueur), round(largeur)
 
-        l_polygone_txt, chemin_image = image_py.html_code_fonction(l_polygone, l_id, id_parcelle)
+        l_polygone_txt, chemin_image = html_code_fonction(l_polygone, l_id, id_parcelle)
 
-        chemin_image = image_py.affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
+        chemin_image = affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
                                                    database.cursor())
 
         l_polynomes_txt = l_polygone_txt[::-1]
-        l_legende = image_py.legende_fonction(database.cursor(), l_id)
+        l_legende = legende_fonction(database.cursor(), l_id)
 
         parametres.append([l_polynomes_txt, l_legende, chemin_image, id_parcelle, id_jardin])
 
     chemin = "potager_user/potager_user_affichage_global.html"
     return render_template(chemin, parametres=parametres)
+
 
 # affichage individuel des parcelles (fonction d'ajout de plantes à mettre)
 @user.route('/mesparcelles/<numero>')
@@ -175,6 +179,7 @@ def mon_potager(numero):
     :param numero:
     :return:
     """
+
     if not session.get("email"):
         return redirect("/signin")
     try:
@@ -203,21 +208,21 @@ def mon_potager(numero):
 
     id_parcelle, id_jardin, longueur, largeur, polygone = resultat
     l_polygone, l_id = polygone.split('//')
-    l_polygone = tp.string_to_lists(l_polygone)
-    l_id = tp.string_to_lists(l_id)
+    l_polygone = string_to_lists(l_polygone)
+    l_id = string_to_lists(l_id)
 
     longueur, largeur = round(longueur), round(largeur)
 
-    l_polygone_txt, chemin_image = image_py.html_code_fonction(l_polygone, l_id, id_parcelle)
+    l_polygone_txt, chemin_image = html_code_fonction(l_polygone, l_id, id_parcelle)
 
-    chemin_image = image_py.affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
+    chemin_image = affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
                                                database.cursor())
 
     chemin = "potager_user/potager_user_affichage_individuel.html"
     print(chemin_image)
 
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
-                           l_legende=image_py.legende_fonction(database.cursor(), l_id), numero=numero,
+                           l_legende=legende_fonction(database.cursor(), l_id), numero=numero,
                            id_jardin=id_jardin)
 
 
@@ -242,9 +247,9 @@ def vos_informations():
 
     if items == []:
         return 'La page demandé n\'existe pas'
-    msg=None
-    if len(session['parcelles'])==0:
-        msg="Vous n'avez pas encore de parcelles, contactez un administrateur pour qu'il vous en attribue une!"
+    msg = None
+    if len(session['parcelles']) == 0:
+        msg = "Vous n'avez pas encore de parcelles, contactez un administrateur pour qu'il vous en attribue une!"
 
     donnees = {
         'lastname': resultat[0],

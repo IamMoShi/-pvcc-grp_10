@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, session, request, redirect
 
 from ..database.get_db import get_db
-from ..fonctions.potager import image as image_py
+from ..fonctions.potager.PotagerImage import PotagerImage
+from ..fonctions.potager.NouvelleParcelle import NouvelleParcelle
 
 admin = Blueprint('admin', __name__)
 
@@ -25,7 +26,7 @@ def definir_parcelle_post():
             largeur = int(request.form['largeur'])
             longueur = int(request.form['longueur'])
             id_jardin = request.form['id_jardin']
-            parcelle = image_py.NouvelleParcelle(longueur, largeur)
+            parcelle = NouvelleParcelle(longueur, largeur)
         except:
             return 'ERROR'
 
