@@ -1,4 +1,5 @@
-from flask import render_template, Blueprint, session, request
+from flask import Blueprint, render_template, session, request, redirect
+
 from ..database.get_db import get_db
 from ..fonctions.potager import image as image_py
 
@@ -58,15 +59,52 @@ def attribution_parcelles():
 
     db = get_db()
     items = db.cursor()
-    items.execute('SELECT id_jardin, numero_rue, nom_rue, ? FROM jardin WHERE id_referent LIKE ?',
-                  (session["num_jardin_a"][0], session["id_user"]))
+    items.execute(
+        'SELECT j.id_jardin, j.numero_rue, j.nom_rue, j.code_postal, j.ville, j.id_referent, u.prenom, u.nom FROM jardin j JOIN administre a ON a.id_jardin=j.id_jardin JOIN utilisateur u ON u.id_user=j.id_referent WHERE a.id_user=?',
+        (session["id_user"],))
     resultat = items.fetchall()
 
-    return render_template('admin/attribution_parcelle.html', resultat=resultat)
+    for i in range(len(resultat)):
+        items.execute(
+            "SELECT p.id_parcelle, p.longueur_parcelle, p.largeur_parcelle, p.id_user, u.prenom, u.nom FROM parcelle p JOIN utilisateur u ON u.id_user=p.id_user WHERE id_jardin=?",
+            (resultat[i][0],))
+        resultat[i] += ((items.fetchall()),)
 
-@admin.route('/test')
-def test():
-    resultat = [[1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50]]],
-                [1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50], [22, 1, 120, 50]]],
-                [1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50]]]]
-    return render_template('admin/attribution_parcelle.html', resultat=resultat)
+    liste_jardiniers = []
+    items.execute('SELECT id_user, prenom, nom FROM utilisateur')
+    liste_jardiniers.append(items.fetchall())
+    return render_template('admin/attribution_parcelle.html', resultat=resultat, liste_jardiniers=liste_jardiniers)
+
+
+@admin.route('/admin/supp_parcelle/<num_parcelle>')
+def supp_parcelle(num_parcelle):
+    db = get_db()
+    items = db.cursor()
+    items.execute('DELETE FROM parcelle WHERE id_parcelle=?', (num_parcelle,))
+    db.commit()
+
+    for i in range(len(session['parcelles'])):
+        if int(session['parcelles'][i])==int(num_parcelle):
+            del session['parcelles'][i]
+        
+    return redirect('/admin/attribution_parcelles')
+
+
+@admin.route('/admin/ajouter_parcelle', methods=['POST', 'GET'])
+def ajouter_parcelle():
+    if request.method == 'POST':
+        db = get_db()
+        items = db.cursor()
+        items.execute('SELECT max(id_parcelle) FROM parcelle')
+        new_id = int(items.fetchall()[0][0]) + 1
+        jardinier = request.form.get('jardinier')[0]
+    
+        if int(jardinier)==int(session.get('id_user')):
+            session['parcelles'].append(new_id)
+
+        items.execute(
+            'INSERT INTO parcelle values (?, ?, ?, ?, ?, "[[(0, 0), (0, 402), (2402, 402), (2402, 0)]]//[0]")',
+            (new_id, request.form.get('num_jardin'), jardinier, request.form.get('longueur'),
+             request.form.get('largeur'),))
+        db.commit()
+        return redirect('/admin/attribution_parcelles')

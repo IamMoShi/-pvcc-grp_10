@@ -16,6 +16,14 @@ def index():
 def test():
     data = sqlite3.connect("/home/mathis/Documents/pvcc-grp_10/pp2i/Web/database/database.db")
     mon_terrain = terrain.creation_terrain()
+<<<<<<< HEAD
+    mon_terrain, B, msg = terrain.ajout_plante(16, (0, 0), 1)
+    mon_terrain, B, msg = terrain.ajout_plante(20, (10, 30), 2)
+    mon_terrain, B, msg = terrain.ajout_plante(12, (50, 15), 3)
+    mon_terrain, B, msg = terrain.ajout_plante(18, (25, 2), 5)
+    mon_terrain, B, msg = terrain.ajout_plante(10, (26, 3), 7)
+    print(msg)
+=======
     cur = data.cursor()
     cur.execute("select id_plante,x_plante,y_plante from contient where id_parcelle like ?",(2,))
     result=cur.fetchall()

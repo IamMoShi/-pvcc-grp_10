@@ -1,14 +1,15 @@
-from flask import render_template, Blueprint, session, redirect, request
+from flask import Blueprint, render_template, redirect, session, request
 
-from ..fonctions.login.register import register
-from ..fonctions.login.hash import hash
-from ..fonctions.main.enleve_crochets import enleve_crochets
-from ..fonctions.login.signin import signin
+from ..fonctions.login import hash as hash_py
+from ..fonctions.login import register as register_py
+from ..fonctions.login import signin as signin_py
 from ..database.get_db import get_db
+from ..fonctions.main.enleve_crochets import enleve_crochets
 
-auth = Blueprint('auth', __name__)
+authentication = Blueprint('authentication', __name__)
 
-@auth.route('/signin')
+
+@authentication.route('/signin')
 def signin():
     session["email"] = None
     session["name"] = None
@@ -19,12 +20,12 @@ def signin():
     return render_template("login/login.html", b_signin=True, b_register=False)
 
 
-@auth.route('/register')
+@authentication.route('/register')
 def signup():
     return render_template("login/login.html", b_signin=False, b_register=True)
 
 
-@auth.route('/login')
+@authentication.route('/login')
 def login():
     session["email"] = None
     session["name"] = None
@@ -35,7 +36,7 @@ def login():
     return render_template("login/login.html", b_signin=True, b_register=True)
 
 
-@auth.route('/logout')
+@authentication.route('/logout')
 def logout():
     session["email"] = None
     session["name"] = None
@@ -46,7 +47,7 @@ def logout():
     return redirect("/")
 
 
-@auth.route('/send-register-form', methods=['POST', 'GET'])
+@authentication.route('/send-register-form', methods=['POST', 'GET'])
 def register_post():
     if request.method == 'POST':
 
@@ -56,7 +57,7 @@ def register_post():
         password = request.form['password']
         confirmation = request.form['confirmation']
 
-        validation = register(last_name, first_name, email, password, confirmation)
+        validation = register_py.register(last_name, first_name, email, password, confirmation)
 
         if validation[0]:
             db = get_db()
@@ -65,7 +66,7 @@ def register_post():
             if len(items.fetchall()[0]) != 1:
                 return redirect('/login')
 
-            pwd_hash = hash(password)
+            pwd_hash = hash_py.hash(password)
             items.execute('INSERT INTO utilisateur (nom, prenom, mail, mdp) VALUES (?,?,?,?)',
                           (last_name, first_name, email, pwd_hash))
             db.commit()
@@ -85,14 +86,14 @@ session["parcelles"]= [id_1, id_2, ...] renvoie les id des parcelles qu'on gère
 """
 
 
-@auth.route('/send-signin-form', methods=['POST', 'GET'])
+@authentication.route('/send-signin-form', methods=['POST', 'GET'])
 def signin_post():
     if request.method == "POST":
         email = request.form['email']
         password = request.form['password']
 
-        if signin(email, password):
-            pwd_hash = hash(password)
+        if signin_py.signin(email, password):
+            pwd_hash = hash_py.hash(password)
             db = get_db()
             items = db.cursor()
             items.execute("SELECT count(*) FROM utilisateur WHERE mail LIKE ? and mdp = ? ", (email, pwd_hash,))

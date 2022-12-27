@@ -1,37 +1,66 @@
 <!doctype html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Vos informations</title>
-    <link rel="stylesheet" href="/static/css/info_user.css"/>
+    <link rel="stylesheet" href="/static/css/info_user.css" />
 </head>
+
 <body>
-{% include "navBar.html" %}
-<div class="head"><H1>Votre profil</H1></div>
-<main>
-    <div class="general">
-        <div class="titre"><h2>Vos informations</h2></div>
-        <div class="partie1">
-            <div class="nom">Nom : {{donnees['lastname']}}</div>
-            <div class="prenom">Prénom : {{donnees['firstname']}}</div>
-            <div class="email">Email : {{donnees['email']}}</div>
-        </div>
+    {% include "navBar.html" %}
+    <div class="head">
+        <H1>Votre profil</H1>
     </div>
-
-    <div class="parcelles">
-        <div class="titre"><h2>Vos parcelles</h2></div>
-        {% for i in donnees['parcelles']%}
-        <div class="parcelle {{i}}">
-            <div class="numero_parcelle">Parcelle numéro : {{i}}</div>
-            <div class="id_jardin">Présente dans le jardin : {{ parcelles[i][1] }}</div>
-            <div class="taille_parcelle">De taille : {{ parcelles[i][3] }} x {{ parcelles[i][3] }}</div>
+    <main>
+        <div class="general">
+            <div>
+            <div class="titre">
+                <h2>Vos informations</h2>
+            </div>
+            <div class="partie1">
+                <div class="nom">Nom : {{donnees['lastname']}}</div>
+                <div class="prenom">Prénom : {{donnees['firstname']}}</div>
+                <div class="email">Email : {{donnees['email']}}</div>
+                <div class="nom">Numéro identifiant: {{session.get('id_user')}}</div>
+            </div>
+            <button class="changePhoto"><a class="changementPhoto" href="/changePhoto">Choisir une autre photo de profil</a></button>
         </div>
-        {%endfor%}
-    </div>
+            <img class="pdp" src="{{donnees['img']}}">
+        </div>
 
-</main>
+        <div class="parcelles">
+            <div class="titre">
+                <h2>Vos parcelles</h2>
+            </div>
+            {% for i in donnees['parcelles']%}
+            <div class="parcelle {{i}}">
+                <div class="numero_parcelle">Parcelle numéro : {{i}}</div>
+                <div class="id_jardin">Présente dans le jardin : {{ parcelles[i][0] }} <a class="voirJardiniers" href="/users/{{parcelles[i][0]}}"> (Voir les jardiniers du jardin {{parcelles[i][0]}})</a></div>
+                <div class="taille_parcelle">De taille : {{ parcelles[i][2] }} x {{ parcelles[i][3] }}</div>
+            </div>
+            {%endfor%}
+        </div>
+        {%if session['admin']%}
+        <div class="jardins">
+            <div class="titre">
+                <h2>Les jardins que vous administrez:</h2>
+            </div>
+            <em class="remarques">Vous administrez ces jardins, cela veut dire que vous pouvez y créer de nouvelles
+                parcelles et les attribuer à des jardiniers.</em>
+            {%for jard in jardins%}
+            <div class="numjard">Jardin numéro {{jard[0]}}</div>
+            <div class="contenujard">
+                <b></b>Situé : {{jard[3]}} rue des {{jard[4]}} dans la ville de {{jard[2]}} {{jard[1]}} <br>
+                Référent.e de ce jardin : {{jard[6]}} {{jard[7]}} (identifiant: {{jard[5]}})
+            </div>
+            {%endfor%}
+        </div>
+        {%endif%}
+    </main>
 </body>
+
 </html>

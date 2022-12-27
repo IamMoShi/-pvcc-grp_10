@@ -15,17 +15,138 @@ div.titre {
 
 
 main div.jardin {
-    margin: 20px 40px;
-    padding: 20px 20px;
-    border: solid 2px lightgreen;
+    margin: 1% 3%;
+    border: inset 5px rgb(87, 145, 87);
 }
 
+td:nth-child(5){background-color: white;border: white;}
 table, th, td {
-    border: 1px solid black;
     border-collapse: collapse;
 }
+
+table{
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+
 th, td{
     padding: 5px 5px;
     font-size: larger;
     min-width: 100px;
+    border-bottom: 1px solid #ddd;
+}
+
+th{
+    padding: 1%;
+}
+
+th, tr:nth-child(1){
+    background-color: #c2cebe;
+}
+
+th:nth-child(1){border-bottom: rgb(109, 109, 109) ;}
+
+
+tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+tr:hover, td:nth-child(5):hover {background-color: #ddd; border-bottom: #ddd; border-top: #ddd;}
+
+td{text-align: center;}
+
+h2{
+    margin: 1% 5%;
+}
+
+div.int{
+    margin: 2% 5%;
+    padding: 2%;
+    background-color: #7dbb7b;
+    border-radius: 2%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.ajout_parcelle{
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    font-size: larger;
+    margin-left: 5%;
+    line-height: 40px;
+    margin-bottom: 5%;
+}
+input[type=submit]{
+    width: 100%;
+    font-size: large;
+    display: block;
+    padding: 5px 20px;
+    color: rgb(61, 61, 61);
+    border-color: rgb(80, 165, 99);
+    border-radius: 4px;
+    transition-duration: 0.4s;
+    cursor:pointer;
+    text-transform: uppercase;
+    margin-top: 5%;
+}
+
+input[type=submit]:hover{
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+a.jard{
+    font-style: italic;
+    color: rgb(47, 90, 62);
+    font-size: large;
+}
+a.jard:hover{color: black;}
+div.jardi{
+    margin: 1%;
+}
+input[type=number]{
+    width: 15%;
+    text-align: center;
+    margin-right: 0;
+    font-size: 100%;
+}
+#num_jard{
+    text-align: center;
+    font-size: 90%;
+    padding: 1%;
+}
+#jardinier{
+    width: 30%;
+    text-align: center;
+    font-size: 90%;
+    padding: 1% 2%;
+    align-self:flex-end;
+    margin-block-end: auto;
+}
+a.supp{
+    color: #b83b3b;
+    text-decoration:solid;
+    font-size:medium;
+}
+a.supp:hover{
+    color: white;
+
+}
+button.sup{
+    padding: 2% 3%;
+    text-transform: uppercase;
+    border-radius: 5%;
+}
+button.sup:hover{
+    background-color: rgb(184, 104, 104);
+}
+
+.rq{
+    margin-left: 30px;
+    color: rgb(70, 70, 70);
+    font-weight:normal;
+    font-style: italic;
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 2%;
 }
