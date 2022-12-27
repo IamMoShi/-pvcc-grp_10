@@ -1,53 +1,91 @@
 <!doctype html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Attribution Parcelles</title>
-    <link rel="stylesheet" href="/static/css/attribution_parcelle.css"/>
+    <link rel="stylesheet" href="/static/css/attribution_parcelle.css" />
 </head>
 {% include "navBar.html" %}
+
 <body>
 
-<main>
-    <div class="titre"><h1>Attribution des parcelles</h1></div>
-    {% for jardin in resultat %}
-    <div class="jardin">
+    <main>
+        <div class="titre">
+            <h1>Attribution des parcelles</h1>
+            <p class="rq">Vous avez accès à cette section car vous administrez un ou plusieurs jardin(s). Dans cette section vous pouvez créer des parcelles dans ces jardins et les attribuer, ou en supprimer.</p>
+        </div>
+        {% for jardin in resultat %}
+        <div class="jardin">
 
-        <table>
-            <thead class="jardin" >
-            <tr>
-                <th colspan="4">
-                    Terrain numéro {{ jardin[0] }}, situé au {{ jardin[1] }}
-                    rue {{ jardin[2] }} de
-                    référent {{ jardin[3] }}
-                </th>
-            </tr>
+            <table>
+                <thead class="jardin">
+                    <tr>
+                        <th colspan="4">
+                            Jardin n°{{ jardin[0] }}<br>
+                            Situé au {{ jardin[1] }}
+                            rue {{ jardin[2] }} à {{jardin[4]}} ({{jardin[3]}}) <br>
+                            Référent.e: {{jardin[6]}} {{jardin[7]}} (n°{{ jardin[5] }})
+                        </th>
+                    </tr>
 
-            </thead>
-            <tbody class="information_jardin">
-            <tr>
-                <td>numéro parcelle</td>
-                <td>utilisateur</td>
-                <td>longueur</td>
-                <td>largeur</td>
-            </tr>
-            {% for parcelle in jardin[4] %}
-            <tr class="parcelle {{ jardin[0] }}">
-                <td>{{ parcelle[0] }}</td>
-                <td>{{ parcelle[1] }}</td>
-                <td>{{ parcelle[2] }}</td>
-                <td>{{ parcelle[3] }}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="information_jardin">
+                    <tr>
+                        <td>Numéro parcelle</td>
+                        <td>Longueur</td>
+                        <td>Largeur</td>
+                        <td>Jardinier</td>
+                    </tr>
+                    {%for parcelles in jardin[8]%}
+                    <tr>
+                        <td>{{parcelles[0]}}</td>
+                        <td>{{parcelles[1]}} </td>
+                        <td>{{parcelles[2]}} </td>
+                        <td>{{parcelles[4]}} {{parcelles[5]}} (n°{{parcelles[3]}}) </td>
+                        <td><button class="sup"><a href="/admin/supp_parcelle/{{parcelles[0]}}" class="supp">supprimer
+                                    parcelle</a></button></td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+            <div class="jardi">
+                <a href="/users/{{jardin[0]}}" class="jard">Voir les jardiniers du jardin {{jardin[0]}}</a>
+            </div>
 
-    </div>
-    {% endfor %}
+        </div>
+        {% endfor %}
+        <div class="int">
 
-</main>
+            <h2>Créer une nouvelle parcelle:</h2>
+            <div class="ajout_parcelle">
+                <form action="/admin/ajouter_parcelle" method="POST">
+                    <label>Numéro du jardin:</label>
+                    <select name="num_jardin" id="num_jard">
+                        {%for i in session.get('num_jardin_a')%}
+                        <option>{{i}}</option>
+                        {%endfor%}
+                    </select><br>
+                    <label>Longueur de la parcelle: </label><input type="number" name="longueur" min="10" max="1000"
+                        value="100"> <br>
+                    <label>Largeur de la parcelle: </label><input type="number" name="largeur" min="10" max="1000"
+                        value="100"><br>
+                    <label>Numéro d'identifiant du jardinier: </label>
+                    <select name="jardinier" id="jardinier">
+                        {%for j in liste_jardiniers[0]%}
+                        <option>{{j[0]}} ({{j[1]}} {{j[2]}})</option>
+                        {%endfor%}
+                    </select>
+                    <input type="submit" value="Créer une nouvelle parcelle">
+                </form>
+            </div>
+
+
+        </div>
+    </main>
 </body>
+
 </html>

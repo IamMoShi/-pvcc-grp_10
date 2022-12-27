@@ -15,13 +15,20 @@ def create_app():
     """
     # ====================
     from .main.main import main
-
+    from .main.authentication import authentication
+    from .main.user import user
+    from .main.admin import admin
+    from .main.plantes import plante
     # ====================
     """
     Utilisation des blueprints
     """
     # ====================
     app.register_blueprint(main)
+    app.register_blueprint(authentication)
+    app.register_blueprint(user)
+    app.register_blueprint(admin)
+    app.register_blueprint(plante)
 
     @app.teardown_appcontext
     def close_connection(exception):

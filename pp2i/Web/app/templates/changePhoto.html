@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <title>Choisissez une photo de profil:</title>
+    
+    <link rel="stylesheet" href="/static/css/changePhoto.css" />
+</head>
+
+<body>
+    {% include "navBar.html" %}
+    <div class="head">
+        <H1>Choisissez une photo de profil</H1>
+    </div>
+    <div class="liste">
+        {%for img in listeImg%}
+        <a class="image" href="/changePhoto/{{img}}"><img class="img" src="/static/images/photos_profil/{{img}}"></a>
+        {%endfor%}
+
+    </div>
+    <main>
+     
+    </main>
+</body>
+
+</html>

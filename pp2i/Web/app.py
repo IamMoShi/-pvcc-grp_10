@@ -102,7 +102,7 @@ def users():
         final = []
 
         for i in data:
-            statut=""
+            statut = ""
             items.execute(
                 "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
                 (i[0],))
@@ -115,9 +115,9 @@ def users():
             items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
             if len(items.fetchall()) != 0:
                 statut += "référent.e "
-            if statut=="":
+            if statut == "":
                 statut = " - "
-            i+=(statut,)
+            i += (statut,)
             # recupere les jardins de chacun
             items.execute(
                 "SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
@@ -128,9 +128,9 @@ def users():
             items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
             parc = items.fetchall()
             i += (enleveCrochets(parc),)
-            i+=(i[4],)
+            i += (i[4],)
             items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
-            ref=items.fetchall()
+            ref = items.fetchall()
             i += (enleveCrochets(ref),)
 
             final.append(i)
@@ -142,34 +142,37 @@ def userss(numero):
     if not session.get("email"):
         return redirect("/signin")
 
-    #vérifie que l'utilisateur a bien accès à ce jardin (qu'il a pas triché)
-    listeJardins=[]
+    # vérifie que l'utilisateur a bien accès à ce jardin (qu'il a pas triché)
+    listeJardins = []
     for i in session.get("parcelles"):
         db = get_db()
         items = db.cursor()
-        items.execute("SELECT p.id_jardin FROM parcelle p JOIN utilisateur u ON p.id_user=u.id_user WHERE id_parcelle=?", (i,))
+        items.execute(
+            "SELECT p.id_jardin FROM parcelle p JOIN utilisateur u ON p.id_user=u.id_user WHERE id_parcelle=?", (i,))
         listeJardins.append((items.fetchall())[0][0])
-    
-    cestpasbon=True
-    for j in listeJardins :
-        if int(numero)==int(j):
-            cestpasbon=False
-    
+
+    cestpasbon = True
+    for j in listeJardins:
+        if int(numero) == int(j):
+            cestpasbon = False
+
     """Bon en fait non, pas de condition pour voir les jardiniers c'est complicado avec les histoires d'admins, référents, ..."""
-    #si l'utilisateur ne fait pas partie du jardin demandé en numéro
+    # si l'utilisateur ne fait pas partie du jardin demandé en numéro
     # if cestpasbon==True:
     #     return render_template("error_page.html", msg="Vous n'avez pas accès à ce jardin")
-    
-    #else:
+
+    # else:
     db = get_db()
     items = db.cursor()
 
-    items.execute("SELECT DISTINCT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN parcelle p ON p.id_user=u.id_user WHERE p.id_jardin=? UNION SELECT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN administre a ON a.id_user=u.id_user WHERE a.id_jardin=? UNION SELECT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN jardin j ON j.id_referent=u.id_user WHERE j.id_jardin=?", (numero,numero,numero,))
+    items.execute(
+        "SELECT DISTINCT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN parcelle p ON p.id_user=u.id_user WHERE p.id_jardin=? UNION SELECT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN administre a ON a.id_user=u.id_user WHERE a.id_jardin=? UNION SELECT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN jardin j ON j.id_referent=u.id_user WHERE j.id_jardin=?",
+        (numero, numero, numero,))
     data = items.fetchall()
     final = []
 
     for i in data:
-        statut=""
+        statut = ""
         items.execute(
             "SELECT u.id_user FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
             (i[0],))
@@ -182,9 +185,9 @@ def userss(numero):
         items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
         if len(items.fetchall()) != 0:
             statut += "référent.e "
-        if statut=="":
+        if statut == "":
             statut = " - "
-        i+=(statut,)
+        i += (statut,)
         # recupere les jardins de chacun
         items.execute(
             "SELECT a.id_jardin FROM utilisateur u JOIN administre a ON u.id_user=a.id_user WHERE u.id_user LIKE ?",
@@ -195,14 +198,15 @@ def userss(numero):
         items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (i[0],))
         parc = items.fetchall()
         i += (enleveCrochets(parc),)
-        i+=(i[4],)
+        i += (i[4],)
         items.execute("SELECT id_jardin FROM jardin WHERE id_referent LIKE ?", (i[0],))
-        ref=items.fetchall()
+        ref = items.fetchall()
         i += (enleveCrochets(ref),)
 
         final.append(i)
 
     return render_template("users.html", data=final, numero=numero)
+
 
 @app.route('/send-register-form', methods=['POST', 'GET'])
 def register_post():
@@ -338,18 +342,22 @@ def attribution_parcelles():
 
     db = get_db()
     items = db.cursor()
-    items.execute('SELECT j.id_jardin, j.numero_rue, j.nom_rue, j.code_postal, j.ville, j.id_referent, u.prenom, u.nom FROM jardin j JOIN administre a ON a.id_jardin=j.id_jardin JOIN utilisateur u ON u.id_user=j.id_referent WHERE a.id_user=?', 
-                    (session["id_user"],))
+    items.execute(
+        'SELECT j.id_jardin, j.numero_rue, j.nom_rue, j.code_postal, j.ville, j.id_referent, u.prenom, u.nom FROM jardin j JOIN administre a ON a.id_jardin=j.id_jardin JOIN utilisateur u ON u.id_user=j.id_referent WHERE a.id_user=?',
+        (session["id_user"],))
     resultat = items.fetchall()
-    
-    for i in range(len(resultat)):
-        items.execute("SELECT p.id_parcelle, p.longueur_parcelle, p.largeur_parcelle, p.id_user, u.prenom, u.nom FROM parcelle p JOIN utilisateur u ON u.id_user=p.id_user WHERE id_jardin=?", (resultat[i][0],))
-        resultat[i]+=((items.fetchall()),)
 
-    liste_jardiniers=[]
+    for i in range(len(resultat)):
+        items.execute(
+            "SELECT p.id_parcelle, p.longueur_parcelle, p.largeur_parcelle, p.id_user, u.prenom, u.nom FROM parcelle p JOIN utilisateur u ON u.id_user=p.id_user WHERE id_jardin=?",
+            (resultat[i][0],))
+        resultat[i] += ((items.fetchall()),)
+
+    liste_jardiniers = []
     items.execute('SELECT id_user, prenom, nom FROM utilisateur')
     liste_jardiniers.append(items.fetchall())
     return render_template('admin/attribution_parcelle.html', resultat=resultat, liste_jardiniers=liste_jardiniers)
+
 
 @app.route('/admin/supp_parcelle/<num_parcelle>')
 def supp_parcelle(num_parcelle):
@@ -362,25 +370,20 @@ def supp_parcelle(num_parcelle):
 
 @app.route('/admin/ajouter_parcelle', methods=['POST', 'GET'])
 def ajouter_parcelle():
-    if request.method=='POST':
-        db=get_db()
-        items=db.cursor()
+    if request.method == 'POST':
+        db = get_db()
+        items = db.cursor()
         items.execute('SELECT max(id_parcelle) FROM parcelle')
-        new_id=int(items.fetchall()[0][0])+1
-        jardinier= request.form.get('jardinier')[0]
-        
-        items.execute('INSERT INTO parcelle values (?, ?, ?, ?, ?, "[[(0, 0), (0, 402), (2402, 402), (2402, 0)]]//[0]")', 
-                    (new_id, request.form.get('num_jardin'), jardinier, request.form.get('longueur'), request.form.get('largeur'), ))
+        new_id = int(items.fetchall()[0][0]) + 1
+        jardinier = request.form.get('jardinier')[0]
+
+        items.execute(
+            'INSERT INTO parcelle values (?, ?, ?, ?, ?, "[[(0, 0), (0, 402), (2402, 402), (2402, 0)]]//[0]")',
+            (new_id, request.form.get('num_jardin'), jardinier, request.form.get('longueur'),
+             request.form.get('largeur'),))
         db.commit()
         return redirect('/admin/attribution_parcelles')
 
-
-@app.route('/test')
-def test():
-    resultat = [[1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50]]],
-                [1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50], [22, 1, 120, 50]]],
-                [1, 37, 'rue Verlaine', 'Léo', [[22, 1, 120, 50]]]]
-    return render_template('admin/attribution_parcelle.html', resultat=resultat)
 
 
 """
@@ -474,11 +477,11 @@ def mon_potager(numero):
     except:
         return 'error ce numero n\'est pas correct'
 
-    #vérifie que l'utilisateur a bien accès à cette parcelle (et qu'il a pas triché)
-    cestpasbon=True
+    # vérifie que l'utilisateur a bien accès à cette parcelle (et qu'il a pas triché)
+    cestpasbon = True
     for num in session.get("parcelles"):
-        if num==numero:
-            cestpasbon=False
+        if num == numero:
+            cestpasbon = False
     if cestpasbon:
         return render_template("error_page.html", msg="Vous n'avez pas accès à cette parcelle")
 
@@ -509,7 +512,8 @@ def mon_potager(numero):
     print(chemin_image)
 
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
-                           l_legende=image_py.legende_fonction(database.cursor(), l_id), numero=numero, id_jardin=id_jardin)
+                           l_legende=image_py.legende_fonction(database.cursor(), l_id), numero=numero,
+                           id_jardin=id_jardin)
 
 
 @app.route('/id_plante/<numero>')
@@ -543,7 +547,7 @@ def vos_informations():
         'lastname': resultat[0],
         'firstname': resultat[1],
         'email': resultat[2],
-        'img' : resultat[3]
+        'img': resultat[3]
     }
 
     items = db.cursor()
@@ -559,15 +563,18 @@ def vos_informations():
         })
     donnees.update({'parcelles': liste_parcelles})
 
-    if session['admin']=='oui':
-        jardins=[]
+    if session['admin'] == 'oui':
+        jardins = []
         for i in session.get('num_jardin_a'):
             items = db.cursor()
-            items.execute('SELECT j.id_jardin, j.code_postal, j.ville, j.numero_rue, j.nom_rue, j.id_referent, u.prenom, u.nom FROM jardin j JOIN utilisateur u ON u.id_user=j.id_referent WHERE id_jardin = ?', (i,))
+            items.execute(
+                'SELECT j.id_jardin, j.code_postal, j.ville, j.numero_rue, j.nom_rue, j.id_referent, u.prenom, u.nom FROM jardin j JOIN utilisateur u ON u.id_user=j.id_referent WHERE id_jardin = ?',
+                (i,))
             jardins.append(items.fetchall()[0])
         return render_template('potager_user/user_page.html', donnees=donnees, parcelles=parcelles, jardins=jardins)
 
     return render_template('potager_user/user_page.html', donnees=donnees, parcelles=parcelles)
+
 
 @app.route('/changePhoto')
 def changePhoto():
@@ -575,18 +582,20 @@ def changePhoto():
         return redirect('/')
 
     listeImg = listdir("static/images/photos_profil")
-        
+
     return render_template('changePhoto.html', listeImg=listeImg)
+
 
 @app.route('/changePhoto/<chemin>')
 def changePhotoo(chemin):
-
-    db=get_db()
-    items=db.cursor()
-    items.execute("UPDATE utilisateur SET img=? WHERE id_user=?", ("/static/images/photos_profil/"+chemin ,session.get('id_user'),))
+    db = get_db()
+    items = db.cursor()
+    items.execute("UPDATE utilisateur SET img=? WHERE id_user=?",
+                  ("/static/images/photos_profil/" + chemin, session.get('id_user'),))
     db.commit()
-    
+
     return redirect('/user/vos_informations')
+
 
 @app.route('/monpotager/<numero>/edit')
 def edit_potager(numero):

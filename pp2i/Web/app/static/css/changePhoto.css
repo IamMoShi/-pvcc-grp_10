@@ -1,0 +1,22 @@
+.liste{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: 20px;
+}
+
+.img{
+    height: 200px;
+    width: auto;
+}
+.img:hover{
+    background-color: rgb(233, 233, 233);
+}
+a.image:hover{
+    border: 2px;
+}
+
+H1{
+    margin-left: 20px;
+    padding: 20px;
+}
