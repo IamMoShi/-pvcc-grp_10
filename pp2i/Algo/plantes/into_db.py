@@ -1,9 +1,10 @@
 import sqlite3
 import re
 from PyPDF2 import PdfReader
+import random
 
 """ Lecture du document """
-reader = PdfReader("Algo/plantes/compagnonnage.pdf")
+reader = PdfReader("plantes/compagnonnage.pdf")
 text = ""
 for page in reader.pages:
     text += page.extract_text() + "\n"
@@ -178,12 +179,22 @@ for test in document: # pour séparer compagnes et ennemies de la plante étudi�
 document=new_doc
 
 
-data = sqlite3.connect("Algo/plantes/databse.db") # ATTENTION LA DATABASE DOIT CONTENIR AU MOINS UNE PLANTE AVEC UN ID
+data = sqlite3.connect("plantes/database.db") # ATTENTION LA DATABASE DOIT CONTENIR AU MOINS UNE PLANTE AVEC UN ID
+
+
+def int_to_code_couleur_hexa(n:int):
+    """ convertit un entier en code couleur hexadécimal """
+
+    r = hex(random.randint(0, 255)).lstrip("0x").rjust(2, "0")
+    g = hex(random.randint(0, 255)).lstrip("0x").rjust(2, "0")
+    b = hex(random.randint(0, 255)).lstrip("0x").rjust(2, "0")
+
+    return "#" + r + g + b
 
 cur = data.cursor()
-cur.execute("select * from plantes") # on cherche si il existe déjà une plante
+cur.execute("select * from plante") # on cherche si il existe déjà une plante
 if cur.fetchall()==[]: # si aucune plante n'existe on en ajoute une
-    cur.execute("insert into plantes (id,nom) values(1,'absinthe')")
+    cur.execute("insert into plante (id_plante,nom,taille,color) values(1,'absinthe',20,?)",(int_to_code_couleur_hexa(1),))
     data.commit()
 
 def new_value(type,plante1,plante2=1):
@@ -193,9 +204,10 @@ def new_value(type,plante1,plante2=1):
 
     if type=="plante": # ajout d'une plante dans la base plante
         cur = data.cursor()
-        cur.execute("select id from plantes where nom like ?",(plante1,)) # on cherche si la plante existe déjà
+        cur.execute("select id_plante from plante where nom like ?",(plante1,)) # on cherche si la plante existe déjà
         if cur.fetchall()==[]: # si la plante n'existe pas encore on l'ajoute
-            cur.execute("insert into plantes (id,nom) values(1+(select max(id) from plantes),?)",(plante1,))
+            max_value=cur.execute("select max(id_plante) from plante").fetchall()[0][0]
+            cur.execute("insert into plante (id_plante,nom,taille,color) values(1+(select max(id_plante) from plante),?,20,?)",(plante1,int_to_code_couleur_hexa(max_value+1)))
             data.commit()
 
 
@@ -205,12 +217,12 @@ def new_value(type,plante1,plante2=1):
 
         """ on récupère l'ID de la plante 1 """
         cur = data.cursor()
-        cur.execute("select id from plantes where nom like ?",(plante1,)) 
+        cur.execute("select id_plante from plante where nom like ?",(plante1,)) 
         for i in cur.fetchall():
             id1=i[0]
 
         """ on récupère l'ID de la plante 2 """
-        cur.execute("select id from plantes where nom like ?",(plante2,))
+        cur.execute("select id_plante from plante where nom like ?",(plante2,))
         for i in cur.fetchall():
             id2=i[0]
 
@@ -226,12 +238,12 @@ def new_value(type,plante1,plante2=1):
 
         """ on récupère l'ID de la plante 1 """
         cur = data.cursor()
-        cur.execute("select id from plantes where nom like ?",(plante1,))
+        cur.execute("select id_plante from plante where nom like ?",(plante1,))
         for i in cur.fetchall():
             id1=i[0]
 
         """ on récupère l'ID de la plante 2 """
-        cur.execute("select id from plantes where nom like ?",(plante2,))
+        cur.execute("select id_plante from plante where nom like ?",(plante2,))
         for i in cur.fetchall():
             id2=i[0]
 
@@ -246,10 +258,6 @@ for lignes in document:
     for i in lignes[1]:
         if i != plante_etudiee and i!= "":
             new_value("compagnon",plante_etudiee,i)
-        if i == "echal ote":
-            print("error 1")
     for i in lignes[2]:
         if i != plante_etudiee and i!= "":
             new_value("ennemi",plante_etudiee,i)
-        if i == "echal ote":
-            print("error 2")

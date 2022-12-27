@@ -1,12 +1,13 @@
 CREATE TABLE utilisateur (
-    id_user  INTEGER  PRIMARY KEY AUTOINCREMENT ,
+    id_user INTEGER PRIMARY KEY AUTOINCREMENT ,
     nom VARCHAR,
     prenom VARCHAR,
     mail VARCHAR,
     mdp VARCHAR
 );
+CREATE TABLE sqlite_sequence(name,seq);
 CREATE TABLE jardin (
-    id_jardin  INTEGER  PRIMARY KEY AUTOINCREMENT,
+    id_jardin INTEGER PRIMARY KEY AUTOINCREMENT,
     code_postal varchar,
     ville varchar,
     numero_rue int,
@@ -18,11 +19,11 @@ CREATE TABLE jardin (
                     ON DELETE CASCADE
 );
 CREATE TABLE parcelle (
-    id_parcelle  INTEGER  primary key AUTOINCREMENT,
+    id_parcelle INTEGER primary key AUTOINCREMENT,
     id_jardin int,
     id_user int,
     longueur_parcelle real,
-    largeur_parcelle real,
+    largeur_parcelle real, polygone varchar,
 
     CONSTRAINT fk_id_jardin
                       foreign key (id_jardin)
@@ -32,10 +33,6 @@ CREATE TABLE parcelle (
                       foreign key (id_user)
                       references utilisateur(id_user)
 
-);
-CREATE TABLE plante (
-    id_plante  INTEGER  PRIMARY KEY,
-    taille int
 );
 CREATE TABLE administre (
     id_user int,
@@ -80,17 +77,36 @@ CREATE TABLE contient (
                         references plante(id_plante)
                         ON DELETE CASCADE
 );
-CREATE TABLE affinites (
-    id_planteA int,
-    id_planteB int,
-    valeur_affinite int,
+CREATE TABLE plante (
+    id_plante int PRIMARY KEY,
+    taille int,
+    nom text unique,
+    color varhar);
+CREATE TABLE compagnons (
+    plante1 int,
+    plante2 int,
+    constraint croissant check(plante1<plante2)
     CONSTRAINT pk
-                        PRIMARY KEY (id_planteA, id_planteB),
+                        primary key (plante1, plante2),
     CONSTRAINT fk
-                        FOREIGN KEY (id_planteA)
+                        FOREIGN KEY (plante1)
                         references plante(id_plante)
                         ON DELETE CASCADE ,
-                        FOREIGN KEY  (id_planteB)
+                        FOREIGN KEY  (plante2)
+                        references plante(id_plante)
+                        ON DELETE CASCADE
+);
+CREATE TABLE ennemis (
+    plante1 int,
+    plante2 int,
+    constraint croissant check(plante1<plante2)
+    CONSTRAINT pk
+                        primary key (plante1, plante2),
+    CONSTRAINT fk
+                        FOREIGN KEY (plante1)
+                        references plante(id_plante)
+                        ON DELETE CASCADE ,
+                        FOREIGN KEY  (plante2)
                         references plante(id_plante)
                         ON DELETE CASCADE
 );
