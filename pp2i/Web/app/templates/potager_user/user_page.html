@@ -55,7 +55,7 @@
             <em class="remarques">Vous administrez ces jardins, cela veut dire que vous pouvez y créer de nouvelles
                 parcelles et les attribuer à des jardiniers.</em>
             {%for jard in jardins%}
-            <div class="numjard">Jardin numéro {{jard[0]}}</div>
+            <div class="numjard">Jardin numéro {{jard[0]}} <a class="voirJardiniers" href="/users/{{jard[0]}}">(Voir les jardiniers du jardin {{jard[0]}})</a></div>
             <div class="contenujard">
                 <b></b>Situé : {{jard[3]}} rue des {{jard[4]}} dans la ville de {{jard[2]}} {{jard[1]}} <br>
                 Référent.e de ce jardin : {{jard[6]}} {{jard[7]}} (identifiant: {{jard[5]}})

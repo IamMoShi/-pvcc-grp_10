@@ -167,6 +167,59 @@ def mesparcelles():
     chemin = "potager_user/potager_user_affichage_global.html"
     return render_template(chemin, parametres=parametres)
 
+# affichage individuel des parcelles (fonction d'ajout de plantes à mettre)
+@user.route('/mesparcelles/<numero>')
+def mon_potager(numero):
+    """
+    Verifier que la fonction tourne après la modification des paramètres sessions par ajout de id_user
+    :param numero:
+    :return:
+    """
+    if not session.get("email"):
+        return redirect("/signin")
+    try:
+        numero = int(numero)
+    except:
+        return 'error ce numero n\'est pas correct'
+
+    # vérifie que l'utilisateur a bien accès à cette parcelle (et qu'il a pas triché)
+    cestpasbon = True
+    for num in session.get("parcelles"):
+        if num == numero:
+            cestpasbon = False
+    if cestpasbon:
+        return render_template("error_page.html", msg="Vous n'avez pas accès à cette parcelle")
+
+    database = get_db()
+    items = database.cursor()
+    items.execute(
+        'SELECT id_parcelle, id_jardin, longueur_parcelle, largeur_parcelle, polygone FROM parcelle WHERE id_parcelle = ?',
+        (numero,))
+    resultat = items.fetchall()
+    if len(resultat) == 0:
+        return 'la parcelle n\' a pas été trouvée'
+
+    resultat = resultat[0]
+
+    id_parcelle, id_jardin, longueur, largeur, polygone = resultat
+    l_polygone, l_id = polygone.split('//')
+    l_polygone = tp.string_to_lists(l_polygone)
+    l_id = tp.string_to_lists(l_id)
+
+    longueur, largeur = round(longueur), round(largeur)
+
+    l_polygone_txt, chemin_image = image_py.html_code_fonction(l_polygone, l_id, id_parcelle)
+
+    chemin_image = image_py.affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
+                                               database.cursor())
+
+    chemin = "potager_user/potager_user_affichage_individuel.html"
+    print(chemin_image)
+
+    return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
+                           l_legende=image_py.legende_fonction(database.cursor(), l_id), numero=numero,
+                           id_jardin=id_jardin)
+
 
 @user.route('/user/vos_informations')
 def vos_informations():

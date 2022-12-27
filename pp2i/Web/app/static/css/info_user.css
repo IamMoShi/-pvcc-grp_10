@@ -65,6 +65,7 @@ div.jardins{
     margin-top: 20px;
     border: solid darkgreen 2px;
     padding: 5px;
+    margin-bottom: 10px;
 }
 
 div.numjard{
@@ -109,8 +110,11 @@ a.changementPhoto:hover{
 }
 
 a.voirJardiniers{
-    text-decoration: none;
-    color: rgb(60, 92, 67);
+    
+    color: rgb(70, 145, 86);
+    font-style: italic;
+    font-weight:500;
+    font-size: medium;
 }
 a.voirJardiniers:hover{
     color: rgb(51, 138, 73);
