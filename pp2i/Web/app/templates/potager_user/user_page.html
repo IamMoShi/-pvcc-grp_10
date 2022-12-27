@@ -35,6 +35,7 @@
         <div class="parcelles">
             <div class="titre">
                 <h2>Vos parcelles</h2>
+                <em class="remarques">Vous pouvez gérer vos parcelles dans l'onglet  <a class="gerer" href="/mesparcelles">'Mes parcelles'</a></em>
             </div>
             {%if msg%}
             {{msg}}
@@ -53,7 +54,9 @@
                 <h2>Les jardins que vous administrez:</h2>
             </div>
             <em class="remarques">Vous administrez ces jardins, cela veut dire que vous pouvez y créer de nouvelles
-                parcelles et les attribuer à des jardiniers.</em>
+                parcelles et les attribuer à des jardiniers.
+                Vous pouvez gérer ces jardins dans l'onglet <a class="gerer" href="/admin/attribution_parcelles">'Attrib parcelles'</a>
+            </em>
             {%for jard in jardins%}
             <div class="numjard">Jardin numéro {{jard[0]}} <a class="voirJardiniers" href="/users/{{jard[0]}}">(Voir les jardiniers du jardin {{jard[0]}})</a></div>
             <div class="contenujard">
