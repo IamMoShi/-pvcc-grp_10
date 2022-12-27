@@ -1,4 +1,5 @@
 import numpy as np
+import sqlite3
 
 '''
 Création de l'objet Terrain regroupant un ensemble de fonction applicable sur un terrain
@@ -148,8 +149,9 @@ class Terrain:
         fonction dédiée à l'affichage web du terrain en remplaçant les id par des couleurs
         :return: une matrice n, p avec des codes couleurs du type b'xxxxxx' avec x un int en base 10
         '''
+        data = sqlite3.connect("/home/mathis/Documents/pvcc-grp_10/pp2i/Web/database/database.db")
 
-        def couleur(nombre):
+        def couleur2(nombre):
             if nombre == -1:
                 return '#202020'
             str_num = '#' + str(((nombre) * 123) % 10 ** 7)
@@ -157,11 +159,21 @@ class Terrain:
                 str_num = str_num + '0'
             return str_num
 
+        def couleur(nombre):
+            if nombre == -1:
+                return [['#202020']]
+            cursor = data.cursor()
+            cursor.execute("select color from plante where id_plante = ?", (nombre,))
+            return cursor.fetchall()
+
         longeur_ligne, longeur_colonne = np.shape(self.mon_terrain)
         mon_terrain_colorie = np.chararray((longeur_ligne, longeur_colonne), itemsize=7)
 
         for i in range(longeur_ligne):
             for j in range(longeur_colonne):
                 x = self.mon_terrain[i, j]
-                mon_terrain_colorie[i, j] = couleur(x)
+                result=couleur(x)
+                print(result)
+                retour = result[0][0]
+                mon_terrain_colorie[i, j] = retour.upper()
         return mon_terrain_colorie

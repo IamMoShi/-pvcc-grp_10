@@ -1,7 +1,7 @@
 import sqlite3
 import random
 
-data = sqlite3.connect("pp2i/Web/database/database.db")
+data = sqlite3.connect("/home/mathis/Documents/pvcc-grp_10/pp2i/Web/database/database.db")
 
 def id_to_nom(id:int) -> str:
 # renvoie le nom d'une plante à partir de son id
