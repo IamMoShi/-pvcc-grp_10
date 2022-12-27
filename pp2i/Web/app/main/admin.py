@@ -93,6 +93,9 @@ def ajouter_parcelle():
         items.execute('SELECT max(id_parcelle) FROM parcelle')
         new_id = int(items.fetchall()[0][0]) + 1
         jardinier = request.form.get('jardinier')[0]
+    
+        if int(jardinier)==int(session.get('id_user')):
+            session['parcelles'].append(new_id)
 
         items.execute(
             'INSERT INTO parcelle values (?, ?, ?, ?, ?, "[[(0, 0), (0, 402), (2402, 402), (2402, 0)]]//[0]")',
