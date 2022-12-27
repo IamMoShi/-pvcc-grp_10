@@ -478,6 +478,8 @@ def mon_potager(numero):
         return 'error ce numero n\'est pas correct'
 
     # vérifie que l'utilisateur a bien accès à cette parcelle (et qu'il a pas triché)
+
+
     cestpasbon = True
     for num in session.get("parcelles"):
         if num == numero:
