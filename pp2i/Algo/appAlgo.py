@@ -14,7 +14,7 @@ def index():
 
 @app.route('/test')
 def test():
-    data = sqlite3.connect("/home/mathis/Documents/pvcc-grp_10/pp2i/Web/database/database.db")
+    data = sqlite3.connect("app/database/database.db")
     mon_terrain = terrain.creation_terrain()
     cur = data.cursor()
     cur.execute("select id_plante,x_plante,y_plante from contient where id_parcelle like ?",(2,))
