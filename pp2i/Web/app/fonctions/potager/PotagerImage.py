@@ -2,9 +2,9 @@ import sys
 from os.path import dirname
 
 sys.path.append(dirname(__file__))
-from pp2i.Web.app.fonctions.potager.transformation_polygone_v2 import *
-from pp2i.Web.app.fonctions.potager.html_code_fonction import html_code_fonction
-from pp2i.Web.app.fonctions.potager.legende_fonction import legende_fonction
+from .transformation_polygone_v2 import *
+from .html_code_fonction import html_code_fonction
+from .legende_fonction import legende_fonction
 
 
 class PotagerImage:

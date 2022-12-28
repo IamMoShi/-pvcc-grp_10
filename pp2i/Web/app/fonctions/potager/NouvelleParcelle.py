@@ -3,7 +3,7 @@ import sys
 from os.path import dirname
 
 sys.path.append(dirname(__file__))
-from pp2i.Web.app.fonctions.potager.transformation_polygone_v2 import *
+from .transformation_polygone_v2 import *
 
 
 class NouvelleParcelle:

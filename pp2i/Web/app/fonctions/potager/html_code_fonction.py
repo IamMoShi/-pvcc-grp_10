@@ -1,4 +1,4 @@
-from pp2i.Web.app.fonctions.potager.transformation_polygone_v2 import *
+from .transformation_polygone_v2 import *
 
 
 def html_code_fonction(l_polygones, l_id, id_image=0, file=''):
