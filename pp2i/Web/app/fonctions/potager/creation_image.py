@@ -1,6 +1,8 @@
 from PIL import Image, ImageDraw
 
-
+"""
+Fonctionne avec matrice de terrain
+"""
 def creation_image(l_polygones, tableau_potager, alpha, items, file, id_image):
     # Création de l'esquisse que l'on va peindre par la suite
     size = (len(tableau_potager[0]) * alpha, len(tableau_potager) * alpha)

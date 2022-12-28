@@ -2,6 +2,9 @@ from transformation_polygone_v2 import give_direction
 
 
 def simplify(l_contours):
+    """
+    Renvoie sommmets du contour
+    """
     l_contours_simplifie = []
 
     for contour in l_contours:
