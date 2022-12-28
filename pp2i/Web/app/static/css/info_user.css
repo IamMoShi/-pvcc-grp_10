@@ -25,8 +25,8 @@ main {
 }
 
 div.general {
-    border: solid darkgreen 2px;
-    padding: 5px;
+    border: solid darkgreen 4px;
+    padding: 10px;
     display: flex;
     flex-direction: row;
 }
@@ -40,10 +40,10 @@ div.partie1 {
     font-size: large;
 }
 
-div.parcelles {
+div.parcelles, div.jardins {
     margin-top: 20px;
-    border: solid darkgreen 2px;
-    padding: 5px;
+    border: solid darkgreen 4px;
+    padding: 10px;
 }
 
 div.parcelle {
@@ -61,12 +61,6 @@ div.parcelle {
     margin-left: 30px;
 }
 
-div.jardins{
-    margin-top: 20px;
-    border: solid darkgreen 2px;
-    padding: 5px;
-    margin-bottom: 10px;
-}
 
 div.numjard{
     font-size: larger;
@@ -92,22 +86,20 @@ em.remarques{
     margin-left: auto;
 }
 
-.changePhoto{
-    display: block;
-    margin-top: 10px;
-    margin-left: 30px;
-    font-size: 100%;
-    padding: 5px 20px;
-    color: rgb(61, 61, 61);
-    border-color: rgb(80, 165, 99);
-}
-
 a.changementPhoto{
+    text-align: center;
+    margin-left: 30px;
+    display: block;
     text-decoration: none;
     color: rgb(61, 61, 61);
+    padding: 2% 5%;
+    border: solid 2px rgb(80, 165, 99);
+    border-radius: 2%;
 }
 a.changementPhoto:hover{
     color: white;
+    background-color: rgb(80, 165, 99);
+    transition-duration: 0.4s;
 }
 
 a.voirJardiniers{
@@ -121,14 +113,7 @@ a.voirJardiniers:hover{
     color: rgb(51, 138, 73);
 }
 
-button.changePhoto {
-    transition-duration: 0.4s;
-  }
-  
-button.changePhoto:hover {
-    background-color: #4CAF50; /* Green */
-    color: white;
-  }
+
 a.gerer{
     color: rgb(61, 61, 61);
     font-size: medium;

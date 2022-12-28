@@ -39,12 +39,13 @@
           <img src="/static/images/icons/login.svg" alt="user-icon">
         </a>
         <div class="sign-btns">
+          <div class="text">
           {%if session.name%}
           Bonjour {{session.name}}
           {%else%}
           Bienvenue sur notre site! Connectez-vous ou créez un compte pour continuer:
           {%endif%}
-
+          </div>
           <button type="button" onclick="window.location.href='/signin'">
           {%if session.name%}
           Déconnexion
