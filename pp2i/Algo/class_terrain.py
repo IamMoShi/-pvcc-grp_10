@@ -163,9 +163,9 @@ class Terrain:
         def couleur(nombre):
             if nombre == -1:
                 return [['#202020']]
-            cursor = data.cursor()
-            cursor.execute("select color from plante where id_plante = ?", (nombre,))
-            return cursor.fetchall()
+            cur = data.cursor()
+            cur.execute("select color from plante where id_plante like ?", (nombre,))
+            return cur.fetchall()
 
         longeur_ligne, longeur_colonne = np.shape(self.mon_terrain)
         mon_terrain_colorie = np.chararray((longeur_ligne, longeur_colonne), itemsize=7)
@@ -173,8 +173,11 @@ class Terrain:
         for i in range(longeur_ligne):
             for j in range(longeur_colonne):
                 x = self.mon_terrain[i, j]
-                result=couleur(x)
-                print(result)
+                result=couleur(int(x))
+                if x!=-1:
+                    print("------------------")
+                    print(x)
+                    print(result)
                 retour = result[0][0]
                 mon_terrain_colorie[i, j] = retour.upper()
         return mon_terrain_colorie
