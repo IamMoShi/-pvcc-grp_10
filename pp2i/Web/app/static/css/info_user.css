@@ -79,9 +79,10 @@ div.contenujard{
     font-size: 110%;
 }
 
-.remarques{
+em.remarques{
     margin-left: 30px;
     color: rgb(70, 70, 70);
+    font-size: medium;
     
 }
 
@@ -128,3 +129,7 @@ button.changePhoto:hover {
     background-color: #4CAF50; /* Green */
     color: white;
   }
+a.gerer{
+    color: rgb(61, 61, 61);
+    font-size: medium;
+}
