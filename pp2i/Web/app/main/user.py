@@ -150,6 +150,7 @@ def mesparcelles():
 
     parametres = []
     for i in range(len(resultat)):
+
         id_parcelle, id_jardin, longueur, largeur, polygone = resultat[i]
         l_polygone, l_id = polygone.split('//')
         l_polygone = string_to_lists(l_polygone)
@@ -159,11 +160,12 @@ def mesparcelles():
 
         l_polygone_txt, chemin_image = html_code_fonction(l_polygone, l_id, id_parcelle)
 
-        chemin_image = affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
+        affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
                                           database.cursor())
 
         l_polynomes_txt = l_polygone_txt[::-1]
         l_legende = legende_fonction(database.cursor(), l_id)
+        chemin_image = str(id_parcelle) + ".png"
 
         parametres.append([l_polynomes_txt, l_legende, chemin_image, id_parcelle, id_jardin])
 

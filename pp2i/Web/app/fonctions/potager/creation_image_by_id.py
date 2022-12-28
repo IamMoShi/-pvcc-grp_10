@@ -1,6 +1,8 @@
 from PIL import Image, ImageDraw
 
-
+"""
+Fonctionne avec id déjà donnés
+"""
 def creation_image_by_id(l_polygones, l_id, size, items, file, id_image):
     # Création de l'esquisse que l'on va peindre par la suite
     img = Image.new('RGB', size, color='white')
