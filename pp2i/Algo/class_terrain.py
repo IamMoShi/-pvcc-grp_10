@@ -150,7 +150,7 @@ class Terrain:
         fonction dédiée à l'affichage web du terrain en remplaçant les id par des couleurs
         :return: une matrice n, p avec des codes couleurs du type b'xxxxxx' avec x un int en base 10
         '''
-        data = sqlite3.connect("/home/mathis/Documents/pvcc-grp_10/pp2i/Web/database/database.db")
+        data = sqlite3.connect("app/database/database.db")
 
         def couleur2(nombre):
             if nombre == -1:
@@ -174,10 +174,6 @@ class Terrain:
             for j in range(longeur_colonne):
                 x = self.mon_terrain[i, j]
                 result=couleur(int(x))
-                if x!=-1:
-                    print("------------------")
-                    print(x)
-                    print(result)
                 retour = result[0][0]
                 mon_terrain_colorie[i, j] = retour.upper()
         return mon_terrain_colorie
