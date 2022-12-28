@@ -1,4 +1,7 @@
 def resize_liste(l_polygones, k: int):
+    """
+    Multiplier liste par k (zoom)
+    """
     def resize(liste_couples):
         liste_couples_redimensionnees = []
         for couple in liste_couples:
