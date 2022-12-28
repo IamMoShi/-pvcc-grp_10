@@ -3,7 +3,8 @@ import sys
 from os.path import dirname
 
 sys.path.append(dirname(__file__))
-from .transformation_polygone_v2 import *
+from .reverse import reverse
+from .resize_liste import resize_liste
 
 
 class NouvelleParcelle:

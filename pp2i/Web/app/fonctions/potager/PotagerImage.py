@@ -3,6 +3,10 @@ from os.path import dirname
 
 sys.path.append(dirname(__file__))
 from .transformation_polygone_v2 import *
+from .simplify import simplify
+from .reverse import reverse
+from .resize_liste import resize_liste
+from .creation_image import creation_image
 from .html_code_fonction import html_code_fonction
 from .legende_fonction import legende_fonction
 

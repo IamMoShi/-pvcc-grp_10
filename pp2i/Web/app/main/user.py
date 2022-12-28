@@ -6,7 +6,7 @@ from ..fonctions.main.enleve_crochets import enleve_crochets
 from ..fonctions.potager.html_code_fonction import html_code_fonction
 from ..fonctions.potager.affichage_parcelle import affichage_parcelle
 from ..fonctions.potager.legende_fonction import legende_fonction
-from ..fonctions.potager.transformation_polygone_v2 import *
+from ..fonctions.potager.string_to_lists import string_to_lists
 
 user = Blueprint('user', __name__)
 

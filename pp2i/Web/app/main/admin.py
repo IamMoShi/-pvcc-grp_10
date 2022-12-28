@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, session, request, redirect
 
 from ..database.get_db import get_db
-from ..fonctions.potager.PotagerImage import PotagerImage
 from ..fonctions.potager.NouvelleParcelle import NouvelleParcelle
 
 admin = Blueprint('admin', __name__)
@@ -85,10 +84,10 @@ def supp_parcelle(num_parcelle):
     db.commit()
 
     for i in range(len(session['parcelles'])):
-        if int(session['parcelles'][i])==int(num_parcelle):
+        if int(session['parcelles'][i]) == int(num_parcelle):
             del session['parcelles'][i]
             break
-        
+
     return redirect('/admin/attribution_parcelles')
 
 
@@ -100,13 +99,13 @@ def ajouter_parcelle():
         items.execute('SELECT max(id_parcelle) FROM parcelle')
         new_id = int(items.fetchall()[0][0]) + 1
         jardinier = request.form.get('jardinier')[0]
-    
-        if int(jardinier)==int(session.get('id_user')):
+
+        if int(jardinier) == int(session.get('id_user')):
             session['parcelles'].append(new_id)
 
         items.execute(
-            'INSERT INTO parcelle values (?, ?, ?, ?, ?, "[[(0, 0), (0, 402), (2402, 402), (2402, 0)]]//[0]")',
+            'INSERT INTO parcelle values (?, ?, ?, ?, ?)',
             (new_id, request.form.get('num_jardin'), jardinier, request.form.get('longueur'),
-             request.form.get('largeur'),))
+             request.form.get('largeur'), "[[(0, 0), (0, 402), (2402, 402), (2402, 0)]]//[0]"))
         db.commit()
         return redirect('/admin/attribution_parcelles')
