@@ -17,6 +17,9 @@ nav {
   padding: 8px 20px;
   background: #49ad47;
   box-shadow: inset 0px -2px 0px #c5c5c6;
+  position: fixed;
+  top: 0;
+  bottom: auto;
 }
 
 .nav-icon {
@@ -111,7 +114,7 @@ div.text{
 @media (max-width: 1200px) {
   nav {
     padding: 8px 20px;
-    position: relative;
+    position: fixed;
   }
 
   .nav-icon {

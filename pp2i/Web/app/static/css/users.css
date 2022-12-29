@@ -22,6 +22,11 @@ h2{
     margin-bottom: 5%;
     margin-top: 2%;
 }
+@media (max-width: 1200px){
+    h2{
+        margin-top: 80px;
+    }
+}
 @media (min-width: 1200px){
 
     #horizontal{
@@ -29,6 +34,7 @@ h2{
         flex-direction:row;
         justify-content:space-around;
         margin-top: 5%;
+        margin-top: 100px;
     }
  
     .coord{
