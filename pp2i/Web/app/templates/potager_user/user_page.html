@@ -17,33 +17,35 @@
     </div>
     <main>
         <div class="general">
-            <div>
             <div class="titre">
-                <h2>Vos informations</h2>
+                <h2 class="vosinfos">Vos informations</h2>
             </div>
-            <div class="partie1">
-                <div class="nom">Nom : {{donnees['lastname']}}</div>
-                <div class="prenom">Prénom : {{donnees['firstname']}}</div>
-                <div class="email">Email : {{donnees['email']}}</div>
-                <div class="nom">Numéro identifiant: {{session.get('id_user')}}</div>
+            <div class="infos_generales">
+                <div class="partie1">
+                    <div class="nom">Nom : {{donnees['lastname']}}</div>
+                    <div class="prenom">Prénom : {{donnees['firstname']}}</div>
+                    <div class="email">Email : {{donnees['email']}}</div>
+                    <div class="nom">Numéro identifiant: {{session.get('id_user')}}</div>
+                    <a class="changementPhoto" href="/changePhoto">Choisir une autre photo de profil</a>
+                </div>
             </div>
-            <button class="changePhoto"><a class="changementPhoto" href="/changePhoto">Choisir une autre photo de profil</a></button>
-        </div>
             <img class="pdp" src="{{donnees['img']}}">
         </div>
 
         <div class="parcelles">
             <div class="titre">
                 <h2>Vos parcelles</h2>
-                <em class="remarques">Vous pouvez gérer vos parcelles dans l'onglet  <a class="gerer" href="/mesparcelles">'Mes parcelles'</a></em>
+                <em class="remarques">Vous pouvez gérer vos parcelles dans l'onglet <a class="gerer"
+                        href="/mesparcelles">'Mes parcelles'</a></em>
             </div>
             {%if msg%}
             {{msg}}
             {%endif%}
             {% for i in donnees['parcelles']%}
-            <div class="parcelle {{i}}">
-                <div class="numero_parcelle">Parcelle numéro : {{i}}</div>
-                <div class="id_jardin">Présente dans le jardin : {{ parcelles[i][0] }} <a class="voirJardiniers" href="/users/{{parcelles[i][0]}}"> (Voir les jardiniers du jardin {{parcelles[i][0]}})</a></div>
+            <div class="parcelle">
+                <div class="numero_parcelle">Parcelle numéro {{i}}</div>
+                <div class="id_jardin">Présente dans le jardin : {{ parcelles[i][0] }} <a class="voirJardiniers"
+                        href="/users/{{parcelles[i][0]}}"> (Voir les jardiniers du jardin {{parcelles[i][0]}})</a></div>
                 <div class="taille_parcelle">De taille : {{ parcelles[i][2] }} x {{ parcelles[i][3] }}</div>
             </div>
             {%endfor%}
@@ -51,14 +53,19 @@
         {%if session['admin']%}
         <div class="jardins">
             <div class="titre">
-                <h2>Les jardins que vous administrez:</h2>
+                <h2>Les jardins que vous administrez</h2>
+
+                <em>Vous administrez ces jardins, cela veut dire que vous pouvez y créer de nouvelles
+                    parcelles et les attribuer à des jardiniers.
+                    Vous pouvez gérer ces jardins dans l'onglet <a class="gerer"
+                        href="/admin/attribution_parcelles">'Attrib
+                        parcelles'</a>
+                </em>
             </div>
-            <em class="remarques">Vous administrez ces jardins, cela veut dire que vous pouvez y créer de nouvelles
-                parcelles et les attribuer à des jardiniers.
-                Vous pouvez gérer ces jardins dans l'onglet <a class="gerer" href="/admin/attribution_parcelles">'Attrib parcelles'</a>
-            </em>
+
             {%for jard in jardins%}
-            <div class="numjard">Jardin numéro {{jard[0]}} <a class="voirJardiniers" href="/users/{{jard[0]}}">(Voir les jardiniers du jardin {{jard[0]}})</a></div>
+            <div class="numjard">Jardin numéro {{jard[0]}} <a class="voirJardiniers" href="/users/{{jard[0]}}">(Voir les
+                    jardiniers du jardin {{jard[0]}})</a></div>
             <div class="contenujard">
                 <b></b>Situé : {{jard[3]}} rue des {{jard[4]}} dans la ville de {{jard[2]}} {{jard[1]}} <br>
                 Référent.e de ce jardin : {{jard[6]}} {{jard[7]}} (identifiant: {{jard[5]}})

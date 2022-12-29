@@ -15,36 +15,70 @@ div.head {
     font-weight: bolder;
     text-align: center;
     text-decoration: none;
-    margin-top: 20px;
+    margin-top: 3%;
+    margin-bottom: 3%;
 }
 
 main {
     display: flex;
     flex-direction: column;
-    margin: 10px 100px;
 }
 
-div.general {
-    border: solid darkgreen 2px;
-    padding: 5px;
-    display: flex;
-    flex-direction: row;
-}
 
 div.titre {
     font-size: large;
-    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    background-color: #C2CEBE;
+    text-align: center;
+    
 }
 
 div.partie1 {
     font-size: large;
 }
 
-div.parcelles {
-    margin-top: 20px;
-    border: solid darkgreen 2px;
-    padding: 5px;
+div.general{
+    border: solid darkgreen 4px;
+    display: flex;
+    flex-direction: row;
 }
+
+div.jardins{
+    margin-bottom: 20px;
+}
+div.partie1{
+    margin: 2%;
+}
+@media (min-width: 800px){
+    h2.vosinfos{
+        display: flex;
+    }
+    div.general {
+        margin-left: auto;
+        margin-right: auto;
+        width: 60%;
+    }
+    div.infos_generales{
+        width: 50%;
+    }
+    
+    div.parcelles, div.jardins {
+        margin-top: 20px;
+        border: solid darkgreen 4px;
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+}
+
+@media (max-width: 800px){
+    
+    div.parcelles, div.jardin{
+        border: solid darkgreen 4px;
+        margin-top: 10px;
+    }
+}
+
 
 div.parcelle {
     font-size: large;
@@ -52,62 +86,51 @@ div.parcelle {
 
 .parcelle .numero_parcelle {
     font-size: larger;
-    margin: 5px auto;
     font-weight: bold;
-    margin-left: 10px;
+    margin: 5px auto;
+    margin-left: 2%;
 }
 
 .id_jardin, .taille_parcelle, .nom, .prenom, .email{
-    margin-left: 30px;
+    margin-left: 5%;
 }
 
-div.jardins{
-    margin-top: 20px;
-    border: solid darkgreen 2px;
-    padding: 5px;
-    margin-bottom: 10px;
-}
 
 div.numjard{
-    font-size: larger;
+    font-size:130%;
     font-weight: bold;
-    margin: 10px;
+    margin: 0.5%;
+    margin-left: 2%;
 }
 
 div.contenujard{
-    margin-left: 30px;
+    margin-left: 5%;
     font-size: 110%;
 }
 
-em.remarques{
-    margin-left: 30px;
-    color: rgb(70, 70, 70);
-    font-size: medium;
-    
-}
 
 .pdp{
     max-height: 180px;
     width: auto;
+    margin-top: auto;
+    margin-bottom: auto;
     margin-left: auto;
 }
 
-.changePhoto{
-    display: block;
-    margin-top: 10px;
-    margin-left: 30px;
-    font-size: 100%;
-    padding: 5px 20px;
-    color: rgb(61, 61, 61);
-    border-color: rgb(80, 165, 99);
-}
-
 a.changementPhoto{
+    text-align: center;
+    margin: 5%;
+    display: block;
     text-decoration: none;
     color: rgb(61, 61, 61);
+    padding: 2% 5%;
+    border: solid 2px rgb(80, 165, 99);
+    border-radius: 2%;
 }
 a.changementPhoto:hover{
     color: white;
+    background-color: rgb(80, 165, 99);
+    transition-duration: 0.4s;
 }
 
 a.voirJardiniers{
@@ -121,14 +144,7 @@ a.voirJardiniers:hover{
     color: rgb(51, 138, 73);
 }
 
-button.changePhoto {
-    transition-duration: 0.4s;
-  }
-  
-button.changePhoto:hover {
-    background-color: #4CAF50; /* Green */
-    color: white;
-  }
+
 a.gerer{
     color: rgb(61, 61, 61);
     font-size: medium;

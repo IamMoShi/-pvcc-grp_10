@@ -96,16 +96,25 @@ def ajouter_parcelle():
     if request.method == 'POST':
         db = get_db()
         items = db.cursor()
-        items.execute('SELECT max(id_parcelle) FROM parcelle')
-        new_id = int(items.fetchall()[0][0]) + 1
+        # items.execute('SELECT max(id_parcelle) FROM parcelle')
+        # new_id = int(items.fetchall()[0][0]) + 1
         jardinier = request.form.get('jardinier')[0]
+
+        largeur = int(request.form.get('largeur'))
+        longueur = int(request.form.get('longueur'))
+        id_jardin = request.form.get('num_jardin')
+        parcelle = NouvelleParcelle(longueur, largeur)
+        
+        items.execute('INSERT INTO parcelle (id_jardin, id_user, longueur_parcelle, largeur_parcelle, polygone) VALUES (?,?,?,?,?)',
+            (id_jardin, jardinier, longueur, largeur, str(parcelle.l_polygones) + "//[0]",)
+        )
+        db.commit()
+        items.execute('SELECT id_parcelle from parcelle where id_jardin=? and id_user=? and longueur_parcelle=? and largeur_parcelle=?', 
+                    (id_jardin, jardinier, longueur, largeur,)
+        )
+        new_id=(items.fetchall())
 
         if int(jardinier) == int(session.get('id_user')):
             session['parcelles'].append(new_id)
 
-        items.execute(
-            'INSERT INTO parcelle values (?, ?, ?, ?, ?)',
-            (new_id, request.form.get('num_jardin'), jardinier, request.form.get('longueur'),
-             request.form.get('largeur'), "[[(0, 0), (0, 402), (2402, 402), (2402, 0)]]//[0]"))
-        db.commit()
         return redirect('/admin/attribution_parcelles')

@@ -30,11 +30,11 @@ def liste_coords_to_id(liste_coords_recherchees:list,liste_coords_plantes:list,l
         liste_id.append(coords_to_id(i[0],i[1],liste_coords_plantes,liste_id_plantes))
     return liste_id
 
-def coords_voisins(x:int,y:int,taille:int,liste_coords_plantes:list,liste_tailles_plantes:list,rayon:int) -> list: 
+def coords_voisins(x:int,y:int,taille:tuple,liste_coords_plantes:list,liste_tailles_plantes:list,rayon:int) -> list: 
 # renvoie les plantes dans un rayon de rayon autour des coordonnées (x,y)
     voisinnage=[]
-    x+=taille/2 # pour se placer au milieu de la plante
-    y+=taille/2
+    x+=taille[0]/2 # pour se placer au milieu de la plante
+    y+=taille[1]/2
     for i in range(len(liste_coords_plantes)): # on teste pour toute la liste de plantes
         x_tmp=liste_coords_plantes[i][0]+liste_tailles_plantes[i]/2 # on se place au milieu de la plante
         y_tmp=liste_coords_plantes[i][1]+liste_tailles_plantes[i]/2
@@ -45,43 +45,35 @@ def coords_voisins(x:int,y:int,taille:int,liste_coords_plantes:list,liste_taille
 
 
 
-def plantes_compagnes(plante:int) -> list:
+def plantes_compagnes(id_plante:int) -> list:
 # renvoie les plantes compagnes d'une plante
     cur = data.cursor()
-    cur.execute("select id_plante from plante where nom like ?",(plante,)) # on cherche l'id de la plante
+    cur.execute("select plante2 from compagnons where plante1 like ?",(id_plante,)) # on cherche les compagnons de la plante
     donnees=cur.fetchall()
-    for i in donnees:
-        id=i[0]
-    cur.execute("select plante2 from compagnons where plante1 like ?",(id,)) # on cherche les compagnons de la plante
-    donnees=cur.fetchall()
-    cur.execute("select plante1 from compagnons where plante2 like ?",(id,)) # on cherche dans les 2 sens (id supérieur et id inférieur)
+    cur.execute("select plante1 from compagnons where plante2 like ?",(id_plante,)) # on cherche dans les 2 sens (id supérieur et id inférieur)
     donnees+=cur.fetchall() # on concatène les 2 listes
     retour=[]
     for i in donnees:
         retour.append(i[0])
     return retour
 
-def plantes_ennemies(plante:int) -> list:
+def plantes_ennemies(id_plante:int) -> list:
 # renvoie la liste des ennemis d'une plante
     cur = data.cursor()
-    cur.execute("select id_plante from plante where nom like ?",(plante,)) # on cherche l'id de la plante
+    cur.execute("select plante2 from ennemis where plante1 like ?",(id_plante,)) # on cherche les ennemis de la plante
     donnees=cur.fetchall()
-    for i in donnees:
-        id=i[0]
-    cur.execute("select plante2 from ennemis where plante1 like ?",(id,)) # on cherche les ennemis de la plante
-    donnees=cur.fetchall()
-    cur.execute("select plante1 from ennemis where plante2 like ?",(id,)) # on cherche dans les 2 sens (id supérieur et id inférieur)
+    cur.execute("select plante1 from ennemis where plante2 like ?",(id_plante,)) # on cherche dans les 2 sens (id supérieur et id inférieur)
     donnees+=cur.fetchall() # on concatène les 2 listes
     retour=[]
     for i in donnees:
         retour.append(i[0])
     return retour
 
-def suggestion(liste_plantes:list) -> tuple:
-# renvoie les plantes compagnes et ennemies d'une liste de plantes
+def suggestion(liste_id_plantes:list) -> tuple:
+# renvoie les id des plantes compagnes et ennemies d'une liste de plantes
     compagnes=[]
     ennemies=[]
-    for i in liste_plantes: # on cherche les compagnes et ennemies de chaque plante
+    for i in liste_id_plantes: # on cherche les compagnes et ennemies de chaque plante
         compagnes_temp=plantes_compagnes(i) # liste des compagnes de la plante étudiée
         for j in compagnes_temp:
             if j not in compagnes: # on vérifie que la plante n'est pas déjà dans la liste
@@ -92,26 +84,30 @@ def suggestion(liste_plantes:list) -> tuple:
                 ennemies.append(j) # on ajoute la plante à la liste
     for ennemi in ennemies:
         if ennemi in compagnes: # on vérifie que la plante n'est pas à la fois ennemie et compagne
-            print("La plante",id_to_nom(ennemi),"est à la fois ennemie et compagne")
             compagnes.remove(ennemi) # on l'enlève de la liste des compagnes si elle est aussi ennemie
 # la liste compagnes contient les id des plantes compagnes et non ennemies
 # la liste ennemies contient les id des plantes ennemies
     return(compagnes,ennemies)      
 
 
-def aleatoire(id_parcelle:int):
+def aleatoire(id_parcelle:int,nombre:int):
 # ajoute une plante aléatoire à la parcelle à une position aléatoire
-    cur = data.cursor()
-    cur.execute("select max(id_plante) from plante") # on cherche l'id maximum des plantes
-    donnees=cur.fetchall()
-    max_id=donnees[0][0]
-    id=random.randint(1,max_id) # on choisit une plante aléatoire
-    x=random.randint(0,100)
-    y=random.randint(0,100)
-    cur.execute("select * from contient where x_plante = ? and y_plante = ?",(x,y)) # on vérifie que la position est libre
-    if cur.fetchall()==[]: # si la position est libre
-        cur.execute("insert into contient values(?,?,?,?)",(id_parcelle,id,x,y)) # on ajoute la plante à la parcelle
-        data.commit()
+    def secondaire(id_parcelle:int):
+        cur = data.cursor()
+        cur.execute("select max(id_plante) from plante") # on cherche l'id maximum des plantes
+        donnees=cur.fetchall()
+        max_id=donnees[0][0]
+        id=random.randint(1,max_id) # on choisit une plante aléatoire
+        cur.execute("select longueur_parcelle,largeur_parcelle from parcelle where id_parcelle like ?",(id_parcelle,)) # on cherche la taille de la parcelle
+        donnees2=cur.fetchall()
+        x=random.randint(0,donnees2[0][0])
+        y=random.randint(0,donnees2[0][1])
+        cur.execute("select * from contient where x_plante = ? and y_plante = ?",(x,y)) # on vérifie que la position est libre
+        if cur.fetchall()==[]: # si la position est libre
+            cur.execute("insert into contient values(?,?,?,?)",(id_parcelle,id,x,y)) # on ajoute la plante à la parcelle
+            data.commit()
+    for i in range(nombre):
+        secondaire(id_parcelle)
 
 def positions_libres(id_parcelle:int,taille:tuple) -> list:
 # renvoie les positions libres d'une certaine taille d'une parcelle
@@ -131,18 +127,46 @@ def positions_libres(id_parcelle:int,taille:tuple) -> list:
             for k in range(0,tailles[i]+1):
                 positions_occupées.append((donnees[i][0]+j,donnees[i][1]+k)) # on ajoute chaque position occupée par les plantes (chaque unique couple de coordonnées)
 
-    # on récupère les dimensions de la parcelle
+    # on récupère les dimensions de la parcelle et les plantes de la parcelle
     cur.execute("select longueur_parcelle,largeur_parcelle from parcelle where id_parcelle = ?",(id_parcelle,))
     dimensions=cur.fetchall()[0]
     x_parcelle=int(dimensions[0])
     y_parcelle=int(dimensions[1])
+    cur.execute("select x_plante,y_plante from contient where id_parcelle = ?",(id_parcelle,))
+    coords_plantes_parcelle=cur.fetchall()
 
     positions_libres = []
+    i_max=i+taille[0]
+    j_max=j+taille[1]
     for i in range(0,x_parcelle-taille[0]): # on parcourt la parcelle
         for j in range(0,y_parcelle-taille[1]):
-            if (i,j) not in positions_occupées and (i+taille[0],j+taille[1]) not in positions_occupées and (i+taille[0],j) not in positions_occupées and (i,j+taille[1]) not in positions_occupées:
-# on vérifie que les 4 coins de l'espace voulu sont libres (donc que l'espace de la taille voulue est libre)
-                positions_libres.append((i,j))
+            positions_libres.append((i,j))
+    for i in coords_plantes_parcelle:
+        pass
+
     return positions_libres
 
-positions_libres(2,(20,20))
+
+def test_all_positions(id_parcelle:int,taille:tuple):
+    pos_libres=positions_libres(id_parcelle,taille) # on récupère les positions libres
+    liste_coords_plantes=[] # liste des coordonnées des plantes de la parcelle
+    liste_tailles_plantes=[] # liste des tailles des plantes de la parcelle
+    liste_id_plantes=[] # liste des id des plantes de la parcelle
+    cur = data.cursor()
+    cur.execute("select x_plante,y_plante,id_plante from contient where id_parcelle = ?",(id_parcelle,)) # on cherche les coordonnées des plantes
+    donnees=cur.fetchall()
+    for i in range(len(donnees)):
+        liste_coords_plantes.append((donnees[i][0],donnees[i][1]))
+        liste_id_plantes.append(donnees[i][2])
+        cur.execute("select taille from plante where id_plante = ?",(donnees[i][2],))
+        taille_plante=cur.fetchall()
+        liste_tailles_plantes.append(taille_plante[0][0])
+    # fin création des listes de coordonnées et de tailles des plantes
+    for i in pos_libres:
+        voisins=coords_voisins(i[0],i[1],taille,liste_coords_plantes,liste_tailles_plantes,300) # on cherche les voisins de la position
+        id_voisins=liste_coords_to_id(voisins,liste_coords_plantes,liste_id_plantes) # on récupère les id des voisins
+        possibles=suggestion(id_voisins)
+        print("Pour la position",i,"les plantes compagnes sont",liste_id_to_nom(possibles[0]),"et les plantes ennemies sont",liste_id_to_nom(possibles[1]))
+
+
+#test_all_positions(23,(20,20))

@@ -70,9 +70,9 @@
                         {%endfor%}
                     </select><br>
                     <label>Longueur de la parcelle: </label><input type="number" name="longueur" min="10" max="1000"
-                        value="100"> <br>
+                        value="100" step="10" required> <br>
                     <label>Largeur de la parcelle: </label><input type="number" name="largeur" min="10" max="1000"
-                        value="100"><br>
+                        value="100" step="10" required><br>
                     <label>Numéro d'identifiant du jardinier: </label>
                     <select name="jardinier" id="jardinier">
                         {%for j in liste_jardiniers[0]%}
