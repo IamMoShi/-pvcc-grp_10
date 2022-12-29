@@ -189,7 +189,7 @@ def mon_potager(numero):
     except:
         return 'error ce numero n\'est pas correct'
 
-    # vérifie que l'utilisateur a bien accès à cette parcelle (et qu'il a pas triché)
+    # vérifie que l'utilisateur a bien accès à cette parcelle (et qu'il n'a pas triché)
     cestpasbon = True
     for num in session.get("parcelles"):
         if num == numero:
@@ -217,11 +217,10 @@ def mon_potager(numero):
 
     l_polygone_txt, chemin_image = html_code_fonction(l_polygone, l_id, id_parcelle)
 
-    chemin_image = affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
+    affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
                                       database.cursor())
-
+    chemin_image = str(id_parcelle) + ".png"
     chemin = "potager_user/potager_user_affichage_individuel.html"
-    print(chemin_image)
 
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
                            l_legende=legende_fonction(database.cursor(), l_id), numero=numero,
