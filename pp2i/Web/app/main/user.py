@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, session, request
 from os import listdir
+from ..fonctions.potager.NouvelleParcelle import NouvelleParcelle
 
 from ..database.get_db import get_db
 from ..fonctions.main.enleve_crochets import enleve_crochets
@@ -7,7 +8,8 @@ from ..fonctions.potager.html_code_fonction import html_code_fonction
 from ..fonctions.potager.affichage_parcelle import affichage_parcelle
 from ..fonctions.potager.legende_fonction import legende_fonction
 from ..fonctions.potager.string_to_lists import string_to_lists
-
+from ..fonctions.potager import class_terrain
+from ..fonctions.potager import PotagerImage
 user = Blueprint('user', __name__)
 
 
@@ -233,12 +235,52 @@ def ajout_plante(numero):
     if not session.get("email"):
         return redirect("/signin")
     if request.method=='POST':
+        db=get_db()
+        items=db.cursor()
         id_plante = request.form['nom_plante'][0]
         x_plante = int(float(request.form['x_plante']))
         y_plante = int(float(request.form['y_plante']))
+
+
+        items.execute("SELECT longueur_parcelle, largeur_parcelle FROM parcelle WHERE id_parcelle=?", (numero,))
+        longueur, largeur = items.fetchall()[0]
+        longueur=int(longueur)
+        largeur=int(largeur)
         
-        db=get_db()
-        items=db.cursor()
+        #creation du terrain vide
+        terrain = class_terrain.Terrain((longueur, largeur))
+        mon_terrain = terrain.creation_terrain()
+
+        #infos de la plante à ajouter
+        items.execute('SELECT * FROM plante WHERE id_plante=?', (id_plante,))
+        id_plante, taille, nom, couleur= items.fetchall()[0]
+        
+        #ajouter les plantes déjà existantes dans le terrain
+        items.execute("select id_plante,x_plante,y_plante from contient where id_parcelle like ?", (numero,) )
+        result=items.fetchall()
+        for i in result:
+            items.execute("select taille from plante where id_plante like ?",(i[0],))
+            result2=items.fetchall()
+            mon_terrain, B, msg = terrain.ajout_plante(result2[0][0], (i[1], i[2]), i[0])
+        
+        #verification
+        mon_nouveau_terrain, condition, msg=terrain.ajout_plante(taille, (x_plante, y_plante), id_plante)
+        if condition==False:
+            #ça marche pas: on garde l'ancien terrain
+            mon_terrain=mon_terrain
+        else:
+            mon_terrain=mon_nouveau_terrain
+
+        #!!!!!!!!!!!!!!!!creation de l'objet:
+        objet_image=PotagerImage.PotagerImage(mon_terrain, numero, items)
+        return str(objet_image)
+        
+        #!!!!!!!!!!!!!appeler fontcion polygone:
+        polygone=str(objet_image.polygone()) + "//[0]"
+        
+
+        #ajout de la plante dans la db si c'est validé:
+        items.execute("UPDATE parcelle SET polygone=? WHERE id_parcelle=?", (polygone, numero,))
         items.execute("INSERT INTO contient VALUES (?,?,?,?)", (numero, id_plante, x_plante, y_plante,))
         db.commit()
         return redirect('/mesparcelles/'+str(numero))
