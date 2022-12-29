@@ -3,6 +3,8 @@ from PIL import Image, ImageDraw
 """
 Fonctionne avec matrice de terrain
 """
+
+
 def creation_image(l_polygones, tableau_potager, alpha, items, file, id_image):
     # Création de l'esquisse que l'on va peindre par la suite
     size = (len(tableau_potager[0]) * alpha, len(tableau_potager) * alpha)
@@ -12,7 +14,7 @@ def creation_image(l_polygones, tableau_potager, alpha, items, file, id_image):
     for polygone in l_polygones:
         id_plante = tableau_potager[(polygone[0][1] // alpha, polygone[0][0] // alpha)]
 
-        if id_plante == 0:
+        if id_plante == 0 or -1:
             draw.polygon(polygone, fill='grey', width=1, outline=None)
         else:
             items.execute('select color from plante where id_plante = ?', (int(id_plante),))
