@@ -291,7 +291,7 @@ def changePhoto():
     if not session["id_user"]:
         return redirect('/')
 
-    listeImg = listdir("static/images/photos_profil")
+    listeImg = listdir("app/static/images/photos_profil")
 
     return render_template('changePhoto.html', listeImg=listeImg)
 

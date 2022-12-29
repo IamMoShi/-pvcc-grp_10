@@ -75,6 +75,14 @@ nav {
   margin-left: auto;
 }
 
+.sign-btns{
+  display: flex;
+  flex-direction: row;
+}
+div.text{
+  margin-top: auto;
+  margin-bottom: auto;
+}
 .sign-btns button {
   font-family: sans-serif;
   font-size: 16px;
