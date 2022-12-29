@@ -44,6 +44,20 @@
             </div>
         </div>
     </div>
+
+    <form action="/mesparcelles/{{numero}}/ajouter_plante" method="POST">
+        <label>Nom de la plante:</label>
+        <select name="nom_plante">
+            {%for i in plantes%}
+            <option>{{i[0]}} {{i[1]}}</option>
+            {%endfor%}
+        </select><br>
+        <label>x_plante:</label>
+        <input type="number" name="x_plante" required min="0" max="{{longueur}}" value="{{longueur/2}}"><br>
+        <label>y_plante:</label>
+        <input type="number" name="y_plante" required min="0" max="{{largeur}}"  value="{{largeur/2}}"><br>
+        <input type="submit" value="Ajouter une plante">
+    </form>
 </main>
 
 </body>

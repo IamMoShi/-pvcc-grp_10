@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, session
+from flask import Blueprint, render_template, redirect, session, request
 from os import listdir
 
 from ..database.get_db import get_db
@@ -222,9 +222,26 @@ def mon_potager(numero):
     chemin_image = str(id_parcelle) + ".png"
     chemin = "potager_user/potager_user_affichage_individuel.html"
 
+    items.execute('SELECT DISTINCT id_plante, nom FROM plante')
+    plantes=items.fetchall()
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
                            l_legende=legende_fonction(database.cursor(), l_id), numero=numero,
-                           id_jardin=id_jardin)
+                           id_jardin=id_jardin, longueur=longueur, largeur=largeur, plantes=plantes)
+
+@user.route('/mesparcelles/<numero>/ajouter_plante', methods=['POST', 'GET'])
+def ajout_plante(numero):
+    if not session.get("email"):
+        return redirect("/signin")
+    if request.method=='POST':
+        id_plante = request.form['nom_plante'][0]
+        x_plante = int(float(request.form['x_plante']))
+        y_plante = int(float(request.form['y_plante']))
+        
+        db=get_db()
+        items=db.cursor()
+        items.execute("INSERT INTO contient VALUES (?,?,?,?)", (numero, id_plante, x_plante, y_plante,))
+        db.commit()
+        return redirect('/mesparcelles/'+str(numero))
 
 
 @user.route('/user/vos_informations')
