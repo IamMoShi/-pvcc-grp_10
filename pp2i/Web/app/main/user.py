@@ -140,7 +140,7 @@ def mesparcelles():
     if len(session["parcelles"]) == 0:
         return render_template("error_page.html",
                                msg="Vous n'avez pas encore de parcelles, contactez un administrateur pour qu'il vous en attribue une!")
-
+    
     for i in range(len(session["parcelles"])):
         items.execute(
             'SELECT id_parcelle, id_jardin, longueur_parcelle, largeur_parcelle, polygone FROM parcelle WHERE id_parcelle = ?',
@@ -265,24 +265,24 @@ def ajout_plante(numero):
 
         # verification
         mon_nouveau_terrain, condition, msg = terrain.ajout_plante(taille, (x_plante, y_plante), id_plante)
-        if condition == False:
-            # ça marche pas: on garde l'ancien terrain
+        
+        if condition == False: #si ça marche pas: on garde l'ancien terrain
             mon_terrain = mon_terrain
-        else:
+            msg = "Vous ne pouvez pas ajouter cette plante ici"
+            return render_template("error_page.html", msg=msg)
+        
+        else: #si c'est validé
             mon_terrain = mon_nouveau_terrain
-        print(mon_terrain)
-        # !!!!!!!!!!!!!!!!creation de l'objet:
-        objet_image = PotagerImage(mon_terrain, numero, items)
-        return str(objet_image)
-
-        # !!!!!!!!!!!!!appeler fontcion polygone:
-        polygone = str(objet_image.polygone()) + "//[0]"
-
-        # ajout de la plante dans la db si c'est validé:
-        items.execute("UPDATE parcelle SET polygone=? WHERE id_parcelle=?", (polygone, numero,))
-        items.execute("INSERT INTO contient VALUES (?,?,?,?)", (numero, id_plante, x_plante, y_plante,))
-        db.commit()
-        return redirect('/mesparcelles/' + str(numero))
+            objet_image = PotagerImage(mon_terrain, numero, items)
+            # appeler fontcion polygone:
+            polygone = str(objet_image.polygone()) + "//[0]"
+            
+            # ajout de la plante dans la db si c'est validé:
+            items.execute("UPDATE parcelle SET polygone=? WHERE id_parcelle=?", (polygone, numero,))
+            items.execute("INSERT INTO contient VALUES (?,?,?,?)", (numero, id_plante, x_plante, y_plante,))
+            db.commit()
+            return redirect('/mesparcelles/' + str(numero))
+        
 
 
 @user.route('/user/vos_informations')

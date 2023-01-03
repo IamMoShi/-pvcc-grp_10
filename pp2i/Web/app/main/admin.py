@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, session, request, redirect
 
 from ..database.get_db import get_db
 from ..fonctions.potager.NouvelleParcelle import NouvelleParcelle
+from ..fonctions.main.enleve_crochets import enleve_crochets
 
 admin = Blueprint('admin', __name__)
 
@@ -83,10 +84,14 @@ def supp_parcelle(num_parcelle):
     items.execute('DELETE FROM parcelle WHERE id_parcelle=?', (num_parcelle,))
     db.commit()
 
-    for i in range(len(session['parcelles'])):
-        if int(session['parcelles'][i]) == int(num_parcelle):
-            del session['parcelles'][i]
-            break
+    # for i in range(len(session['parcelles'])):
+    #     if int(session['parcelles'][i]) == int(num_parcelle):
+    #         del session['parcelles'][i]
+    #         break
+
+    items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (session['id_user'],))
+    parc = items.fetchall()
+    session["parcelles"] = enleve_crochets(parc)
 
     return redirect('/admin/attribution_parcelles')
 
@@ -115,6 +120,8 @@ def ajouter_parcelle():
         new_id=(items.fetchall())
 
         if int(jardinier) == int(session.get('id_user')):
-            session['parcelles'].append(new_id)
+            items.execute("SELECT id_parcelle FROM parcelle WHERE id_user LIKE ?", (session['id_user'],))
+            parc = items.fetchall()
+            session["parcelles"] = enleve_crochets(parc)
 
         return redirect('/admin/attribution_parcelles')
