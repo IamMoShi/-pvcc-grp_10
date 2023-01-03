@@ -372,3 +372,19 @@ def edit_potager(numero):
         return 'error ce numero n\'est pas correct'
 
     return render_template('potager_user/edit_potager.html')
+
+@user.route('/dico')
+def dico():
+    db=get_db()
+    items=db.cursor()
+    items.execute("SELECT id_plante, nom FROM plante ORDER BY nom")
+    plantes=items.fetchall()
+    for i in range(len(plantes)):
+        items.execute("SELECT c.plante2, nom FROM compagnons c JOIN plante p ON c.plante2=p.id_plante WHERE c.plante1=? UNION SELECT c.plante1, nom FROM compagnons c JOIN plante p ON p.id_plante=c.plante1 WHERE c.plante2=?",
+        (plantes[i][0],plantes[i][0],) )
+        plantes[i]+=(items.fetchall(),)
+        items.execute("SELECT c.plante2, nom FROM ennemis c JOIN plante p ON c.plante2=p.id_plante WHERE c.plante1=? UNION SELECT c.plante1, nom FROM ennemis c JOIN plante p ON p.id_plante=c.plante1 WHERE c.plante2=?",
+        (plantes[i][0],plantes[i][0],) )
+        plantes[i]+=(items.fetchall(),)
+    
+    return render_template('dico.html', plantes=plantes)

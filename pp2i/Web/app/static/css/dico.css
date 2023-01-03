@@ -1,0 +1,23 @@
+
+body{
+    margin-top: 80px;
+}
+
+h2{
+    margin-left: 5%;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    }
+table{
+    margin: 3% 5%;
+}
+td:nth-child(1){
+    text-transform: capitalize;
+    text-align: center;
+}
+td{
+    padding: 1% 1%;
+}
