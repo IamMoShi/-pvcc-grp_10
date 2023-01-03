@@ -42,6 +42,14 @@ def coords_voisins(x:int,y:int,taille:tuple,liste_coords_plantes:list,liste_tail
             voisinnage.append(liste_coords_plantes[i]) #  on ajoute la plante à la liste des plantes voisines
     return voisinnage
 
+def est_voisin(x:int,y:int,liste_coords_plantes:list,liste_tailles_plantes:list,rayon:int) -> bool:
+# renvoie True si les coordonnées sont dans un certain rayon autour d'une plante
+    for i in range(len(liste_coords_plantes)): # on teste pour toute la liste de plantes
+        x_tmp=liste_coords_plantes[i][0]+liste_tailles_plantes[i]/2 # on se place au milieu de la plante
+        y_tmp=liste_coords_plantes[i][1]+liste_tailles_plantes[i]/2
+        if (x_tmp-x)**2+(y_tmp-y)**2<=rayon**2: # si la distance est inférieure au rayon
+            return True #  on renvoie True
+    return False
 
 
 
@@ -147,8 +155,7 @@ def positions_libres(id_parcelle:int,taille:tuple) -> list:
     return positions_libres
 
 
-def test_all_positions(id_parcelle:int,taille:tuple):
-    pos_libres=positions_libres(id_parcelle,taille) # on récupère les positions libres
+def test_positions(id_parcelle:int,taille:tuple,pos_testees:list):
     liste_coords_plantes=[] # liste des coordonnées des plantes de la parcelle
     liste_tailles_plantes=[] # liste des tailles des plantes de la parcelle
     liste_id_plantes=[] # liste des id des plantes de la parcelle
@@ -162,11 +169,8 @@ def test_all_positions(id_parcelle:int,taille:tuple):
         taille_plante=cur.fetchall()
         liste_tailles_plantes.append(taille_plante[0][0])
     # fin création des listes de coordonnées et de tailles des plantes
-    for i in pos_libres:
+    for i in pos_testees:
         voisins=coords_voisins(i[0],i[1],taille,liste_coords_plantes,liste_tailles_plantes,300) # on cherche les voisins de la position
         id_voisins=liste_coords_to_id(voisins,liste_coords_plantes,liste_id_plantes) # on récupère les id des voisins
         possibles=suggestion(id_voisins)
         print("Pour la position",i,"les plantes compagnes sont",liste_id_to_nom(possibles[0]),"et les plantes ennemies sont",liste_id_to_nom(possibles[1]))
-
-
-#test_all_positions(23,(20,20))
