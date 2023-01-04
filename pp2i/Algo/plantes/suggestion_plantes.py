@@ -117,43 +117,41 @@ def aleatoire(id_parcelle:int,nombre:int):
     for i in range(nombre):
         secondaire(id_parcelle)
 
-def positions_libres(id_parcelle:int,taille:tuple) -> list:
-# renvoie les positions libres d'une certaine taille d'une parcelle
-# taille correspond à la hauteur et à la largeur de l'espace libre que l'on cherche
+def positions_libres(id_parcelle:int,taille:int) -> list:
+# renvoie les positions sans influence d'autres plantes et les positions sous influence d'autres plantes
     cur = data.cursor()
-    cur.execute("select x_plante,y_plante,id_plante from contient where id_parcelle = ?",(id_parcelle,)) # on cherche les positions occupées
+    cur.execute("select x_plante,y_plante from contient where id_parcelle like ?",(id_parcelle,)) # on cherche les positions des plantes    
     donnees=cur.fetchall()
-    tailles = [] # liste des tailles des plantes
-    for i in range(len(donnees)):
-        cur.execute("select taille from plante where id_plante = ?",(donnees[i][2],))
-        taille_plante=cur.fetchall()
-        tailles.append(taille_plante[0][0])
-        donnees[i]=(donnees[i][0],donnees[i][1]) # on ne garde que les coordonnées
-    positions_occupées=donnees.copy()
-    for i in range(len(donnees)):
-        for j in range(0,tailles[i]+1):
-            for k in range(0,tailles[i]+1):
-                positions_occupées.append((donnees[i][0]+j,donnees[i][1]+k)) # on ajoute chaque position occupée par les plantes (chaque unique couple de coordonnées)
+    pos_plantes=donnees.copy() # liste des positions des plantes (des milieux)
+    pos_occupees_plantes=donnees.copy() # liste de ttes les positions occupées par chaque plante
+    tmp=donnees.copy()
+    liste_tailles=[]
+    for i in tmp:
+        cur.execute("select taille from contient join plante on contient.id_plante=plante.id_plante where x_plante like ? and y_plante like ?",(i[0],i[1])) # on cherche la taille de la plante
+        donnees2=cur.fetchall()[0][0]
+        liste_tailles.append(donnees2)
+        liste=[(x, y) for x in range(int((-donnees2/2)+i[0]), int((donnees2/2)+1+i[0])) for y in range(int((-donnees2/2)+i[1]), int((donnees2/2)+1+i[1]))]
+        pos_occupees_plantes+=liste
 
-    # on récupère les dimensions de la parcelle et les plantes de la parcelle
-    cur.execute("select longueur_parcelle,largeur_parcelle from parcelle where id_parcelle = ?",(id_parcelle,))
-    dimensions=cur.fetchall()[0]
-    x_parcelle=int(dimensions[0])
-    y_parcelle=int(dimensions[1])
-    cur.execute("select x_plante,y_plante from contient where id_parcelle = ?",(id_parcelle,))
-    coords_plantes_parcelle=cur.fetchall()
 
-    positions_libres = []
-    i_max=i+taille[0]
-    j_max=j+taille[1]
-    for i in range(0,x_parcelle-taille[0]): # on parcourt la parcelle
-        for j in range(0,y_parcelle-taille[1]):
-            positions_libres.append((i,j))
-    for i in coords_plantes_parcelle:
-        pass
-
-    return positions_libres
-
+    cur.execute("select longueur_parcelle,largeur_parcelle from parcelle where id_parcelle like ?",(id_parcelle,)) # on cherche la taille de la parcelle
+    dimensions=cur.fetchall()
+    pos_free=[] # liste des positions sans influence d'autres plantes
+    pos_influence=[] # liste des positions sous influence d'autres plantes
+    tmp=[]
+    x=0
+    y=0
+    while y<int(dimensions[0][1]):
+        if tmp[0][0] and tmp[0][1]:
+            tmp.pop(0)
+        if not est_voisin(x,y,pos_plantes,liste_tailles,300):
+            tmp.append((x,y))
+            x+=19
+        x+=1
+        if x>=int(dimensions[0][0]):
+            x=0
+            y+=1
+    return(pos_free,pos_influence)
 
 def test_positions(id_parcelle:int,taille:tuple,pos_testees:list):
     liste_coords_plantes=[] # liste des coordonnées des plantes de la parcelle
@@ -174,3 +172,5 @@ def test_positions(id_parcelle:int,taille:tuple,pos_testees:list):
         id_voisins=liste_coords_to_id(voisins,liste_coords_plantes,liste_id_plantes) # on récupère les id des voisins
         possibles=suggestion(id_voisins)
         print("Pour la position",i,"les plantes compagnes sont",liste_id_to_nom(possibles[0]),"et les plantes ennemies sont",liste_id_to_nom(possibles[1]))
+
+print(positions_libres(29,(20,20)))
