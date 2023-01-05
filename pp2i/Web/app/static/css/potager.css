@@ -83,7 +83,7 @@ div.potager {
 }
 
 .potager .imageMap img {
-
+    border: solid black 1px;
     max-width: 90%;
 }
 
