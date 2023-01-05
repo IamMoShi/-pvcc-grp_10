@@ -133,12 +133,27 @@ def userss(numero):
 
 @user.route('/mesparcelles')
 def mesparcelles():
-    database = get_db()
-    items = database.cursor()
-    resultat = []
+    # ----------------------------------------------------------------------------------------------------------#
+    """
+    Le but de cette fonction est d'afficher toutes les parcelles possédées par un utilisateur logger
+    S'il n'est pas logger, alors le renvoyer vers la page de connection
+    """
+    # ----------------------------------------------------------------------------------------------------------#
+    # ----------------On vérifie que la personne est bien connectée avec une session ---------------------------#
+
     if len(session["parcelles"]) == 0:
         return render_template("error_page.html",
                                msg="Vous n'avez pas encore de parcelles, contactez un administrateur pour qu'il vous en attribue une!")
+
+    # ----------------------------------------------------------------------------------------------------------#
+    # ----- Import de la base de donnée pour récupérer les informations sur les parcelles de la personne -------#
+
+    database = get_db()
+    items    = database.cursor()
+    resultat = []
+
+    # ----------------------------------------------------------------------------------------------------------#
+    # ------------------On fait une boucle sur toutes les parcelles de la personne -----------------------------#
 
     for i in range(len(session["parcelles"])):
         items.execute(
@@ -146,31 +161,82 @@ def mesparcelles():
             (session["parcelles"][i],))
         resultat.append(items.fetchall())
 
+    # ----------------------------------------------------------------------------------------------------------#
+    # -------------- On ne récupère que la partie contenant les informations dans resultat ---------------------#
+
     for i in range(len(resultat)):
         tmp = resultat[i][0]
         resultat[i] = tmp
 
+    # ----------------------------------------------------------------------------------------------------------#
+    """
+    On va maintenant passé à l'affichage des parcelles de l'utilisateur
+    """
+    # ----------------------------------------------------------------------------------------------------------#
+
+    # -------------------------------------------- #
+    # --- Paramètres nécessaire à la page html ----#
+
     parametres = []
-    for i in range(len(resultat)):
+
+    # -------------------------------------------- #
+
+    for k in range(len(resultat)):  # On va faire le travail sur chaque parcelle
+
+        # -------------------------------------------- #
+        # --- Récupération des infos de la parcelle ---#
+
         id_parcelle, id_jardin, longueur, largeur, polygone = resultat[i]
+
+        # -------------------------------------------- #
+        # ---- récupération de l_polygone et l_id ---- #
+
         l_polygone, l_id = polygone.split('//')
+
+        # -------------------------------------------- #
+        # --------- transformation vers list --------- #
+
         l_polygone = string_to_lists(l_polygone)
         l_id = string_to_lists(l_id)
 
+        # -------------------------------------------- #
+        # ----------- Création de l'image ------------ #
+
         longueur, largeur = round(longueur), round(largeur)
+        affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id, database.cursor())
+
+        # -------------------------------------------- #
+        # --------- transformation pour html --------- #
 
         l_polygone_txt, chemin_image = html_code_fonction(l_polygone, l_id, id_parcelle)
 
-        affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
-                           database.cursor())
+        # -------------------------------------------- #
+        # ------- Problématique d'empilement --------- #
 
         l_polynomes_txt = l_polygone_txt[::-1]
+
+        # -------------------------------------------- #
+        # ------- Récupération de la légende --------- #
+
         l_legende = legende_fonction(database.cursor(), l_id)
+
+        # -------------------------------------------- #
+        # ------------ Chemin de l'image ------------- #
+
         chemin_image = str(id_parcelle) + ".png"
+
+        # -------------------------------------------- #
+        # ---Récupération des données de paramètres--- #
 
         parametres.append([l_polynomes_txt, l_legende, chemin_image, id_parcelle, id_jardin])
 
+    # -------------------------------------------- #
+    # ------------ Chemin du template ------------ #
+
     chemin = "potager_user/potager_user_affichage_global.html"
+
+    # -------------------------------------------- #
+
     return render_template(chemin, parametres=parametres)
 
 
