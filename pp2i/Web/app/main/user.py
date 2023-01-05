@@ -181,7 +181,7 @@ def mesparcelles():
 
     # -------------------------------------------- #
 
-    for k in range(len(resultat)):  # On va faire le travail sur chaque parcelle
+    for i in range(len(resultat)):  # On va faire le travail sur chaque parcelle
 
         # -------------------------------------------- #
         # --- Récupération des infos de la parcelle ---#
