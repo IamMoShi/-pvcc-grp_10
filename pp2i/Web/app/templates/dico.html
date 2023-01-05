@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/dico.css" />
+    <title>Dico des plantes</title>
+</head>
+{% include "navBar.html" %}
+<body>
+    
+    <h2>
+        Recherchez une plante pour connaître ses affinités avec les autres plantes:
+    </h2>
+
+    <select>
+        {%for plante in plantes%}
+        <option onclick="affiche_plante('{{plante[1]}}')">
+            {{plante[1]}}
+        </option>
+        {%endfor%}
+    </select>
+    
+
+    <div id="compagnon"></div>
+
+    <table>
+        <tr>
+            <th>Plante</th>
+            <th>Compagnons</th>
+            <th>Ennemis</th>
+        </tr>
+        {%for plante in plantes%}
+        <tr>
+            <td>{{plante[1]}} </td>
+            <td>{%for i in plante[2]%}
+                {{i[1]}},
+                {%endfor%}
+            </td>
+            <td>{%for i in plante[3]%}
+                {{i[1]}},
+                {%endfor%}
+            </td>
+        </tr>
+        {%endfor%}
+    </table>
+    <script>
+        function affiche_plante(a){
+            document.getElementById('compagnon').textContent = a;
+        }
+    </script>
+</body>
+</html>
