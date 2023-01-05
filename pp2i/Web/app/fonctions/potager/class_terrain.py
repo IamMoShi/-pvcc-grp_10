@@ -1,7 +1,6 @@
 import numpy as np
 import sqlite3
 
-
 '''
 Création de l'objet Terrain regroupant un ensemble de fonction applicable sur un terrain
 Ceci n'est que le début de la création de l'objet Terrain, il sera nécessaire d'ajouter des fonctionnalités !
@@ -82,8 +81,8 @@ class Terrain:
         self.largeur = int(self.largeur // self.echelle)
 
         try:
-            # création d'une matrice de -1 de la taille demandé par mise à l'échelle
-            self.mon_terrain = np.full((self.longueur, self.largeur), -1)
+            # création d'une matrice de 0 de la taille demandé par mise à l'échelle
+            self.mon_terrain = np.full((self.longueur, self.largeur), 0)
             msg = 'opération réussie'
             return self.mon_terrain, True, msg
         except (Exception,):
@@ -101,7 +100,7 @@ class Terrain:
         """
         x, y = position
         colonne_legume = np.full_like(np.zeros(taille_plante), id_plante)
-        colonne_vide = np.full_like(np.zeros(taille_plante), -1)
+        colonne_vide = np.full_like(np.zeros(taille_plante), 0)
         for k in range(taille_plante):
             if np.array_equal(
                     terrain[y + k, x:x + taille_plante],
@@ -153,28 +152,27 @@ class Terrain:
         data = sqlite3.connect("app/database/database.db")
 
         def couleur2(nombre):
-            if nombre == -1:
+            if nombre == 0:
                 return '#202020'
-            str_num = '#' + str(((nombre) * 123) % 10 ** 7)
+            str_num = '#' + str((nombre * 123) % 10 ** 7)
             for k in range(7 - len(str_num)):
                 str_num = str_num + '0'
             return str_num
 
         def couleur(nombre):
-            if nombre == -1:
+            if nombre == 0:
                 return [['#202020']]
             cur = data.cursor()
             cur.execute("select color from plante where id_plante like ?", (nombre,))
             return cur.fetchall()
 
-        longeur_ligne, longeur_colonne = np.shape(self.mon_terrain)
-        mon_terrain_colorie = np.chararray((longeur_ligne, longeur_colonne), itemsize=7)
+        longueur_ligne, longueur_colonne = np.shape(self.mon_terrain)
+        mon_terrain_colorie = np.chararray((longueur_ligne, longueur_colonne), itemsize=7)
 
-        for i in range(longeur_ligne):
-            for j in range(longeur_colonne):
+        for i in range(longueur_ligne):
+            for j in range(longueur_colonne):
                 x = self.mon_terrain[i, j]
-                result=couleur(int(x))
+                result = couleur(int(x))
                 retour = result[0][0]
                 mon_terrain_colorie[i, j] = retour.upper()
         return mon_terrain_colorie
-

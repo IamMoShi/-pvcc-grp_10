@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, redirect, session, request
 from os import listdir
-from ..fonctions.potager.NouvelleParcelle import NouvelleParcelle
 
 from ..database.get_db import get_db
 from ..fonctions.main.enleve_crochets import enleve_crochets
@@ -270,18 +269,21 @@ def ajout_plante(numero):
             mon_terrain = mon_terrain
         else:
             mon_terrain = mon_nouveau_terrain
-        print(mon_terrain)
-        # !!!!!!!!!!!!!!!!creation de l'objet:
-        objet_image = PotagerImage(mon_terrain, numero, items)
-        return str(objet_image)
 
-        # !!!!!!!!!!!!!appeler fontcion polygone:
-        polygone = str(objet_image.polygone()) + "//[0]"
+
+        objet_image = PotagerImage(mon_terrain, numero, items)
+
+        l_contour, l_polygone, alpha = objet_image.polygone()
+        l_id = objet_image.l_id
+        polygone = str(l_polygone) + "//" + str(l_id)
+        print(polygone)
 
         # ajout de la plante dans la db si c'est validé:
+
         items.execute("UPDATE parcelle SET polygone=? WHERE id_parcelle=?", (polygone, numero,))
         items.execute("INSERT INTO contient VALUES (?,?,?,?)", (numero, id_plante, x_plante, y_plante,))
         db.commit()
+        return 0
         return redirect('/mesparcelles/' + str(numero))
 
 
