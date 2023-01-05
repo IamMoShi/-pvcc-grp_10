@@ -324,4 +324,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/python,osx,windows,linux,visualstudiocode,pycharm
-/pp2i/Web/flask_session/
+/pp2i/Web/app/static/images/images_potagers/
+/pp2i/Web/app/static/images/images_potagers/
