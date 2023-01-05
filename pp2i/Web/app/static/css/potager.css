@@ -30,6 +30,7 @@ div.parcelle {
     justify-content: center;
     border: solid green 4px;
     margin: 30px;
+    max-width: 80%;
 }
 
 div.entete {
@@ -82,7 +83,8 @@ div.potager {
 }
 
 .potager .imageMap img {
-    max-width: 100%;
+
+    max-width: 90%;
 }
 
 /* Partie légende */

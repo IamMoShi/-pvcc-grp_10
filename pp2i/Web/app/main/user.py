@@ -351,7 +351,6 @@ def ajout_plante(numero):
         items.execute("UPDATE parcelle SET polygone=? WHERE id_parcelle=?", (polygone, numero,))
         items.execute("INSERT INTO contient VALUES (?,?,?,?)", (numero, id_plante, x_plante, y_plante,))
         db.commit()
-        return 0
         return redirect('/mesparcelles/' + str(numero))
 
 

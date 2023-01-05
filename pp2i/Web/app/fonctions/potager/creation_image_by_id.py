@@ -19,6 +19,6 @@ def creation_image_by_id(l_polygones, l_id, size, items, file, id_image):
         else:
             items.execute('select color from plante where id_plante = ?', (int(id_plante),))
             color = items.fetchall()[0][0]
-            draw.polygon(polygone, fill="blue", width=1, outline=None)
+            draw.polygon(polygone, fill=color, width=1, outline=None)
     img.save(file + str(id_image) + '.png', "PNG")
     return None
