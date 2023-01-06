@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,47 +9,58 @@
     <title>Dico des plantes</title>
 </head>
 {% include "navBar.html" %}
+
 <body>
-    
+
     <h2>
         Recherchez une plante pour connaître ses affinités avec les autres plantes:
     </h2>
+    <div class="global">
 
-    <select>
-        {%for plante in plantes%}
-        <option onclick="affiche_plante('{{plante[1]}}')">
-            {{plante[1]}}
-        </option>
-        {%endfor%}
-    </select>
-    
+        <div class="case">
 
-    <div id="compagnon"></div>
+            <form action="/dico">
 
-    <table>
-        <tr>
-            <th>Plante</th>
-            <th>Compagnons</th>
-            <th>Ennemis</th>
-        </tr>
-        {%for plante in plantes%}
-        <tr>
-            <td>{{plante[1]}} </td>
-            <td>{%for i in plante[2]%}
-                {{i[1]}},
-                {%endfor%}
-            </td>
-            <td>{%for i in plante[3]%}
-                {{i[1]}},
-                {%endfor%}
-            </td>
-        </tr>
-        {%endfor%}
-    </table>
-    <script>
-        function affiche_plante(a){
-            document.getElementById('compagnon').textContent = a;
-        }
-    </script>
+                <select name="num_plante">
+                    {%for plante in plantes%}
+                    <option>
+                        {{plante[0]}} {{plante[1]}}
+                    </option>
+                    {%endfor%}
+                </select>
+                <input type="submit" value="Afficher">
+            </form>
+
+        </div>
+
+        <div class="case">
+            {{plante_cherchee[0][1]}}
+        </div>
+
+        <div class="case">
+
+            {%if amis%}
+            <h1>Plantes amies:</h1>
+            {%for i in amis%}
+            <ul>{{i[0][2]}}</ul>
+            {%endfor%}
+            {%endif%}
+        </div>
+
+        <div class="case">
+
+            {%if ennemis%}
+            <h1>Plantes ennemies:</h1>
+            {%for i in ennemis%}
+            <ul>{{i[0][2]}}</ul>
+            {%endfor%}
+            {%endif%}
+        </div>
+
+    </div>
+
+
+
 </body>
+
 </html>

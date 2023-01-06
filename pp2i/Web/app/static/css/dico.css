@@ -7,17 +7,19 @@ h2{
     margin-left: 5%;
 }
 
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    }
-table{
-    margin: 3% 5%;
+
+
+select{
+    padding: 2% 2%;
+    font-size: large;
 }
-td:nth-child(1){
-    text-transform: capitalize;
-    text-align: center;
+div.global{
+    display: flex;
+    flex-direction: row;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 2%;
 }
-td{
-    padding: 1% 1%;
+div.case{
+    padding: 2%;
 }

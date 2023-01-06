@@ -9,6 +9,7 @@ from ..fonctions.potager.legende_fonction import legende_fonction
 from ..fonctions.potager.string_to_lists import string_to_lists
 from ..fonctions.potager import class_terrain
 from ..fonctions.potager.PotagerImage import PotagerImage
+from ..fonctions.plante.amis_ennemis import amis_ennemis
 
 user = Blueprint('user', __name__)
 
@@ -90,7 +91,12 @@ def userss(numero):
     items = db.cursor()
 
     items.execute(
-        "SELECT DISTINCT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN parcelle p ON p.id_user=u.id_user WHERE p.id_jardin=? UNION SELECT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN administre a ON a.id_user=u.id_user WHERE a.id_jardin=? UNION SELECT u.id_user, u.nom, u.prenom, u.mail, u.img FROM utilisateur u JOIN jardin j ON j.id_referent=u.id_user WHERE j.id_jardin=?",
+        """SELECT DISTINCT u.id_user, u.nom, u.prenom, u.mail, u.img 
+            FROM utilisateur u JOIN parcelle p ON p.id_user=u.id_user WHERE p.id_jardin=? 
+            UNION SELECT u.id_user, u.nom, u.prenom, u.mail, u.img 
+            FROM utilisateur u JOIN administre a ON a.id_user=u.id_user WHERE a.id_jardin=? 
+            UNION SELECT u.id_user, u.nom, u.prenom, u.mail, u.img 
+            FROM utilisateur u JOIN jardin j ON j.id_referent=u.id_user WHERE j.id_jardin=?""",
         (numero, numero, numero,))
     data = items.fetchall()
     final = []
@@ -289,7 +295,7 @@ def mon_potager(numero):
     chemin_image = str(id_parcelle) + ".png"
     chemin = "potager_user/potager_user_affichage_individuel.html"
 
-    items.execute('SELECT DISTINCT id_plante, nom FROM plante')
+    items.execute('SELECT DISTINCT id_plante, nom FROM plante ORDER BY nom')
     plantes = items.fetchall()
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
                            l_legende=legende_fonction(database.cursor(), l_id), numero=numero,
@@ -443,20 +449,23 @@ def edit_potager(numero):
     return render_template('potager_user/edit_potager.html')
 
 
-@user.route('/dico')
+@user.route('/dico', methods=['GET', 'POST'])
 def dico():
+
+    num=request.args.get('num_plante')
+    return redirect('/dico/'+num[0])
+
+@user.route('/dico/<num>')
+def dicoo(num):
+
     db = get_db()
     items = db.cursor()
     items.execute("SELECT id_plante, nom FROM plante ORDER BY nom")
     plantes = items.fetchall()
-    for i in range(len(plantes)):
-        items.execute(
-            "SELECT c.plante2, nom FROM compagnons c JOIN plante p ON c.plante2=p.id_plante WHERE c.plante1=? UNION SELECT c.plante1, nom FROM compagnons c JOIN plante p ON p.id_plante=c.plante1 WHERE c.plante2=?",
-            (plantes[i][0], plantes[i][0],))
-        plantes[i] += (items.fetchall(),)
-        items.execute(
-            "SELECT c.plante2, nom FROM ennemis c JOIN plante p ON c.plante2=p.id_plante WHERE c.plante1=? UNION SELECT c.plante1, nom FROM ennemis c JOIN plante p ON p.id_plante=c.plante1 WHERE c.plante2=?",
-            (plantes[i][0], plantes[i][0],))
-        plantes[i] += (items.fetchall(),)
 
-    return render_template('dico.html', plantes=plantes)
+    items.execute("SELECT id_plante, nom FROM plante WHERE id_plante=? ORDER BY nom", (num,))
+    plante_cherchee = items.fetchall()
+
+    l_infos_amis, l_infos_ennemis, dico_des_erreurs, i =amis_ennemis(num, get_db())
+    
+    return render_template('dico.html', amis=l_infos_amis, ennemis=l_infos_ennemis, plantes=plantes, plante_cherchee=plante_cherchee)
