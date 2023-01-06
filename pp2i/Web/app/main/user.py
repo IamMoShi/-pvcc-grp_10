@@ -10,7 +10,7 @@ from ..fonctions.potager.string_to_lists import string_to_lists
 from ..fonctions.potager import class_terrain
 from ..fonctions.potager.PotagerImage import PotagerImage
 from ..fonctions.plante.amis_ennemis import amis_ennemis
-
+import re
 user = Blueprint('user', __name__)
 
 
@@ -309,7 +309,8 @@ def ajout_plante(numero):
     if request.method == 'POST':
         db = get_db()
         items = db.cursor()
-        id_plante = request.form['nom_plante'][0]
+        id_p = request.form['nom_plante']
+        id_plante=int(re.findall('\d+', id_p)[0])
         x_plante = int(float(request.form['x_plante']))
         y_plante = int(float(request.form['y_plante']))
 
@@ -453,10 +454,19 @@ def edit_potager(numero):
 def dico():
 
     num=request.args.get('num_plante')
-    return redirect('/dico/'+num[0])
+    n=int(re.findall('\d+', num)[0])
 
+    return redirect('/dico/'+str(n))
+    
+
+#page pour voir les affinités des plantes
 @user.route('/dico/<num>')
 def dicoo(num):
+
+
+    #vérifier que la plante est dans la db (les id des plantes vont de 1 à 86)
+    if (int(num)<1 or int(num)>86):
+        return redirect('/mesparcelles')
 
     db = get_db()
     items = db.cursor()
