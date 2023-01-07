@@ -23,11 +23,10 @@
           <span></span>
         </button>
         <div class="navlinks-container">
-          <a href="/dico">Dico des plantes</a>
           {%if session.name%}
-          <a href="/users">Jardiniers</a>
-          <a href="/mesparcelles">Mes parcelles</a>
           <a href="/user/vos_informations">Mon profil</a>
+          <a href="/mesparcelles">Mes parcelles</a>
+          <a href="/dico/1">Dico des plantes</a>
           {%endif%}
           {%if session.admin%}
           <a href="/admin/attribution_parcelles">Attrib parcelles</a>

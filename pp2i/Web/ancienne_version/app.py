@@ -518,10 +518,6 @@ def mon_potager(numero):
                            id_jardin=id_jardin)
 
 
-@app.route('/id_plante/<numero>')
-def id_plante(numero):
-    return numero
-
 
 @app.route('/user/vos_informations')
 def vos_informations():
