@@ -15,7 +15,7 @@ def creation_image_by_id(l_polygones, l_id, size, items, file, id_image):
         i += 1
 
         if id_plante == 0:
-            draw.polygon(polygone, fill='#cccccc', width=1, outline=None)
+            draw.polygon(polygone, fill='white', width=1, outline=None)
         else:
             items.execute('select color from plante where id_plante = ?', (int(id_plante),))
             color = items.fetchall()[0][0]

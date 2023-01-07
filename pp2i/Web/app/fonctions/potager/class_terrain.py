@@ -98,7 +98,7 @@ class Terrain:
         :param id_plante: identifiant unique de la plante à placer selon son type, doit être positif
         :return: Booléen représentant le succès de la modification et le terrain modifié
         """
-        x, y = position
+        y, x = position
         colonne_legume = np.full_like(np.zeros(taille_plante), id_plante)
         colonne_vide = np.full_like(np.zeros(taille_plante), 0)
         for k in range(taille_plante):

@@ -349,6 +349,7 @@ def mon_potager(numero):
 def ajout_plante(numero):
     if not session.get("email"):
         return redirect("/signin")
+
     if request.method == 'POST':
         db = get_db()
         items = db.cursor()
@@ -393,7 +394,6 @@ def ajout_plante(numero):
         l_contour, l_polygone, alpha = objet_image.polygone()
         l_id = objet_image.l_id
         polygone = str(l_polygone) + "//" + str(l_id)
-        print(polygone)
 
         # ajout de la plante dans la db si c'est validé :
 

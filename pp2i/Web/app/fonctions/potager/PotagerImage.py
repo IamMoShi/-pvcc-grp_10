@@ -28,8 +28,8 @@ class PotagerImage:
         l_polygones = simplify(l_contours)
 
         # Pour utiliser la fonction area et par la création de l'image, on doit inverser i et j.
-        l_polygones = reverse(l_polygones)
-
+        # l_polygones = reverse(l_polygones)
+        print(l_polygones)
         # On garde le contour en mémoire dans l'objet
         self.l_contours = l_polygones
 
