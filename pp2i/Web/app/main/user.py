@@ -176,7 +176,7 @@ def mesparcelles():
 
     # ----------------------------------------------------------------------------------------------------------#
     """
-    On va maintenant passé à l'affichage des parcelles de l'utilisateur
+    On va maintenant passer à l'affichage des parcelles de l'utilisateur
     """
     # ----------------------------------------------------------------------------------------------------------#
 
@@ -224,8 +224,12 @@ def mesparcelles():
         # -------------------------------------------- #
         # ------- Récupération de la légende --------- #
 
-        l_legende = legende_fonction(database.cursor(), l_id)
 
+        l_legend = legende_fonction(database.cursor(), l_id)
+        for i in range(len(l_legend)):
+            items.execute("SELECT nom FROM plante WHERE id_plante=?", (l_legend[i][1],))
+            l_legend[i]+=(items.fetchone(),)
+        
         # -------------------------------------------- #
         # ------------ Chemin de l'image ------------- #
 
@@ -234,7 +238,7 @@ def mesparcelles():
         # -------------------------------------------- #
         # ---Récupération des données de paramètres--- #
 
-        parametres.append([l_polynomes_txt, l_legende, chemin_image, id_parcelle, id_jardin])
+        parametres.append([l_polynomes_txt, l_legend, chemin_image, id_parcelle, id_jardin])
 
     # -------------------------------------------- #
     # ------------ Chemin du template ------------ #
@@ -297,8 +301,15 @@ def mon_potager(numero):
 
     items.execute('SELECT DISTINCT id_plante, nom FROM plante ORDER BY nom')
     plantes = items.fetchall()
+
+    l_legend = legende_fonction(database.cursor(), l_id)
+    for i in range(len(l_legend)):
+        items.execute("SELECT nom FROM plante WHERE id_plante=?", (l_legend[i][1],))
+        l_legend[i]+=(items.fetchone(),)
+        
+    
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
-                           l_legende=legende_fonction(database.cursor(), l_id), numero=numero,
+                           l_legende=l_legend, numero=numero,
                            id_jardin=id_jardin, longueur=longueur, largeur=largeur, plantes=plantes)
 
 
