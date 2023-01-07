@@ -149,7 +149,7 @@ def mesparcelles():
     # ----- Import de la base de donnée pour récupérer les informations sur les parcelles de la personne -------#
 
     database = get_db()
-    items    = database.cursor()
+    items = database.cursor()
     resultat = []
 
     # ----------------------------------------------------------------------------------------------------------#
@@ -162,7 +162,7 @@ def mesparcelles():
         resultat.append(items.fetchall())
 
     # ----------------------------------------------------------------------------------------------------------#
-    # -------------- On ne récupère que la partie contenant les informations dans resultat ---------------------#
+    # -------------- On ne récupère que la partie contenant les informations dans résultat ---------------------#
 
     for i in range(len(resultat)):
         tmp = resultat[i][0]
@@ -244,10 +244,13 @@ def mesparcelles():
 @user.route('/mesparcelles/<numero>')
 def mon_potager(numero):
     """
-    Verifier que la fonction tourne après la modification des paramètres sessions par ajout de id_user
+    Verifier que la fonction tourne après la modification des paramètres sessions par ajout d'id_user
     :param numero:
     :return:
     """
+
+    # ----------------------------------------------------- #
+    # ----------- vérification de la connection------------ #
 
     if not session.get("email"):
         return redirect("/signin")
@@ -256,41 +259,87 @@ def mon_potager(numero):
     except:
         return 'error ce numero n\'est pas correct'
 
-    # vérifie que l'utilisateur a bien accès à cette parcelle (et qu'il n'a pas triché)
+    # ------------------------------------------------------------------------------------- #
+    # --vérifie que l'utilisateur a bien accès à cette parcelle (et qu'il n'a pas triché)-- #
+
     cestpasbon = True
     for num in session.get("parcelles"):
+
         if num == numero:
             cestpasbon = False
+
     if cestpasbon:
         return render_template("error_page.html", msg="Vous n'avez pas accès à cette parcelle")
 
+    # ----------------------------------------------------- #
+    # --------- récupération de la base de données--------- #
+
     database = get_db()
+
+    # ----------------------------------------------------- #
+    # ---- récupération des informations de la parcelle---- #
+
     items = database.cursor()
     items.execute(
         'SELECT id_parcelle, id_jardin, longueur_parcelle, largeur_parcelle, polygone FROM parcelle WHERE id_parcelle = ?',
         (numero,))
     resultat = items.fetchall()
+
+    # ----------------------------------------------------- #
+    # ------------Cas où l'on a aucun résultat------------- #
+
     if len(resultat) == 0:
         return 'la parcelle n\' a pas été trouvée'
 
+    # ----------------------------------------------------- #
+    # ---------------Cas où l'on a un résultat------------- #
+
     resultat = resultat[0]
 
+    # ----------------------------------------------------- #
+    # -----récupération des informations de résultat------- #
+
     id_parcelle, id_jardin, longueur, largeur, polygone = resultat
+
+    # ----------------------------------------------------- #
+    # ---------récupération de l_polygone et l_id---------- #
+
     l_polygone, l_id = polygone.split('//')
+
+    # ----------------------------------------------------- #
+    # -----------Conversion de string vers liste----------- #
+
     l_polygone = string_to_lists(l_polygone)
     l_id = string_to_lists(l_id)
 
+    # ----------------------------------------------------- #
+    # --Conversion de float vers int (longueur et largeur)- #
+
     longueur, largeur = round(longueur), round(largeur)
+
+    # ----------------------------------------------------- #
+    # --------récupération de la liste pour le html-------- #
 
     l_polygone_txt, chemin_image = html_code_fonction(l_polygone, l_id, id_parcelle)
 
+    # ----------------------------------------------------- #
+    # --------Création de l'image de la parcelle----------- #
+
     affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
                        database.cursor())
+
+    # ----------------------------------------------------- #
+    # ---Chemin d'ouverture de la page html et de l'image-- #
+
     chemin_image = str(id_parcelle) + ".png"
     chemin = "potager_user/potager_user_affichage_individuel.html"
 
+    # ----------------------------------------------------- #
+    # --Récupération de la liste des plantes pour l'ajout-- #
+
     items.execute('SELECT DISTINCT id_plante, nom FROM plante')
     plantes = items.fetchall()
+
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
                            l_legende=legende_fonction(database.cursor(), l_id), numero=numero,
                            id_jardin=id_jardin, longueur=longueur, largeur=largeur, plantes=plantes)
@@ -331,7 +380,7 @@ def ajout_plante(numero):
         # verification
         mon_nouveau_terrain, condition, msg = terrain.ajout_plante(taille, (x_plante, y_plante), id_plante)
 
-        if condition == False:  # si ça marche pas: on garde l'ancien terrain
+        if not condition:  # si ça ne marche pas : on garde l'ancien terrain
             mon_terrain = mon_terrain
             msg = "Vous ne pouvez pas ajouter cette plante ici"
             return render_template("error_page.html", msg=msg)
@@ -346,7 +395,7 @@ def ajout_plante(numero):
         polygone = str(l_polygone) + "//" + str(l_id)
         print(polygone)
 
-        # ajout de la plante dans la db si c'est validé:
+        # ajout de la plante dans la db si c'est validé :
 
         items.execute("UPDATE parcelle SET polygone=? WHERE id_parcelle=?", (polygone, numero,))
         items.execute("INSERT INTO contient VALUES (?,?,?,?)", (numero, id_plante, x_plante, y_plante,))

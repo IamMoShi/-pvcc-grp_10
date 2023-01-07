@@ -1,10 +1,8 @@
-from ...database.get_db import get_db
-
-
 def amis_ennemis(numero, database):
     # ----------------------------------------------------------------------------------------------------------#
     """
     :param numero: numéro de la plante demandée
+    :param database: database
     :return:
     l_infos_amis : correspond aux compagnons de la plante
     l_infos_ennemis : correspond aux ennemis de la plante
