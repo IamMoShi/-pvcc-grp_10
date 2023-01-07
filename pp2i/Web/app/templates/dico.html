@@ -12,11 +12,10 @@
 
 <body>
 
-    <h2>
-        Recherchez une plante pour connaître ses affinités avec les autres plantes:
-    </h2>
     <div class="global">
-
+        <h1>
+            Recherchez une plante pour connaître ses affinités avec les autres plantes:
+        </h1>
         <div class="case">
 
             <form action="/dico">
@@ -28,35 +27,39 @@
                     </option>
                     {%endfor%}
                 </select>
-                <input type="submit" value="Afficher">
+                <input type="submit" value="Afficher les informations sur la plante">
             </form>
 
         </div>
+        <div class="case_flex">
+            <div class="case1">
+                    <h2 class="case1">{{plante_cherchee[0][1]}}</h2>
+            </div>
 
-        <div class="case">
-            {{plante_cherchee[0][1]}}
+            <div class="case2">
+                {%if amis%}
+                <h2>Plantes amies:</h2>
+                {%for i in amis%}
+                <ul>{{i[0][2]}}</ul>
+                {%endfor%}
+                {%else%}
+                <h2>Plantes amies:</h2>
+                Cette plante n'a pas d'affinités particulière avec d'autres plantes.
+                {%endif%}
+            </div>
+
+            <div class="case3">
+                {%if ennemis%}
+                <h2>Plantes ennemies:</h2>
+                {%for i in ennemis%}
+                <ul>{{i[0][2]}}</ul>
+                {%endfor%}
+                {%else%}
+                <h2>Plantes ennemies:</h2>
+                Cette plante n'a pas de plantes ennemies.
+                {%endif%}
+            </div>
         </div>
-
-        <div class="case">
-
-            {%if amis%}
-            <h1>Plantes amies:</h1>
-            {%for i in amis%}
-            <ul>{{i[0][2]}}</ul>
-            {%endfor%}
-            {%endif%}
-        </div>
-
-        <div class="case">
-
-            {%if ennemis%}
-            <h1>Plantes ennemies:</h1>
-            {%for i in ennemis%}
-            <ul>{{i[0][2]}}</ul>
-            {%endfor%}
-            {%endif%}
-        </div>
-
     </div>
 
 

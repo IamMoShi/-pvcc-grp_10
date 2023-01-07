@@ -1,9 +1,10 @@
 
 body{
     margin-top: 80px;
+    font-family: sans-serif;
 }
 
-h2{
+h1{
     margin-left: 5%;
 }
 
@@ -12,13 +13,82 @@ select{
     padding: 2% 2%;
     font-size: large;
 }
-div.global{
-    display: flex;
-    flex-direction: row;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 2%;
+@media (min-width: 800px){
+
+    div.case_flex{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        border: solid darkgreen 4px;
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+    div.case1, div.case2, div.case3{
+        padding: 2%;
+        width: 33%;
+    }
+}
+@media (max-width: 800px){
+    div.case_flex{
+        display: flex;
+        flex-direction: column;
+        border: solid darkgreen 4px;
+    }
+}
+
+div.case1{
+    background-color: #C2CEBE;
+}
+h2.case1{
+    margin-top: auto;
+    text-align: center;
+    text-transform: capitalize;
+    font-weight: bold;
+    font-family: cursive;
+    font-size: 300%;
+    margin-block: 50px;
+    
+}
+h2{
+    margin-bottom: 3%;
+}
+ul{
+    text-transform: capitalize;
+    line-height: 150%;
+    font-size: large;
 }
 div.case{
+    margin: auto auto;
     padding: 2%;
+    width: 40%;
+    
+}
+form{
+    display: flex;
+    flex-direction: column;
+}
+select{
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-family: sans-serif;
+    text-transform: capitalize;
+    background-color: #C2CEBE;
+}
+
+input{
+    text-align: center;
+    margin: 5%;
+    color: rgb(61, 61, 61);
+    padding: 2% 5%;
+    border: solid 2px rgb(80, 165, 99);
+    border-radius: 2%;
+    font-size: large;
+    font-family: sans-serif;
+}
+input:hover{
+    color: white;
+    background-color: rgb(80, 165, 99);
+    transition-duration: 0.4s;
+    cursor: pointer;
 }
