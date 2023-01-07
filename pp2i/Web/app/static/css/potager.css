@@ -147,3 +147,27 @@ div.carre {
     }
 
 }
+
+div.ajout_plante{
+    border: solid darkgreen 4px;
+    padding: 2%;
+    margin: 0 auto;
+}
+div.en_bas{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2%;
+}
+div.suggestion{
+    width: 40%;
+    border: solid darkgreen 4px;
+    padding: 1%;
+    margin: 0 auto;
+}
+.rq{
+    
+    color: rgb(70, 70, 70);
+    font-weight:normal;
+    font-style: italic;
+    padding: 1%;
+}

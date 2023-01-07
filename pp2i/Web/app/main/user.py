@@ -251,11 +251,11 @@ def mesparcelles():
 
 
 # affichage individuel des parcelles (fonction d'ajout de plantes à mettre)
-@user.route('/mesparcelles/<numero>')
+@user.route('/mesparcelles/<numero>', methods=['GET', 'POST'])
 def mon_potager(numero):
     """
     Verifier que la fonction tourne après la modification des paramètres sessions par ajout d'id_user
-    :param numero:
+    :param numero: id de la parcelle
     :return:
     """
 
@@ -280,6 +280,22 @@ def mon_potager(numero):
 
     if cestpasbon:
         return render_template("error_page.html", msg="Vous n'avez pas accès à cette parcelle")
+
+    #Suggestion de plante quand on donne des coordonnées:
+    x_sugg=None
+    y_sugg=None
+    suggestion=None
+
+    if request.method == 'POST':
+        x_sugg=request.form['x_sugg']
+        y_sugg=request.form['y_sugg']
+        id_parcelle=num
+
+        #algo de mathis
+
+        suggestion=["tomates", "concombres"]
+    
+    
 
     # ----------------------------------------------------- #
     # --------- récupération de la base de données--------- #
@@ -355,9 +371,12 @@ def mon_potager(numero):
         items.execute("SELECT nom FROM plante WHERE id_plante=?", (l_legend[i][1],))
         l_legend[i] += (items.fetchone(),)
 
+    
+
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
                            l_legende=l_legend, numero=numero,
-                           id_jardin=id_jardin, longueur=longueur, largeur=largeur, plantes=plantes)
+                           id_jardin=id_jardin, longueur=longueur, largeur=largeur, 
+                           plantes=plantes, suggestion=suggestion, x_sugg=x_sugg, y_sugg=y_sugg)
 
 
 @user.route('/mesparcelles/<numero>/ajouter_plante', methods=['POST', 'GET'])
@@ -365,13 +384,13 @@ def ajout_plante(numero):
     if not session.get("email"):
         return redirect("/signin")
 
-    if request.method == 'POST':
+    if request.method == 'GET':
         db = get_db()
         items = db.cursor()
-        id_p = request.form['nom_plante']
+        id_p = request.args['nom_plante']
         id_plante = int(re.findall('\d+', id_p)[0])
-        x_plante = int(float(request.form['x_plante']))
-        y_plante = int(float(request.form['y_plante']))
+        x_plante = int(float(request.args['x_plante']))
+        y_plante = int(float(request.args['y_plante']))
 
         items.execute("SELECT longueur_parcelle, largeur_parcelle FROM parcelle WHERE id_parcelle=?", (numero,))
         longueur, largeur = items.fetchall()[0]
@@ -535,3 +554,15 @@ def dicoo(num):
 
     return render_template('dico.html', amis=l_infos_amis, ennemis=l_infos_ennemis, plantes=plantes,
                            plante_cherchee=plante_cherchee)
+
+#suggestion de plante quand on demande à l'algo quoi mettre en (x,y)
+@user.route('/suggestion/<num>')
+def sugg(num):
+    x_plante=request.args.get('x_plante_s')
+    y_plante=request.args.get('y_plante_s')
+    id_parcelle=num
+    
+    #algo
+    message="mettez des tomates là"
+
+    return redirect('/mesparcelles/'+id_parcelle)
