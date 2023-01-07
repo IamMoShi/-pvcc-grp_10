@@ -11,6 +11,7 @@ from ..fonctions.potager import class_terrain
 from ..fonctions.potager.PotagerImage import PotagerImage
 from ..fonctions.plante.amis_ennemis import amis_ennemis
 import re
+
 user = Blueprint('user', __name__)
 
 
@@ -224,12 +225,11 @@ def mesparcelles():
         # -------------------------------------------- #
         # ------- Récupération de la légende --------- #
 
-
         l_legend = legende_fonction(database.cursor(), l_id)
         for i in range(len(l_legend)):
             items.execute("SELECT nom FROM plante WHERE id_plante=?", (l_legend[i][1],))
-            l_legend[i]+=(items.fetchone(),)
-        
+            l_legend[i] += (items.fetchone(),)
+
         # -------------------------------------------- #
         # ------------ Chemin de l'image ------------- #
 
@@ -344,24 +344,17 @@ def mon_potager(numero):
     chemin_image = str(id_parcelle) + ".png"
     chemin = "potager_user/potager_user_affichage_individuel.html"
 
-<<<<<<< HEAD
     # ----------------------------------------------------- #
     # --Récupération de la liste des plantes pour l'ajout-- #
 
-    items.execute('SELECT DISTINCT id_plante, nom FROM plante')
-    plantes = items.fetchall()
-
-=======
     items.execute('SELECT DISTINCT id_plante, nom FROM plante ORDER BY nom')
     plantes = items.fetchall()
 
     l_legend = legende_fonction(database.cursor(), l_id)
     for i in range(len(l_legend)):
         items.execute("SELECT nom FROM plante WHERE id_plante=?", (l_legend[i][1],))
-        l_legend[i]+=(items.fetchone(),)
-        
-    
->>>>>>> ca1514633bcb669b719483bf0eda7ad9ff791e24
+        l_legend[i] += (items.fetchone(),)
+
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
                            l_legende=l_legend, numero=numero,
                            id_jardin=id_jardin, longueur=longueur, largeur=largeur, plantes=plantes)
@@ -376,7 +369,7 @@ def ajout_plante(numero):
         db = get_db()
         items = db.cursor()
         id_p = request.form['nom_plante']
-        id_plante=int(re.findall('\d+', id_p)[0])
+        id_plante = int(re.findall('\d+', id_p)[0])
         x_plante = int(float(request.form['x_plante']))
         y_plante = int(float(request.form['y_plante']))
 
@@ -517,20 +510,17 @@ def edit_potager(numero):
 
 @user.route('/dico', methods=['GET', 'POST'])
 def dico():
+    num = request.args.get('num_plante')
+    n = int(re.findall('\d+', num)[0])
 
-    num=request.args.get('num_plante')
-    n=int(re.findall('\d+', num)[0])
+    return redirect('/dico/' + str(n))
 
-    return redirect('/dico/'+str(n))
-    
 
-#page pour voir les affinités des plantes
+# page pour voir les affinités des plantes
 @user.route('/dico/<num>')
 def dicoo(num):
-
-
-    #vérifier que la plante est dans la db (les id des plantes vont de 1 à 86)
-    if (int(num)<1 or int(num)>86):
+    # vérifier que la plante est dans la db (les id des plantes vont de 1 à 86)
+    if (int(num) < 1 or int(num) > 86):
         return redirect('/mesparcelles')
 
     db = get_db()
@@ -541,6 +531,7 @@ def dicoo(num):
     items.execute("SELECT id_plante, nom FROM plante WHERE id_plante=? ORDER BY nom", (num,))
     plante_cherchee = items.fetchall()
 
-    l_infos_amis, l_infos_ennemis, dico_des_erreurs, i =amis_ennemis(num, get_db())
-    
-    return render_template('dico.html', amis=l_infos_amis, ennemis=l_infos_ennemis, plantes=plantes, plante_cherchee=plante_cherchee)
+    l_infos_amis, l_infos_ennemis, dico_des_erreurs, i = amis_ennemis(num, get_db())
+
+    return render_template('dico.html', amis=l_infos_amis, ennemis=l_infos_ennemis, plantes=plantes,
+                           plante_cherchee=plante_cherchee)
