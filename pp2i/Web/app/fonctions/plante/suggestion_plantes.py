@@ -2,7 +2,7 @@ import sqlite3
 import random
 from math import sqrt
 
-database = sqlite3.connect("app/database/database.db")
+#data = sqlite3.connect("app/database/database.db")
 
 def id_to_nom(id:int,database) -> str:
 # renvoie le nom d'une plante à partir de son id
@@ -180,7 +180,6 @@ def trouve_positions(plantes, taille, id_parcelle,database):
                 x_tmp = x + j
                 y_tmp = y + k
                 dist=distances_voisins(x_tmp, y_tmp, (20,20), plantes,rayon,id_parcelle,liste_tailles_plantes,database)
-                print(dist)
     return pos_libres, pos_influence
 
 def test_position(id_parcelle:int,taille:tuple,pos_testee:tuple,database):
@@ -205,5 +204,3 @@ def test_position(id_parcelle:int,taille:tuple,pos_testee:tuple,database):
     possibles=suggestion(id_voisins,database)
     #print("Pour la position",i,"les plantes compagnes sont",liste_id_to_nom(possibles[0],database),"et les plantes ennemies sont",liste_id_to_nom(possibles[1],database))
     return liste_id_to_nom(possibles[0],database)
-
-positions_libres(23,(20.20),database)
