@@ -59,19 +59,31 @@
                         
                         <input type=hidden name="type" value="sugg_placement">
                         <input type="submit" value="Je veux être aidé oskour">
+                        <input type=hidden name="liste" value="{{liste_deja_testee}}">
+                        {% if coords_plante_suggeree %}
+                        <ul>La plante suggérée est : </ul>
+                        <ul>{{coords_plante_suggeree[2]}}  {{coords_plante_suggeree[3]}}</ul>
+                        <ul>Aux coordonnées : </ul>
+                        <ul>({{coords_plante_suggeree[0]}} ,  {{coords_plante_suggeree[1]}})</ul>
+                        {% endif %}
 
                     </form>
                     
                     <!-- Et là paf l'algo il te donne des conseils (mettre un if t'as capté) -->
-                    {%if suggestion_placement%}
+                    {%if suggestion_placement and not vide %}
                     Vous pouvez mettre les plantes suivantes:
-                    <form action="/suggestion_placement" method="POST">
+                    <form action="/mesparcelles/{{numero}}" method="POST">
                         {%for i in suggestions_placement%}
                         <input type=hidden name="dico" value="{{dico_complet}}">
+                        <input type=hidden name="type" value="montrer_placement">
+                        <input type=hidden name="liste" value="{{liste_deja_testee}}">
                         <input type="submit" name="nom_plante" value="{{i}}">
                         {%endfor%}
                     </form>
                         {%endif%}
+                    {% if vide %}
+                    <ul>Il n'y a plus de plantes à vous suggérer</ul>
+                    {% endif %}
                 </div>
 
             </div>
@@ -84,6 +96,7 @@
                     <!-- Le form de suggestion de plantes -->
                     <form action="/mesparcelles/{{numero}}" method="POST">
 
+                        <input type=hidden name="liste" value="{{liste_deja_testee}}">
                         <input type=hidden name="type" value="sugg_classique">
                         <label>x_plante:</label>
                         <input type="number" name="x_sugg" required min="0" max="{{longueur}}"

@@ -124,6 +124,7 @@ class Terrain:
                 else:
                     return False, terrain
             return True, terrain
+        return False, terrain
 
     def ajout_plante(self, taille_plante: int, position: tuple, id_plante: int):
         """
@@ -134,28 +135,33 @@ class Terrain:
             le booléen représentant le succès de la modification
             et un message associé à la modification (pour le debug)
         """
+        tmp=self.mon_terrain.copy()
         taille_plante = int(taille_plante // self.echelle)
         if len(position) != 2:
             msg = 'Les coordonnées de position ne se pas correcte, cf taille tuple'
+            self.mon_terrain=tmp.copy()
             return self.mon_terrain, False, msg
 
         if position[0] < 0 or position[1] < 0:
             msg = 'position impossible car l\'une des coordonnées est négative '
+            self.mon_terrain=tmp.copy()
             return self.mon_terrain, False, msg
 
         if position[0] + taille_plante > len(self.mon_terrain[0]) \
                 or position[1] + taille_plante > len(self.mon_terrain[1]):
             msg = 'La plante ne rentre pas dans le jardin à cette position'
+            self.mon_terrain=tmp.copy()
             return self.mon_terrain, False, msg
 
-        terrain_modifie = self.modification_terrain(self.mon_terrain, taille_plante, position, id_plante,'ajout')
+        bool_,terrain_modifie = self.modification_terrain(self.mon_terrain, taille_plante, position, id_plante,'ajout')
 
-        if terrain_modifie[0]:
-            self.mon_terrain = terrain_modifie[1]
+        if bool_:
+            self.mon_terrain = terrain_modifie.copy()
             msg = 'Ajout réussi'
             return self.mon_terrain, True, msg
         else:
             msg = 'problème d\'ajout'
+            self.mon_terrain=tmp.copy()
             return self.mon_terrain, False, msg
 
     def suppression_plante(self, taille_plante: int, position: tuple):

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, session, request
+from flask import Blueprint, render_template, redirect, session, request,url_for
 from os import listdir
 
 from ..database.get_db import get_db
@@ -14,7 +14,9 @@ from ..fonctions.plante.suggestion_plantes import test_position
 from ..fonctions.plante.suggestion_plantes import liste_id_to_nom
 from ..fonctions.plante.suggestion_plantes import algo_placement
 from ..fonctions.plante.suggestion_plantes import nom_to_id
+from ..fonctions.plante.suggestion_plantes import id_to_nom
 import re
+import random
 
 user = Blueprint('user', __name__)
 
@@ -316,50 +318,53 @@ def mon_potager(numero):
 
     id_parcelle, id_jardin, longueur, largeur, polygone = resultat
 
-    # ----------------------------------------------------- #
-    # ---------récupération de l_polygone et l_id---------- #
+    def secondaire(id_parcelle, id_jardin, longueur, largeur, polygone,string=""):
+        # ----------------------------------------------------- #
+        # ---------récupération de l_polygone et l_id---------- #
 
-    l_polygone, l_id = polygone.split('//')
+        l_polygone, l_id = polygone.split('//')
 
-    # ----------------------------------------------------- #
-    # -----------Conversion de string vers liste----------- #
+        # ----------------------------------------------------- #
+        # -----------Conversion de string vers liste----------- #
 
-    l_polygone = string_to_lists(l_polygone)
-    l_id = string_to_lists(l_id)
+        l_polygone = string_to_lists(l_polygone)
+        l_id = string_to_lists(l_id)
 
-    # ----------------------------------------------------- #
-    # --Conversion de float vers int (longueur et largeur)- #
+        # ----------------------------------------------------- #
+        # --Conversion de float vers int (longueur et largeur)- #
 
-    longueur, largeur = round(longueur), round(largeur)
+        longueur, largeur = round(longueur), round(largeur)
 
-    # ----------------------------------------------------- #
-    # --------récupération de la liste pour le html-------- #
+        # ----------------------------------------------------- #
+        # --------récupération de la liste pour le html-------- #
 
-    l_polygone_txt, chemin_image = html_code_fonction(l_polygone, l_id, id_parcelle)
+        l_polygone_txt, chemin_image = html_code_fonction(l_polygone, l_id, id_parcelle)
 
-    # ----------------------------------------------------- #
-    # --------Création de l'image de la parcelle----------- #
+        # ----------------------------------------------------- #
+        # --------Création de l'image de la parcelle----------- #
 
-    affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
-                       database.cursor())
+        affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
+                        database.cursor(),string)
 
-    # ----------------------------------------------------- #
-    # ---Chemin d'ouverture de la page html et de l'image-- #
+        # ----------------------------------------------------- #
+        # ---Chemin d'ouverture de la page html et de l'image-- #
 
-    chemin_image = str(id_parcelle) + ".png"
-    chemin = "potager_user/potager_user_affichage_individuel.html"
+        chemin_image = str(id_parcelle) + string + ".png"
+        chemin = "potager_user/potager_user_affichage_individuel.html"
 
-    # ----------------------------------------------------- #
-    # --Récupération de la liste des plantes pour l'ajout-- #
+        # ----------------------------------------------------- #
+        # --Récupération de la liste des plantes pour l'ajout-- #
 
-    items.execute('SELECT DISTINCT id_plante, nom FROM plante ORDER BY nom')
-    plantes = items.fetchall()
+        items.execute('SELECT DISTINCT id_plante, nom FROM plante ORDER BY nom')
+        plantes = items.fetchall()
 
-    l_legend = legende_fonction(database.cursor(), l_id)
-    for i in range(len(l_legend)):
-        items.execute("SELECT nom FROM plante WHERE id_plante=?", (l_legend[i][1],))
-        l_legend[i] += (items.fetchone(),)
+        l_legend = legende_fonction(database.cursor(), l_id)
+        for i in range(len(l_legend)):
+            items.execute("SELECT nom FROM plante WHERE id_plante=?", (l_legend[i][1],))
+            l_legend[i] += (items.fetchone(),)
+        return chemin,l_polygone_txt,chemin_image,l_legend,numero,id_jardin,longueur,largeur,plantes
 
+    chemin,l_polygone_txt,chemin_image,l_legend,numero,id_jardin,longueur,largeur,plantes=secondaire(id_parcelle, id_jardin, longueur, largeur, polygone)
     
 #Suggestion de plante quand on donne des coordonnées:
     x_sugg=None
@@ -368,9 +373,13 @@ def mon_potager(numero):
     suggestion_placement=False
     suggestions_placement=None
     dico_complet=None
+    coords_plante_suggeree=None
+    vide=False
+    liste_deja_testee=[]
 
     if request.method == 'POST':
-        
+
+        liste_deja_testee=eval(request.form['liste'])
         
         if request.form['type'] == "sugg_placement":
             suggestion_placement=True
@@ -387,7 +396,11 @@ def mon_potager(numero):
             tmp = set(cles) # on transforme la liste en ensemble
             cles_uniques = list(tmp) # on transforme l'ensemble en liste
             suggestions_placement=liste_id_to_nom(cles_uniques,database)
-            print(dico_complet)
+            for element in liste_deja_testee:
+                if element in suggestions_placement:
+                    suggestions_placement.remove(element)
+            if len(suggestions_placement)==0:
+                vide=True
         
         elif request.form['type'] == "sugg_classique":
             x_sugg=request.form['x_sugg']
@@ -401,18 +414,67 @@ def mon_potager(numero):
             suggestion=liste_id_to_nom(id_suggestion,database)
         
         elif request.form['type'] == "montrer_placement":
-            #changer image
-            return True
+            nom_plante=request.form['nom_plante']
+            id_plante=nom_to_id(nom_plante, get_db())
+            dico=request.form["dico"]
+            dico_complet=eval(dico)
+            all_pos=dico_complet[str(id_plante)]
+            pos_choisie=all_pos[0]
+            
+# recréer l'image correspondante
+            db = get_db()
+            items = db.cursor()
 
-        elif request.form['type'] == "image_creee":
-            pass
+            items.execute("SELECT longueur_parcelle, largeur_parcelle FROM parcelle WHERE id_parcelle=?", (numero,))
+            longueur, largeur = items.fetchall()[0]
+            longueur = int(longueur)
+            largeur = int(largeur)
 
+            # creation du terrain vide
+            terrain = class_terrain.Terrain((longueur, largeur))
+            mon_terrain = terrain.creation_terrain()
+
+            # infos de la plante à ajouter
+            items.execute('SELECT * FROM plante WHERE id_plante=?', (id_plante,))
+            id_plante, taille, nom, couleur = items.fetchall()[0]
+
+            # ajouter les plantes déjà existantes dans le terrain
+            items.execute("select id_plante,x_plante,y_plante from contient where id_parcelle like ?", (numero,))
+            result = items.fetchall()
+            for i in result:
+                items.execute("select taille from plante where id_plante like ?", (i[0],))
+                result2 = items.fetchall()
+                mon_terrain, B, msg = terrain.ajout_plante(result2[0][0], (i[1], i[2]), i[0])
+
+            condition=False
+            while not condition and not all_pos==[]:
+                indice=random.randint(0,len(all_pos)-1)
+                pos_choisie=all_pos[indice]
+                x_test,y_test=pos_choisie
+                mon_nouveau_terrain, condition, msg = terrain.ajout_plante(taille, (x_test, y_test), id_plante)
+                all_pos.remove(pos_choisie)
+            
+            coords_plante_suggeree=(x_test,y_test,id_plante,id_to_nom(id_plante,get_db()))
+            if not condition:
+                liste_deja_testee.append(nom_plante)
+                return render_template("potager_user/erreur_suggestion_placement.html", msg="Cette plante ne peux plus être ajoutée",
+                liste_deja_testee=liste_deja_testee,numero=numero)
+            
+            mon_terrain=mon_nouveau_terrain.copy()
+
+            objet_image = PotagerImage(mon_terrain, numero, items)
+
+            l_contour, l_polygone, alpha = objet_image.polygone()
+            l_id = objet_image.l_id
+            polygone = str(l_polygone) + "//" + str(l_id)
+            chemin,l_polygone_txt,chemin_image,l_legend,numero,id_jardin,longueur,largeur,plantes=secondaire(id_parcelle, id_jardin, longueur, largeur, polygone)
 
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
                            l_legende=l_legend, numero=numero,
                            id_jardin=id_jardin, longueur=longueur, largeur=largeur, 
                            plantes=plantes, suggestion=suggestion, x_sugg=x_sugg, y_sugg=y_sugg,
-                           suggestion_placement=suggestion_placement,suggestions_placement=suggestions_placement,dico_complet=dico_complet)
+                           suggestion_placement=suggestion_placement,suggestions_placement=suggestions_placement,vide=vide,
+                           dico_complet=dico_complet,coords_plante_suggeree=coords_plante_suggeree,liste_deja_testee=liste_deja_testee)
 
 
 @user.route('/mesparcelles/<numero>/ajouter_plante', methods=['POST', 'GET'])
@@ -472,56 +534,6 @@ def ajout_plante(numero):
         items.execute("INSERT INTO contient VALUES (?,?,?,?)", (numero, id_plante, x_plante, y_plante,))
         db.commit()
         return redirect('/mesparcelles/' + str(numero))
-
-
-# dans le cas ou on ajoute une plante pour la suggestion de placement
-    elif request.method==['POST']: 
-        db = get_db()
-        items = db.cursor()
-        id_p = request.form['nom_plante']
-        id_plante = int(re.findall('\d+', id_p)[0])
-        x_plante = int(float(request.form['x_plante']))
-        y_plante = int(float(request.form['y_plante']))
-
-        items.execute("SELECT longueur_parcelle, largeur_parcelle FROM parcelle WHERE id_parcelle=?", (numero,))
-        longueur, largeur = items.fetchall()[0]
-        longueur = int(longueur)
-        largeur = int(largeur)
-
-        # creation du terrain vide
-        terrain = class_terrain.Terrain((longueur, largeur))
-        mon_terrain = terrain.creation_terrain()
-
-        # infos de la plante à ajouter
-        items.execute('SELECT * FROM plante WHERE id_plante=?', (id_plante,))
-        id_plante, taille, nom, couleur = items.fetchall()[0]
-
-        # ajouter les plantes déjà existantes dans le terrain
-        items.execute("select id_plante,x_plante,y_plante from contient where id_parcelle like ?", (numero,))
-        result = items.fetchall()
-        for i in result:
-            items.execute("select taille from plante where id_plante like ?", (i[0],))
-            result2 = items.fetchall()
-            mon_terrain, B, msg = terrain.ajout_plante(result2[0][0], (i[1], i[2]), i[0])
-
-        # verification
-        mon_nouveau_terrain, condition, msg = terrain.ajout_plante(taille, (x_plante, y_plante), id_plante)
-
-        if not condition:  # si ça ne marche pas : on garde l'ancien terrain
-            mon_terrain = mon_terrain
-            msg = "Vous ne pouvez pas ajouter cette plante ici"
-            return render_template("error_page.html", msg=msg)
-
-        else:  # si c'est validé
-            mon_terrain = mon_nouveau_terrain
-
-        objet_image = PotagerImage(mon_terrain, numero, items)
-
-        l_contour, l_polygone, alpha = objet_image.polygone()
-        l_id = objet_image.l_id
-        polygone = str(l_polygone) + "//" + str(l_id)
-
-        data={'type':"image_creee", 'polygone':polygone, 'alpha':alpha, 'l_contour':l_contour, 'l_polygone':l_polygone, 'l_id':l_id}
 
 
 @user.route('/user/vos_informations')
@@ -640,18 +652,3 @@ def dicoo(num):
 
     return render_template('dico.html', amis=l_infos_amis, ennemis=l_infos_ennemis, plantes=plantes,
                            plante_cherchee=plante_cherchee)
-
-
-#suggestion de plante quand on demande à l'algo quoi mettre en (x,y)
-@user.route('/suggestion_placement', methods=['GET','POST'])
-def sugg():
-    if request.method=="POST":
-        nom_plante=request.form['nom_plante']
-        id_plante=nom_to_id(nom_plante, get_db())
-        dico=request.form["dico"]
-        dico_complet=eval(dico)
-        all_pos=dico_complet[str(id_plante)]
-        pos_choisie=all_pos[0]
-        return(str(all_pos))
-    else:
-        return("je suis en get")

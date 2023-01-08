@@ -3,7 +3,7 @@ import random
 from math import sqrt
 
 # IMPORTANT : penser à masque la ligne suivante quand on utilise le code via l'app web (possible conflit)
-#database = sqlite3.connect("app/database/database.db")
+database = sqlite3.connect("app/database/database.db")
 
 def id_to_nom(id:int,database) -> str:
 # renvoie le nom d'une plante à partir de son id
