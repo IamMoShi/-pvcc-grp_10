@@ -69,7 +69,7 @@
 
                     </form>
                     
-                    <!-- Et là paf l'algo il te donne des conseils (mettre un if t'as capté) -->
+                    
                     {%if suggestion_placement and not vide %}
                     Vous pouvez mettre les plantes suivantes:
                     <form action="/mesparcelles/{{numero}}" method="POST">
@@ -107,7 +107,7 @@
                         <input type="submit" value="Rechercher">
                     </form>
 
-                    <!-- Et là paf l'algo il te donne des conseils (mettre un if t'as capté) -->
+                   
                     {%if x_sugg%}
                     Nous vous conseillons de mettre en x_plante={{x_sugg}} y_plante={{y_sugg}}:
                     {%for i in suggestion%}
