@@ -23,11 +23,11 @@ h2{
     display: flex;
     justify-content: space-between;
     padding: 1em;
-    background-color: rgb(0, 83, 14);
+    background-color: rgb(7, 157, 32);
     cursor: pointer;
 }
 .label_accordeon:hover{
-    background: rgb(0, 168, 50);
+    background: rgb(24, 218, 82);
     transition: all 0.1s;
 }
 .label_accordeon::after {
@@ -49,7 +49,7 @@ h2{
 }
 
 input:checked + .label_accordeon {
-    background: rgb(18, 141, 7);
+    background: rgb(24, 218, 82);
 }
 
 input:checked + .label_accordeon::after {
@@ -66,11 +66,9 @@ input:checked ~ .contenu_accordeon {
     padding: 0.5rem 0;
 }
 
-
-
 input{
     position: absolute;
-    opacity: 1;
+    opacity: 0;
     z-index: -1;
 }
 
