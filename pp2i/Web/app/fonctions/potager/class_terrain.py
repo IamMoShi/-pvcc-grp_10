@@ -90,7 +90,7 @@ class Terrain:
             msg = 'erreur dans la fonction '
             return np.array([]), False, msg
 
-    def modification_terrain(self, terrain: np.array, taille_plante: int, position: tuple, id_plante: int):
+    def modification_terrain(self, terrain: np.array, taille_plante: int, position: tuple, id_plante: int,type: str):
         """
         :param terrain: prend un terrain (utilisé pour ne pas modifier Mon_terrain, la matrice de l'objet Terrain
         :param taille_plante: taille plante est supposé être la longueur du côté du carré necessaire à la plante
@@ -98,18 +98,32 @@ class Terrain:
         :param id_plante: identifiant unique de la plante à placer selon son type, doit être positif
         :return: Booléen représentant le succès de la modification et le terrain modifié
         """
-        y, x = position
-        colonne_legume = np.full_like(np.zeros(taille_plante), id_plante)
-        colonne_vide = np.full_like(np.zeros(taille_plante), 0)
-        for k in range(taille_plante):
-            if np.array_equal(
-                    terrain[y + k, x:x + taille_plante],
-                    colonne_vide
-            ):
-                terrain[y + k, x:x + taille_plante] = colonne_legume
-            else:
-                return False, terrain
-        return True, terrain
+        if type == 'ajout':
+            y, x = position
+            colonne_legume = np.full_like(np.zeros(taille_plante), id_plante)
+            colonne_vide = np.full_like(np.zeros(taille_plante), 0)
+            for k in range(taille_plante):
+                if np.array_equal(
+                        terrain[y + k, x:x + taille_plante],
+                        colonne_vide
+                ):
+                    terrain[y + k, x:x + taille_plante] = colonne_legume
+                else:
+                    return False, terrain
+            return True, terrain
+        elif type == 'suppression':
+            y,x = position
+            colonne_legume= np.full_like(np.zeros(taille_plante), id_plante)
+            colonne_vide = np.full_like(np.zeros(taille_plante), 0)
+            for k in range(taille_plante):
+                if np.array_equal(
+                        terrain[y + k, x:x + taille_plante],
+                        colonne_legume
+                ):
+                    terrain[y + k, x:x + taille_plante] = colonne_vide
+                else:
+                    return False, terrain
+            return True, terrain
 
     def ajout_plante(self, taille_plante: int, position: tuple, id_plante: int):
         """
@@ -134,7 +148,7 @@ class Terrain:
             msg = 'La plante ne rentre pas dans le jardin à cette position'
             return self.mon_terrain, False, msg
 
-        terrain_modifie = self.modification_terrain(self.mon_terrain, taille_plante, position, id_plante)
+        terrain_modifie = self.modification_terrain(self.mon_terrain, taille_plante, position, id_plante,'ajout')
 
         if terrain_modifie[0]:
             self.mon_terrain = terrain_modifie[1]
@@ -142,6 +156,37 @@ class Terrain:
             return self.mon_terrain, True, msg
         else:
             msg = 'problème d\'ajout'
+            return self.mon_terrain, False, msg
+
+    def suppression_plante(self, taille_plante: int, position: tuple):
+        """
+        :param taille_plante: taille plante est un entier
+        :param position: position du coin en haut à gauche de la plante, l'indice du jardin commence en 0,0
+        :return: le terrain modifié si la modification était possible,
+            le booléen représentant le succès de la modification
+            et un message associé à la modification (pour le debug)
+        """
+        taille_plante = int(taille_plante // self.echelle)
+        if len(position) != 2:
+            msg = 'Les coordonnées de position ne se pas correcte, cf taille tuple'
+            return self.mon_terrain, False, msg
+
+        if position[0] < 0 or position[1] < 0:
+            msg = 'position impossible car l\'une des coordonnées est négative '
+            return self.mon_terrain, False, msg
+
+        if position[0] + taille_plante > len(self.mon_terrain[0]) or position[1] + taille_plante > len(self.mon_terrain[1]):
+            msg = 'il ne peut pas y avoir de plante ici'
+            return self.mon_terrain, False, msg
+
+        terrain_modifie = self.modification_terrain(self.mon_terrain, taille_plante, position, 0,"suppression")
+
+        if terrain_modifie[0]:
+            self.mon_terrain = terrain_modifie[1]
+            msg = 'suppression réussie'
+            return self.mon_terrain, True, msg
+        else:
+            msg = 'problème de suppression'
             return self.mon_terrain, False, msg
 
     def colorisation(self):

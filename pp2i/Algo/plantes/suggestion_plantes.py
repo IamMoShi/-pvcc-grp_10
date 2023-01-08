@@ -2,12 +2,20 @@ import sqlite3
 import random
 from math import sqrt
 
+# IMPORTANT : penser à masque la ligne suivante quand on utilise le code via l'app web (possible conflit)
 database = sqlite3.connect("app/database/database.db")
 
 def id_to_nom(id:int,database) -> str:
 # renvoie le nom d'une plante à partir de son id
     cur = database.cursor()
     cur.execute("select nom from plante where id_plante like ?",(id,))
+    donnees=cur.fetchall()
+    return donnees[0][0]
+
+def nom_to_id(nom:str,database) -> int:
+# renvoie l'id d'une plante à partir de son nom
+    cur = database.cursor()
+    cur.execute("select id_plante from plante where nom like ?",(nom,))
     donnees=cur.fetchall()
     return donnees[0][0]
 
@@ -130,26 +138,12 @@ def aleatoire(id_parcelle:int,nombre:int,database):
     for i in range(nombre,database):
         secondaire(id_parcelle)
 
-def positions_libres(id_parcelle:int,taille:int,database) -> list:
+def algo_placement(id_parcelle:int,taille:int,database) -> list:
 # algo de placement
     cur = database.cursor()
     cur.execute("select x_plante,y_plante from contient where id_parcelle like ?",(id_parcelle,)) # on cherche les positions des plantes    
     donnees=cur.fetchall()
     pos_plantes=donnees.copy() # liste des positions des plantes (des milieux)
-
-
-#    pos_occupees_plantes=donnees.copy() # liste de ttes les positions occupées par chaque plante
- #   tmp=donnees.copy()
-  #  liste_tailles=[]
-
-#    for i in tmp:
- #       cur.execute("select taille from contient join plante on contient.id_plante=plante.id_plante where x_plante like ? and y_plante like ?",(i[0],i[1]))
-        # on cherche la taille de la plante
-  #      donnees2=cur.fetchall()[0][0]
-   #     liste_tailles.append(donnees2)
-    #    liste=[(x, y) for x in range(int((-donnees2/2)+i[0]), int((donnees2/2)+1+i[0])) for y in range(int((-donnees2/2)+i[1]), int((donnees2/2)+1+i[1]))]
-     #   pos_occupees_plantes+=liste
-
     plantes = []
     for i in range(len(pos_plantes)):
         plantes.append((pos_plantes[i])+(300,))
@@ -190,20 +184,31 @@ def trouve_positions(plantes:list, taille:tuple, id_parcelle:int,database):
                 dist=distances_voisins(x_tmp, y_tmp, taille, plantes,rayon,id_parcelle,liste_tailles_plantes,database)
                 # dist : (dist_x, dist_y, x_voisin,y_voisin)
                 for i in dist:
-# ATTENTION x_emplacement et y_emplacement sont les coordonnées du milieu de la plante et pas de son coin supérieur gauche
-                    x_emplacement, y_emplacement = (x_tmp+(i[0]//2), y_tmp+(i[1]//2))
-                    if x_emplacement<taille[0]//2 or y_emplacement<taille[1]//2:
+# ATTENTION x_emplacement et y_emplacement sont les coordonnées du coin supérieur gauche
+                    x_test, y_test = (x_tmp+(i[0]//2), y_tmp+(i[1]//2))
+                    if x_test<taille[0]//2 or y_test<taille[1]//2:
                         continue
-                    if x_emplacement>longueur_parcelle-taille[0]//2 or y_emplacement>largeur_parcelle-taille[1]//2:
+                    if x_test>longueur_parcelle-taille[0]//2 or y_test>largeur_parcelle-taille[1]//2:
                         continue
+                    x_emplacement, y_emplacement = (x_test-taille[0]//2, y_test-taille[1]//2)
                     emplacements.append((x_emplacement, y_emplacement))
 
     #on enlève les doublons
     ensemble = set(emplacements) # on transforme la liste en ensemble
     emplacements = list(ensemble) # on transforme l'ensemble en liste
 
-    return (emplacements,plantes,database)
+    return creation_dict(emplacements, taille, id_parcelle,database)
 
+def creation_dict(emplacements:list, taille:tuple, id_parcelle:int,database):
+    mon_dict={}
+    for i in emplacements:
+        id_compagnons=test_position(id_parcelle,taille,(i[0]+taille[0],i[1]+taille[1]),database)
+        for j in id_compagnons:
+            if str(j) in mon_dict:
+                mon_dict[str(j)].append(i)
+            else:
+                mon_dict[str(j)]=[i]
+    return mon_dict
 
 def test_position(id_parcelle:int,taille:tuple,pos_testee:tuple,database):
     liste_coords_plantes=[] # liste des coordonnées des plantes de la parcelle

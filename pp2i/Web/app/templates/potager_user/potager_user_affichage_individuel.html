@@ -50,6 +50,32 @@
         </div>
         <div class="en_bas">
             <div class="suggestion">
+                <h2>Suggestion intelligente de plantes et de placements:</h2>
+                <div class="rq">Recevoir des suggestions de plantes et de positions adéquates pour ces mêmes plantes :</div>
+
+                <div>
+                    <!-- Le form de suggestion de placements de plantes -->
+                    <form action="/mesparcelles/{{numero}}" method="POST">
+                        
+                        <input type=hidden name="type" value="sugg_placement">
+                        <input type="submit" value="Je veux être aidé oskour">
+
+                    </form>
+                    
+                    <!-- Et là paf l'algo il te donne des conseils (mettre un if t'as capté) -->
+                    {%if suggestion_placement%}
+                    Vous pouvez mettre les plantes suivantes:
+                    <form action="/suggestion_placement" method="POST">
+                        {%for i in suggestions_placement%}
+                        <input type=hidden name="dico" value="{{dico_complet}}">
+                        <input type="submit" name="nom_plante" value="{{i}}">
+                        {%endfor%}
+                    </form>
+                        {%endif%}
+                </div>
+
+            </div>
+            <div class="suggestion">
                 <h2>Suggestion de plantes:</h2>
                 <div class="rq">Indiquez où vous voulez placer une nouvelle plante, nous vous conseillons la plante la
                     plus adaptée par rapport à ce qu'il y a autour:</div>
@@ -58,6 +84,7 @@
                     <!-- Le form de suggestion de plantes -->
                     <form action="/mesparcelles/{{numero}}" method="POST">
 
+                        <input type=hidden name="type" value="sugg_classique">
                         <label>x_plante:</label>
                         <input type="number" name="x_sugg" required min="0" max="{{longueur}}"
                             value="{{longueur/2}}"><br>
@@ -67,7 +94,7 @@
                         <input type="submit" value="Rechercher">
                     </form>
 
-                    <!-- Et là paf l'algo il te donne des conseils (mettre un if d'as capté) -->
+                    <!-- Et là paf l'algo il te donne des conseils (mettre un if t'as capté) -->
                     {%if x_sugg%}
                     Nous vous conseillons de mettre en x_plante={{x_sugg}} y_plante={{y_sugg}}:
                     {%for i in suggestion%}

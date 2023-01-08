@@ -12,6 +12,13 @@ def id_to_nom(id:int,database) -> str:
     donnees=cur.fetchall()
     return donnees[0][0]
 
+def nom_to_id(nom:str,database) -> int:
+# renvoie l'id d'une plante à partir de son nom
+    cur = database.cursor()
+    cur.execute("select id_plante from plante where nom like ?",(nom,))
+    donnees=cur.fetchall()
+    return donnees[0][0]
+
 def liste_id_to_nom(liste_id:list,database) -> list:
 # renvoie une liste de noms à partir d'une liste d'id
     liste_nom=[]
@@ -197,10 +204,10 @@ def creation_dict(emplacements:list, taille:tuple, id_parcelle:int,database):
     for i in emplacements:
         id_compagnons=test_position(id_parcelle,taille,(i[0]+taille[0],i[1]+taille[1]),database)
         for j in id_compagnons:
-            if j in mon_dict:
-                mon_dict[j].append(i)
+            if str(j) in mon_dict:
+                mon_dict[str(j)].append(i)
             else:
-                mon_dict[j]=[i]
+                mon_dict[str(j)]=[i]
     return mon_dict
 
 def test_position(id_parcelle:int,taille:tuple,pos_testee:tuple,database):
