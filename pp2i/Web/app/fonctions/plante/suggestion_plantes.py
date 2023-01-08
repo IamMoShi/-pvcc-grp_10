@@ -2,6 +2,7 @@ import sqlite3
 import random
 from math import sqrt
 
+# IMPORTANT : penser à masque la ligne suivante quand on utilise le code via l'app web (possible conflit)
 #database = sqlite3.connect("app/database/database.db")
 
 def id_to_nom(id:int,database) -> str:
@@ -130,37 +131,29 @@ def aleatoire(id_parcelle:int,nombre:int,database):
     for i in range(nombre,database):
         secondaire(id_parcelle)
 
-def positions_libres(id_parcelle:int,taille:int,database) -> list:
-# renvoie les positions sans influence d'autres plantes et les positions sous influence d'autres plantes
+def algo_placement(id_parcelle:int,taille:int,database) -> list:
+# algo de placement
     cur = database.cursor()
     cur.execute("select x_plante,y_plante from contient where id_parcelle like ?",(id_parcelle,)) # on cherche les positions des plantes    
     donnees=cur.fetchall()
     pos_plantes=donnees.copy() # liste des positions des plantes (des milieux)
-#    pos_occupees_plantes=donnees.copy() # liste de ttes les positions occupées par chaque plante
- #   tmp=donnees.copy()
-  #  liste_tailles=[]
-
-#    for i in tmp:
- #       cur.execute("select taille from contient join plante on contient.id_plante=plante.id_plante where x_plante like ? and y_plante like ?",(i[0],i[1]))
-        # on cherche la taille de la plante
-  #      donnees2=cur.fetchall()[0][0]
-   #     liste_tailles.append(donnees2)
-    #    liste=[(x, y) for x in range(int((-donnees2/2)+i[0]), int((donnees2/2)+1+i[0])) for y in range(int((-donnees2/2)+i[1]), int((donnees2/2)+1+i[1]))]
-     #   pos_occupees_plantes+=liste
-
-
     plantes = []
     for i in range(len(pos_plantes)):
         plantes.append((pos_plantes[i])+(300,))
     return (trouve_positions(plantes, taille, id_parcelle,database))
 
+
 def trouve_positions(plantes:list, taille:tuple, id_parcelle:int,database):
-    #algo de placement des plantes
+# sous algo de l'algo de placement (recherche les positions)
+
     bug=plantes.copy() #on travaille sur une copie car sinon on crée des erreurs en modifiant la liste originale
-    pos_libres = []
-    pos_influence = []
     liste_tailles_plantes=[]
 
+    cur=database.cursor()
+    cur.execute("select longueur_parcelle,largeur_parcelle from parcelle where id_parcelle like ?",(id_parcelle,))
+    donnees=cur.fetchall()
+    longueur_parcelle=donnees[0][0]
+    largeur_parcelle=donnees[0][1]
 
     tmp=plantes.copy()
     for i in range(len(tmp)): # on cherche la taille de chaque plante
@@ -173,10 +166,10 @@ def trouve_positions(plantes:list, taille:tuple, id_parcelle:int,database):
         plantes[i]=(tmp[i][0],tmp[i][1])
 
     emplacements=[]
-    for i in range(len(plantes)):
+    for i in range(len(plantes)): # on travaille sur la liste de plantes
         x, y, rayon = bug[i]
-        for j in range(-taille[0] // 2, taille[0] // 2 + 1,taille[0]):
-            for k in range(-taille[1] // 2, taille[1] // 2 + 1,taille[1]):
+        for j in range(-taille[0] // 2, taille[0] // 2 + 1,taille[0]): # pour chaque plante on travaille sur les 4 coins
+            for k in range(-taille[1] // 2, taille[1] // 2 + 1,taille[1]): # suite des 4 coins
                 if x+j<0 or y+k<0:
                     continue
                 x_tmp = x + j
@@ -184,13 +177,31 @@ def trouve_positions(plantes:list, taille:tuple, id_parcelle:int,database):
                 dist=distances_voisins(x_tmp, y_tmp, taille, plantes,rayon,id_parcelle,liste_tailles_plantes,database)
                 # dist : (dist_x, dist_y, x_voisin,y_voisin)
                 for i in dist:
-                    x_emplacement, y_emplacement = (x_tmp+(i[0]//2), y_tmp+(i[1]//2))
-                    if x_emplacement<taille[0]//2 or y_emplacement<taille[1]//2:
+# ATTENTION x_emplacement et y_emplacement sont les coordonnées du coin supérieur gauche
+                    x_test, y_test = (x_tmp+(i[0]//2), y_tmp+(i[1]//2))
+                    if x_test<taille[0]//2 or y_test<taille[1]//2:
                         continue
+                    if x_test>longueur_parcelle-taille[0]//2 or y_test>largeur_parcelle-taille[1]//2:
+                        continue
+                    x_emplacement, y_emplacement = (x_test-taille[0]//2, y_test-taille[1]//2)
                     emplacements.append((x_emplacement, y_emplacement))
-    ensemble = set(emplacements)
-    emplacements = list(ensemble)
-    print(len(emplacements))
+
+    #on enlève les doublons
+    ensemble = set(emplacements) # on transforme la liste en ensemble
+    emplacements = list(ensemble) # on transforme l'ensemble en liste
+
+    return creation_dict(emplacements, taille, id_parcelle,database)
+
+def creation_dict(emplacements:list, taille:tuple, id_parcelle:int,database):
+    mon_dict={}
+    for i in emplacements:
+        id_compagnons=test_position(id_parcelle,taille,(i[0]+taille[0],i[1]+taille[1]),database)
+        for j in id_compagnons:
+            if j in mon_dict:
+                mon_dict[j].append(i)
+            else:
+                mon_dict[j]=[i]
+    return mon_dict
 
 def test_position(id_parcelle:int,taille:tuple,pos_testee:tuple,database):
     liste_coords_plantes=[] # liste des coordonnées des plantes de la parcelle

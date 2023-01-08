@@ -131,7 +131,7 @@ def aleatoire(id_parcelle:int,nombre:int,database):
         secondaire(id_parcelle)
 
 def positions_libres(id_parcelle:int,taille:int,database) -> list:
-# renvoie les positions sans influence d'autres plantes et les positions sous influence d'autres plantes
+# algo de placement
     cur = database.cursor()
     cur.execute("select x_plante,y_plante from contient where id_parcelle like ?",(id_parcelle,)) # on cherche les positions des plantes    
     donnees=cur.fetchall()
@@ -157,7 +157,7 @@ def positions_libres(id_parcelle:int,taille:int,database) -> list:
 
 
 def trouve_positions(plantes:list, taille:tuple, id_parcelle:int,database):
-#algo de placement des plantes
+# sous algo de l'algo de placement (recherche les positions)
 
     bug=plantes.copy() #on travaille sur une copie car sinon on crée des erreurs en modifiant la liste originale
     liste_tailles_plantes=[]
@@ -190,6 +190,7 @@ def trouve_positions(plantes:list, taille:tuple, id_parcelle:int,database):
                 dist=distances_voisins(x_tmp, y_tmp, taille, plantes,rayon,id_parcelle,liste_tailles_plantes,database)
                 # dist : (dist_x, dist_y, x_voisin,y_voisin)
                 for i in dist:
+# ATTENTION x_emplacement et y_emplacement sont les coordonnées du milieu de la plante et pas de son coin supérieur gauche
                     x_emplacement, y_emplacement = (x_tmp+(i[0]//2), y_tmp+(i[1]//2))
                     if x_emplacement<taille[0]//2 or y_emplacement<taille[1]//2:
                         continue
@@ -201,7 +202,8 @@ def trouve_positions(plantes:list, taille:tuple, id_parcelle:int,database):
     ensemble = set(emplacements) # on transforme la liste en ensemble
     emplacements = list(ensemble) # on transforme l'ensemble en liste
 
-    return emplacements
+    return (emplacements,plantes,database)
+
 
 def test_position(id_parcelle:int,taille:tuple,pos_testee:tuple,database):
     liste_coords_plantes=[] # liste des coordonnées des plantes de la parcelle
@@ -225,5 +227,3 @@ def test_position(id_parcelle:int,taille:tuple,pos_testee:tuple,database):
     possibles=suggestion(id_voisins,database)
     #print("Pour la position",i,"les plantes compagnes sont",liste_id_to_nom(possibles[0],database),"et les plantes ennemies sont",liste_id_to_nom(possibles[1],database))
     return possibles[0]
-
-positions_libres(93,(20,20),database)

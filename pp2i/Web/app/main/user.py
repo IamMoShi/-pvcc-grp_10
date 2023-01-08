@@ -12,6 +12,7 @@ from ..fonctions.potager.PotagerImage import PotagerImage
 from ..fonctions.plante.amis_ennemis import amis_ennemis
 from ..fonctions.plante.suggestion_plantes import test_position
 from ..fonctions.plante.suggestion_plantes import liste_id_to_nom
+from ..fonctions.plante.suggestion_plantes import algo_placement
 import re
 
 user = Blueprint('user', __name__)

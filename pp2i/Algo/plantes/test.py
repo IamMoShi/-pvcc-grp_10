@@ -1,6 +1,9 @@
-liste=[0,1]
-tmp=liste.copy()
-for i in range(3):
-    liste.extend(tmp)
-liste.remove(1)
-print(liste)
+#fichier potager image
+#donner ma matrice, l'id de la parcelle, curseur
+#--> génère l'image
+#
+#afficher l'image / donner l'adresse
+#
+#ajout possible ou non --> class terrain
+#
+#créer fonction remove
