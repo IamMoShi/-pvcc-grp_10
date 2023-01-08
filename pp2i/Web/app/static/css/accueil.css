@@ -12,14 +12,81 @@ h2{
     font-size: larger;
     line-height: 150%;
 }
+
+.accordeon{
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.label_accordeon{
+    display: flex;
+    justify-content: space-between;
+    padding: 1em;
+    background-color: rgb(0, 83, 14);
+    cursor: pointer;
+}
+.label_accordeon:hover{
+    background: rgb(0, 168, 50);
+    transition: all 0.1s;
+}
+.label_accordeon::after {
+    content: "\276F";
+    width: 1em;
+    height: 1em;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.contenu_accordeon{
+    border-radius: 0 0 8px 8px;
+    max-height: 0;
+    padding: 0 1em;
+    color: rgb(38, 38, 38);
+    background-color: #ddd;
+    transition: all 0.3s;
+    opacity: 0;
+}
+
+input:checked + .label_accordeon {
+    background: rgb(18, 141, 7);
+}
+
+input:checked + .label_accordeon::after {
+    transform: rotate(90deg);
+}
+input:checked ~ .contenu_accordeon {
+    max-height: 600px;
+    padding: 1em;
+    opacity: 1;
+    list-style: none;
+    padding: 1rem 2rem;
+}
+.contenu_accordeon ul > li {
+    padding: 0.5rem 0;
+}
+
+
+
+input{
+    position: absolute;
+    opacity: 1;
+    z-index: -1;
+}
+
+
 .Nom{
-    color: green;
+    color: rgb(99, 255, 99);
     font-weight: bold;
 }
 .debut{
+    position: relative;
+    top: -35px;
+    z-index: -1;
+    background-image: url("../images/autres/bandeau_accueil.jpg");
+    background-size: 100%;
     text-align: center;
-    margin: 2% 2%;
-    background-color: rgb(173, 224, 173);
+    color: rgb(255, 255, 255);
     padding-right: 20%;
     padding: 5% 2%;
 }
@@ -35,8 +102,10 @@ h2{
 }
 .droite{
     width: 40%;
-    background-color: antiquewhite;
-    height: 300px;
+    background-image: url("../images/autres/papillon.png");
+    height: auto;
+    margin: 0 0 0 20px;
+    background-position: center ;
 }
 .credits{
     text-align: center;

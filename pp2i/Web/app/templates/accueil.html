@@ -9,10 +9,6 @@
 </head>
 <body>
     {% include "navBar.html" %}
-    <h2>
-        Bienvenue sur notre site! (page pas finie)
-
-    </h2>
     <div class="presentation">
         <div class="debut"><span class="Nom">Le Bonheur Est Dans Le Potager</span> a pour but d'aider à la gestion des jardins partagés.<br>
         Il permet de faire le lien entre les jardiniers, et permet une initiation 
@@ -20,13 +16,27 @@
         </div>
 
         <div class="blabla">
-            <div class="gauche">
-
-                <b>Le principe du site:</b><br>
-                Chaque jardin est identifié par un nombre. Il a un référent et un ou plusieurs administrateurs: ce sont les personnes à contacter en cas de questions ou problème.<br>
-                Les administrateurs peuvent créer des parcelles dans ces jardins ou en supprimer, et les attribuer à des jardiniers.<br>
-                Si vous voulez faire partie d'un jardin, il faut donc contacter un administrateur pour qu'il vous attribue une parcelle.<br>
-                Vous pourrez ensuite planter des plantes dans ces parcelles via l'onglet 'Mes Parcelles' et jardiner!
+            <div class="accordeon_liste">
+            <div class="accordeon">
+                    <input type="checkbox" id="un">
+                    <label class="label_accordeon" for="un">Le principe du site:</label>
+                    <div class="contenu_accordeon">
+                        <ul>
+                            <li>Chaque jardin est identifié par son <b>identifiant</b>. Il a un <b>référent</b> et un ou plusieurs <b>administrateurs</b>: ce sont les personnes à contacter en cas de questions ou problème !</li>
+                            <li>Les administrateurs peuvent <b>créer</b> des parcelles dans ces jardins ou en <b>supprimer</b>, et les <b>attribuer</b> à des jardiniers.</li>
+                        </ul>
+                    </div>
+            </div>
+            <div class="accordeon">
+                <input type="checkbox" id="deux">
+                <label class="label_accordeon" for="deux">Comment rejoindre un jardin ?</label>
+                <div class="contenu_accordeon">
+                    <ul>
+                        <li>Si vous voulez faire partie d'un jardin, il faut donc <b>contacter un administrateur</b> pour qu'il vous attribue une parcelle.</li>
+                        <li>Vous pourrez ensuite planter des plantes dans ces parcelles via l'onglet <b>'Mes Parcelles'</b> et jardiner!</li>
+                    </ul>
+                </div>
+            </div>
             </div>
 
             <div class="droite">
@@ -37,7 +47,8 @@
             Site réalisé dans le cadre du projet PP2I à Télécom Nancy par: <br>
             Héléna Barbillon<br>
             Léo Fornoff<br>
-            Mathis Mangold
+            Mathis Mangold<br>
+            Maelan Tiger
         </div>
     </div>
 
