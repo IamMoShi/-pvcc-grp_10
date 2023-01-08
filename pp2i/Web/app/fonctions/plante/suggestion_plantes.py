@@ -56,8 +56,8 @@ def distances_voisins(x:int,y:int,taille:tuple,liste_coords_plantes:list,rayon:i
     distances=[]
     voisinnage=coords_voisins(x,y,taille,liste_coords_plantes,liste_tailles_plantes,rayon,database)
     for i in voisinnage:
-        x_tmp=i[0]
-        y_tmp=i[1]
+        x_tmp=i[0]+10
+        y_tmp=i[1]+10
         delta_x=x-x_tmp
         delta_y=y-y_tmp
         if abs(delta_x)>taille[0] and abs(delta_y)>taille[1]: # si la distance est inférieure à la taille on ne peut pas planter de plante
