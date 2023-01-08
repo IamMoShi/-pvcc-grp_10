@@ -11,6 +11,7 @@ from ..fonctions.potager import class_terrain
 from ..fonctions.potager.PotagerImage import PotagerImage
 from ..fonctions.plante.amis_ennemis import amis_ennemis
 from ..fonctions.plante.suggestion_plantes import test_position
+from ..fonctions.plante.suggestion_plantes import liste_id_to_nom
 import re
 
 user = Blueprint('user', __name__)
@@ -295,7 +296,8 @@ def mon_potager(numero):
         x_sugg=round(float(x_sugg))
         y_sugg=round(float(y_sugg))
         database = get_db()
-        suggestion=test_position(id_parcelle,(20,20),(x_sugg,y_sugg),database)
+        id_suggestion=test_position(id_parcelle,(20,20),(x_sugg,y_sugg),database)
+        suggestion=liste_id_to_nom(id_suggestion,database)
     
     
 

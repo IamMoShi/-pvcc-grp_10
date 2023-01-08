@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect
 import class_terrain
 import sqlite3
 
-terrain = class_terrain.Terrain((300, 300))
+terrain = class_terrain.Terrain((200, 300))
 
 app = Flask(__name__)
 
@@ -15,8 +15,9 @@ def index():
 def test():
     data = sqlite3.connect("app/database/database.db")
     mon_terrain = terrain.creation_terrain()
+    mon_terrain, B, msg = terrain.ajout_plante(20, (0, 0), 1)
     cur = data.cursor()
-    cur.execute("select id_plante,x_plante,y_plante from contient where id_parcelle like ?",(27,))
+    cur.execute("select id_plante,x_plante,y_plante from contient where id_parcelle like ?",(93,))
     result=cur.fetchall()
     for i in result:
         cur.execute("select taille from plante where id_plante like ?",(i[0],))

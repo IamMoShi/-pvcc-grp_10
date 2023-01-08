@@ -2,7 +2,7 @@ import sqlite3
 import random
 from math import sqrt
 
-#data = sqlite3.connect("app/database/database.db")
+#database = sqlite3.connect("app/database/database.db")
 
 def id_to_nom(id:int,database) -> str:
 # renvoie le nom d'une plante à partir de son id
@@ -34,7 +34,6 @@ def liste_coords_to_id(liste_coords_recherchees:list,liste_coords_plantes:list,l
 def coords_voisins(x:int,y:int,taille:tuple,liste_coords_plantes:list,liste_tailles_plantes:list,rayon:int,database) -> list: 
 # renvoie les plantes dans un rayon de rayon autour des coordonnées (x,y)
     voisinnage=[]
-    print(x,y,taille)
     x+=taille[0]/2 # pour se placer au milieu de la plante
     y+=taille[1]/2
     for i in range(len(liste_coords_plantes)): # on teste pour toute la liste de plantes
@@ -53,9 +52,8 @@ def distances_voisins(x:int,y:int,taille:tuple,liste_coords_plantes:list,rayon:i
         y_tmp=i[1]
         delta_x=x-x_tmp
         delta_y=y-y_tmp
-        dist_carre=(delta_x)**2+(delta_y)**2
-        dist=sqrt(dist_carre)
-        distances.append((delta_x, delta_y, x_tmp,y_tmp,int(dist))) # valeurs d'index 0 et 1 positives si la plante est à droite / en bas
+        if abs(delta_x)>taille[0] and abs(delta_y)>taille[1]: # si la distance est inférieure à la taille on ne peut pas planter de plante
+            distances.append((delta_x, delta_y, x_tmp,y_tmp)) # valeurs d'index 0 et 1 positives si la plante est à droite / en bas
     return distances
 
 def est_voisin(x:int,y:int,liste_coords_plantes:list,liste_tailles_plantes:list,rayon:int,database) -> bool:
@@ -138,30 +136,34 @@ def positions_libres(id_parcelle:int,taille:int,database) -> list:
     cur.execute("select x_plante,y_plante from contient where id_parcelle like ?",(id_parcelle,)) # on cherche les positions des plantes    
     donnees=cur.fetchall()
     pos_plantes=donnees.copy() # liste des positions des plantes (des milieux)
-    pos_occupees_plantes=donnees.copy() # liste de ttes les positions occupées par chaque plante
-    tmp=donnees.copy()
-    liste_tailles=[]
-    for i in tmp:
-        cur.execute("select taille from contient join plante on contient.id_plante=plante.id_plante where x_plante like ? and y_plante like ?",(i[0],i[1])) # on cherche la taille de la plante
-        donnees2=cur.fetchall()[0][0]
-        liste_tailles.append(donnees2)
-        liste=[(x, y) for x in range(int((-donnees2/2)+i[0]), int((donnees2/2)+1+i[0])) for y in range(int((-donnees2/2)+i[1]), int((donnees2/2)+1+i[1]))]
-        pos_occupees_plantes+=liste
+#    pos_occupees_plantes=donnees.copy() # liste de ttes les positions occupées par chaque plante
+ #   tmp=donnees.copy()
+  #  liste_tailles=[]
+
+#    for i in tmp:
+ #       cur.execute("select taille from contient join plante on contient.id_plante=plante.id_plante where x_plante like ? and y_plante like ?",(i[0],i[1]))
+        # on cherche la taille de la plante
+  #      donnees2=cur.fetchall()[0][0]
+   #     liste_tailles.append(donnees2)
+    #    liste=[(x, y) for x in range(int((-donnees2/2)+i[0]), int((donnees2/2)+1+i[0])) for y in range(int((-donnees2/2)+i[1]), int((donnees2/2)+1+i[1]))]
+     #   pos_occupees_plantes+=liste
+
 
     plantes = []
     for i in range(len(pos_plantes)):
         plantes.append((pos_plantes[i])+(300,))
     return (trouve_positions(plantes, taille, id_parcelle,database))
 
-def trouve_positions(plantes, taille, id_parcelle,database):
-    bug=plantes.copy()
+def trouve_positions(plantes:list, taille:tuple, id_parcelle:int,database):
+    #algo de placement des plantes
+    bug=plantes.copy() #on travaille sur une copie car sinon on crée des erreurs en modifiant la liste originale
     pos_libres = []
     pos_influence = []
     liste_tailles_plantes=[]
 
 
     tmp=plantes.copy()
-    for i in range(len(tmp)):
+    for i in range(len(tmp)): # on cherche la taille de chaque plante
         cur=database.cursor()
         cur.execute("""select taille from contient as ct join plante as pl on ct.id_plante=pl.id_plante
         where id_parcelle like ? and x_plante like ? and y_plante like ?
@@ -170,17 +172,25 @@ def trouve_positions(plantes, taille, id_parcelle,database):
         liste_tailles_plantes.append(donnees[0][0])
         plantes[i]=(tmp[i][0],tmp[i][1])
 
-
+    emplacements=[]
     for i in range(len(plantes)):
         x, y, rayon = bug[i]
-        for j in range(-taille // 2, taille // 2 + 1,taille):
-            for k in range(-taille // 2, taille // 2 + 1,taille):
+        for j in range(-taille[0] // 2, taille[0] // 2 + 1,taille[0]):
+            for k in range(-taille[1] // 2, taille[1] // 2 + 1,taille[1]):
                 if x+j<0 or y+k<0:
                     continue
                 x_tmp = x + j
                 y_tmp = y + k
-                dist=distances_voisins(x_tmp, y_tmp, (20,20), plantes,rayon,id_parcelle,liste_tailles_plantes,database)
-    return pos_libres, pos_influence
+                dist=distances_voisins(x_tmp, y_tmp, taille, plantes,rayon,id_parcelle,liste_tailles_plantes,database)
+                # dist : (dist_x, dist_y, x_voisin,y_voisin)
+                for i in dist:
+                    x_emplacement, y_emplacement = (x_tmp+(i[0]//2), y_tmp+(i[1]//2))
+                    if x_emplacement<taille[0]//2 or y_emplacement<taille[1]//2:
+                        continue
+                    emplacements.append((x_emplacement, y_emplacement))
+    ensemble = set(emplacements)
+    emplacements = list(ensemble)
+    print(len(emplacements))
 
 def test_position(id_parcelle:int,taille:tuple,pos_testee:tuple,database):
     liste_coords_plantes=[] # liste des coordonnées des plantes de la parcelle
@@ -203,4 +213,4 @@ def test_position(id_parcelle:int,taille:tuple,pos_testee:tuple,database):
     id_voisins=liste_coords_to_id(voisins,liste_coords_plantes,liste_id_plantes,database) # on récupère les id des voisins
     possibles=suggestion(id_voisins,database)
     #print("Pour la position",i,"les plantes compagnes sont",liste_id_to_nom(possibles[0],database),"et les plantes ennemies sont",liste_id_to_nom(possibles[1],database))
-    return liste_id_to_nom(possibles[0],database)
+    return possibles[0]
