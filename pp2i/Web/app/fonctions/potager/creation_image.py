@@ -15,7 +15,7 @@ def creation_image(l_polygones, tableau_potager, alpha, items, file, id_image):
         id_plante = tableau_potager[(polygone[0][0] // alpha, polygone[0][1] // alpha)]
 
         if id_plante == 0:
-            draw.polygon(polygone, fill='white', width=1, outline=None)
+            draw.polygon(polygone, fill='#dddddd', width=1, outline=None)
         else:
             items.execute('select color from plante where id_plante = ?', (int(id_plante),))
             color = items.fetchall()[0][0]

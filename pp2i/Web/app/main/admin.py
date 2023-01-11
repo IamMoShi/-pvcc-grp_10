@@ -79,6 +79,10 @@ def attribution_parcelles():
 
 @admin.route('/admin/supp_parcelle/<num_parcelle>')
 def supp_parcelle(num_parcelle):
+    if not session.get("email"):
+        return redirect("/signin")
+    if not session["admin"]:
+        return render_template('error_page.html', msg='Vous n\'êtes administrateur d\'aucun jardin')
     db = get_db()
     items = db.cursor()
     items.execute('DELETE FROM parcelle WHERE id_parcelle=?', (num_parcelle,))
@@ -98,6 +102,10 @@ def supp_parcelle(num_parcelle):
 
 @admin.route('/admin/ajouter_parcelle', methods=['POST', 'GET'])
 def ajouter_parcelle():
+    if not session.get("email"):
+        return redirect("/signin")
+    if not session["admin"]:
+        return render_template('error_page.html', msg='Vous n\'êtes administrateur d\'aucun jardin')
     if request.method == 'POST':
         db = get_db()
         items = db.cursor()

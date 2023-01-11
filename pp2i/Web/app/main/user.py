@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, session, request,url_for
+from flask import Blueprint, render_template, redirect, session, request, url_for
 from os import listdir
 
 from ..database.get_db import get_db
@@ -15,7 +15,6 @@ from ..fonctions.plante.suggestion_plantes import liste_id_to_nom
 from ..fonctions.plante.suggestion_plantes import algo_placement
 from ..fonctions.plante.suggestion_plantes import nom_to_id
 from ..fonctions.plante.suggestion_plantes import id_to_nom
-from ..fonctions.API_handler import GPSAPI
 import re
 import random
 
@@ -72,9 +71,8 @@ def users():
 
 @user.route('/users/<numero>')
 def userss(numero):
-    
-    #Affiche les administrateurs du jardin
-    if numero=="admins":
+    # Affiche les administrateurs du jardin
+    if numero == "admins":
         db = get_db()
         items = db.cursor()
 
@@ -91,7 +89,6 @@ def userss(numero):
             admin = items.fetchall()
             if len(admin) != 0:
                 statut += "- administrateur.trice "
-            
 
             statut += " - "
             i += (statut,)
@@ -101,13 +98,12 @@ def userss(numero):
                 (i[0],))
             num_jardin_a = items.fetchall()
             i += (enleve_crochets(num_jardin_a),)
-           
 
             final.append(i)
         return render_template("users.html", data=final)
 
     else:
-        #Affiche les jardiniers d'un jardin (accessible si on est connecté)
+        # Affiche les jardiniers d'un jardin (accessible si on est connecté)
         if not session.get("email"):
             return redirect("/signin")
 
@@ -304,7 +300,6 @@ def mon_potager(numero):
     if cestpasbon:
         return render_template("error_page.html", msg="Vous n'avez pas accès à cette parcelle")
 
-
     # ----------------------------------------------------- #
     # --------- récupération de la base de données--------- #
 
@@ -335,7 +330,7 @@ def mon_potager(numero):
 
     id_parcelle, id_jardin, longueur, largeur, polygone = resultat
 
-    def secondaire(id_parcelle, id_jardin, longueur, largeur, polygone,string=""):
+    def secondaire(id_parcelle, id_jardin, longueur, largeur, polygone, string=""):
         # ----------------------------------------------------- #
         # ---------récupération de l_polygone et l_id---------- #
 
@@ -361,7 +356,7 @@ def mon_potager(numero):
         # --------Création de l'image de la parcelle----------- #
 
         affichage_parcelle(id_parcelle, id_jardin, longueur, largeur, l_polygone, l_id,
-                        database.cursor(),string)
+                           database.cursor(), string)
 
         # ----------------------------------------------------- #
         # ---Chemin d'ouverture de la page html et de l'image-- #
@@ -379,77 +374,67 @@ def mon_potager(numero):
         for i in range(len(l_legend)):
             items.execute("SELECT nom FROM plante WHERE id_plante=?", (l_legend[i][1],))
             l_legend[i] += (items.fetchone(),)
-        return chemin,l_polygone_txt,chemin_image,l_legend,numero,id_jardin,longueur,largeur,plantes
+        return chemin, l_polygone_txt, chemin_image, l_legend, numero, id_jardin, longueur, largeur, plantes
 
-    chemin,l_polygone_txt,chemin_image,l_legend,numero,id_jardin,longueur,largeur,plantes=secondaire(id_parcelle, id_jardin, longueur, largeur, polygone)
-    
-    # Carte GPS et API météo:
-    adress = items.execute(f'SELECT numero_rue, nom_rue, code_postal, ville FROM jardin WHERE id_jardin == {id_jardin}').fetchone()
-    adress = f"{adress[0]} {adress[1]}, {adress[2]} {adress[3]}"
+    chemin, l_polygone_txt, chemin_image, l_legend, numero, id_jardin, longueur, largeur, plantes = secondaire(
+        id_parcelle, id_jardin, longueur, largeur, polygone)
 
-    if adress:
-        coords = GPSAPI.get_coordinates(adress)
-        weather = GPSAPI.get_weather(coords)
-    else :
-        coords = None
-        weather = None
-    
-#Suggestion de plante quand on donne des coordonnées:
-    x_sugg=None
-    y_sugg=None
-    suggestion=None
-    suggestion_placement=False
-    suggestions_placement=None
-    dico_complet=None
-    coords_plante_suggeree=None
-    vide=False
-    liste_deja_testee=[]
+    # Suggestion de plante quand on donne des coordonnées:
+    x_sugg = None
+    y_sugg = None
+    suggestion = None
+    suggestion_placement = False
+    suggestions_placement = None
+    dico_complet = None
+    coords_plante_suggeree = None
+    vide = False
+    liste_deja_testee = []
 
     if request.method == 'POST':
 
-        liste_deja_testee=eval(request.form['liste'])
-        
+        liste_deja_testee = eval(request.form['liste'])
+
         if request.form['type'] == "sugg_placement":
-            suggestion_placement=True
-            suggestions_placement=[]
-            id_parcelle=numero
-            database=get_db()
-            dico_retour=algo_placement(id_parcelle,(20,20),database)
-            dico_complet=dico_retour.copy()
-            cles_str=dico_retour.keys()
-            cles=[]
+            suggestion_placement = True
+            suggestions_placement = []
+            id_parcelle = numero
+            database = get_db()
+            dico_retour = algo_placement(id_parcelle, (20, 20), database)
+            dico_complet = dico_retour.copy()
+            cles_str = dico_retour.keys()
+            cles = []
             for i in cles_str:
                 cles.append(int(i))
-            #on enlève les doublons
-            tmp = set(cles) # on transforme la liste en ensemble
-            cles_uniques = list(tmp) # on transforme l'ensemble en liste
-            suggestions_placement=liste_id_to_nom(cles_uniques,database)
+            # on enlève les doublons
+            tmp = set(cles)  # on transforme la liste en ensemble
+            cles_uniques = list(tmp)  # on transforme l'ensemble en liste
+            suggestions_placement = liste_id_to_nom(cles_uniques, database)
             for element in liste_deja_testee:
                 if element in suggestions_placement:
                     suggestions_placement.remove(element)
-            if len(suggestions_placement)==0:
-                vide=True
-        
-        elif request.form['type'] == "sugg_classique":
-            x_sugg=request.form['x_sugg']
-            y_sugg=request.form['y_sugg']
-            id_parcelle=numero
+            if len(suggestions_placement) == 0:
+                vide = True
 
-            x_sugg=round(float(x_sugg))
-            y_sugg=round(float(y_sugg))
+        elif request.form['type'] == "sugg_classique":
+            x_sugg = request.form['x_sugg']
+            y_sugg = request.form['y_sugg']
+            id_parcelle = numero
+
+            x_sugg = round(float(x_sugg))
+            y_sugg = round(float(y_sugg))
             database = get_db()
-            id_suggestion=test_position(id_parcelle,(20,20),(x_sugg,y_sugg),database)
-            suggestion=liste_id_to_nom(id_suggestion,database)
-        
+            id_suggestion = test_position(id_parcelle, (20, 20), (x_sugg, y_sugg), database)
+            suggestion = liste_id_to_nom(id_suggestion, database)
+
         elif request.form['type'] == "montrer_placement":
-            nom_plante=request.form['nom_plante']
-            id_plante=nom_to_id(nom_plante, get_db())
-            dico=request.form["dico"]
-            dico_complet=eval(dico)
-            all_pos=dico_complet[str(id_plante)]
-            pos_choisie=all_pos[0]
-            
-# recréer l'image correspondante
+            nom_plante = request.form['nom_plante']
+            id_plante = nom_to_id(nom_plante, get_db())
+            dico = request.form["dico"]
+            dico_complet = eval(dico)
+            all_pos = dico_complet[str(id_plante)]
+            pos_choisie = all_pos[0]
+
+            # recréer l'image correspondante
             db = get_db()
             items = db.cursor()
 
@@ -474,35 +459,40 @@ def mon_potager(numero):
                 result2 = items.fetchall()
                 mon_terrain, B, msg = terrain.ajout_plante(result2[0][0], (i[1], i[2]), i[0])
 
-            condition=False
-            while not condition and not all_pos==[]:
-                indice=random.randint(0,len(all_pos)-1)
-                pos_choisie=all_pos[indice]
-                x_test,y_test=pos_choisie
+            condition = False
+            while not condition and not all_pos == []:
+                indice = random.randint(0, len(all_pos) - 1)
+                pos_choisie = all_pos[indice]
+                x_test, y_test = pos_choisie
                 mon_nouveau_terrain, condition, msg = terrain.ajout_plante(taille, (x_test, y_test), id_plante)
                 all_pos.remove(pos_choisie)
-            
-            coords_plante_suggeree=(x_test,y_test,id_plante,id_to_nom(id_plante,get_db()))
+
+            coords_plante_suggeree = (x_test, y_test, id_plante, id_to_nom(id_plante, get_db()))
             if not condition:
                 liste_deja_testee.append(nom_plante)
-                return render_template("potager_user/erreur_suggestion_placement.html", msg="Cette plante ne peux plus être ajoutée",
-                liste_deja_testee=liste_deja_testee,numero=numero)
-            
-            mon_terrain=mon_nouveau_terrain.copy()
+                return render_template("potager_user/erreur_suggestion_placement.html",
+                                       msg="Cette plante ne peux plus être ajoutée",
+                                       liste_deja_testee=liste_deja_testee, numero=numero)
+
+            mon_terrain = mon_nouveau_terrain.copy()
 
             objet_image = PotagerImage(mon_terrain, numero, items)
 
             l_contour, l_polygone, alpha = objet_image.polygone()
             l_id = objet_image.l_id
             polygone = str(l_polygone) + "//" + str(l_id)
-            chemin,l_polygone_txt,chemin_image,l_legend,numero,id_jardin,longueur,largeur,plantes=secondaire(id_parcelle, id_jardin, longueur, largeur, polygone)
+            chemin, l_polygone_txt, chemin_image, l_legend, numero, id_jardin, longueur, largeur, plantes = secondaire(
+                id_parcelle, id_jardin, longueur, largeur, polygone)
 
     return render_template(chemin, l_polynomes_txt=l_polygone_txt[::-1], chemin_image=chemin_image,
                            l_legende=l_legend, numero=numero,
-                           id_jardin=id_jardin, longueur=longueur, largeur=largeur, 
+                           id_jardin=id_jardin, longueur=longueur, largeur=largeur,
                            plantes=plantes, suggestion=suggestion, x_sugg=x_sugg, y_sugg=y_sugg,
-                           suggestion_placement=suggestion_placement, weather=weather, coords=coords ,suggestions_placement=suggestions_placement,vide=vide,
-                           dico_complet=dico_complet,coords_plante_suggeree=coords_plante_suggeree,liste_deja_testee=liste_deja_testee)
+                           suggestion_placement=suggestion_placement, suggestions_placement=suggestions_placement,
+                           vide=vide,
+                           dico_complet=dico_complet, coords_plante_suggeree=coords_plante_suggeree,
+                           liste_deja_testee=liste_deja_testee)
+
 
 @user.route('/mesparcelles/<numero>/ajouter_plante', methods=['POST', 'GET'])
 def ajout_plante(numero):
@@ -640,16 +630,6 @@ def changePhotoo(chemin):
     db.commit()
 
     return redirect('/user/vos_informations')
-
-
-@user.route('/monpotager/<numero>/edit')
-def edit_potager(numero):
-    try:
-        numero = int(numero)
-    except:
-        return 'error ce numero n\'est pas correct'
-
-    return render_template('potager_user/edit_potager.html')
 
 
 @user.route('/dico', methods=['GET', 'POST'])
