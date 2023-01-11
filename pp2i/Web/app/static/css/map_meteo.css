@@ -1,0 +1,41 @@
+.leaflet-container {
+    height: 300px;
+    width: 400px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.Maps{
+    display: flex;
+    align-items: center;
+}
+
+.meteo{
+    margin-left: 30px;
+    display: flex;
+}
+
+.daily{
+    height: 200px;
+    width : 180px;
+    background-color: white;
+    border: 2px solid;
+    border-color: rgb(48, 136, 48);
+    margin: 5px;
+    padding: 20px;
+    text-align: center;
+}
+.tempM{
+    color :rgb(217, 122, 71);
+    margin-top: 15px;
+    font-size: 20px;
+}
+.tempm{
+    color :rgb(48, 123, 136);
+    margin-top: 15px;
+    font-size: 20px;
+}
+.rain{
+    margin-top: 25px;
+    font-size: 18px;
+}

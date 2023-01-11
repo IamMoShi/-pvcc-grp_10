@@ -14,6 +14,7 @@ from ..fonctions.plante.suggestion_plantes import test_position
 from ..fonctions.plante.suggestion_plantes import liste_id_to_nom
 from ..fonctions.plante.suggestion_plantes import algo_placement
 from ..fonctions.plante.suggestion_plantes import nom_to_id
+from ..fonctions.API_handler import GPSAPI
 import re
 
 user = Blueprint('user', __name__)
@@ -360,6 +361,17 @@ def mon_potager(numero):
         items.execute("SELECT nom FROM plante WHERE id_plante=?", (l_legend[i][1],))
         l_legend[i] += (items.fetchone(),)
 
+    # Carte GPS et API météo:
+    #adress = items.execute(f'SELECT numero_rue, nom_rue, code_postal, ville FROM jardin WHERE id_jardin == {id_jardin}').fetchone()
+    adress = (16, "rue docteur Hermite", "38000", "Grenoble")
+    adress = f"{adress[0]} {adress[1]}, {adress[2]} {adress[3]}"
+
+    if adress:
+        coords = GPSAPI.get_coordinates(adress)
+        weather = GPSAPI.get_weather(coords)
+    else :
+        coords = None
+        weather = None
     
 #Suggestion de plante quand on donne des coordonnées:
     x_sugg=None
@@ -412,8 +424,7 @@ def mon_potager(numero):
                            l_legende=l_legend, numero=numero,
                            id_jardin=id_jardin, longueur=longueur, largeur=largeur, 
                            plantes=plantes, suggestion=suggestion, x_sugg=x_sugg, y_sugg=y_sugg,
-                           suggestion_placement=suggestion_placement,suggestions_placement=suggestions_placement,dico_complet=dico_complet)
-
+                           suggestion_placement=suggestion_placement, weather=weather, coords=coords ,suggestions_placement=suggestions_placement,dico_complet=dico_complet)
 
 @user.route('/mesparcelles/<numero>/ajouter_plante', methods=['POST', 'GET'])
 def ajout_plante(numero):

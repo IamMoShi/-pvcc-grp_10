@@ -103,7 +103,8 @@ input{
     background-image: url("../images/autres/papillon.png");
     height: auto;
     margin: 0 0 0 20px;
-    background-position: center ;
+    background-position: center;
+    background-size: 100%;
 }
 .credits{
     text-align: center;
