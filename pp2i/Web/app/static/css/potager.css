@@ -152,6 +152,8 @@ div.ajout_plante{
     border: solid darkgreen 4px;
     padding: 2%;
     margin: 0 auto;
+    margin-left: 1%;
+    margin-right: 1%;
 }
 div.en_bas{
     display: flex;
@@ -163,6 +165,8 @@ div.suggestion{
     border: solid darkgreen 4px;
     padding: 1%;
     margin: 0 auto;
+    margin-left: 1%;
+    margin-right: 1%;
 }
 .rq{
     
